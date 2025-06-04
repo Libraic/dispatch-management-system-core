@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:54322/kovin_dms
+    username: kovin
+    password: kovin
+    driver-class-name: org.postgresql.Driver

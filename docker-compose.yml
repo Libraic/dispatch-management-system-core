@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: kovin-dispatch-management-system-db
+    restart: always
+    environment:
+      POSTGRES_USER: kovin
+      POSTGRES_PASSWORD: kovin
+      POSTGRES_DB: kovin_dms
+    ports:
+      - "54322:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

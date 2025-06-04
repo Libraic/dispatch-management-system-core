@@ -33,3 +33,54 @@ COMMENT ON COLUMN t_companies.name             IS 'The name of the company.';
 COMMENT ON COLUMN t_companies.created_at       IS 'The date the company was created.';
 COMMENT ON COLUMN t_companies.last_updated_at  IS 'The date the company was last updated.';
 COMMENT ON COLUMN t_companies.deleted_at       IS 'The date the company was deleted.';
+
+-- changeset libra:003
+-- comment: Create the t_users table and its related dependencies
+CREATE SEQUENCE t_users_sequence
+    INCREMENT BY 1
+    START WITH 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE t_users (
+    id BIGINT       PRIMARY                     KEY DEFAULT nextval('t_users_sequence'),
+    uuid uuid       NOT NULL                    UNIQUE,
+    first_name      VARCHAR(50)                 NOT NULL,
+    last_name       VARCHAR(50)                 NOT NULL,
+    role            VARCHAR(50)                 NOT NULL,
+    position        VARCHAR(50)                 NOT NULL,
+    birth_date      DATE                        NOT NULL,
+    email           VARCHAR(60)                 NOT NULL UNIQUE,
+    password        VARCHAR                     NOT NULL,
+    personal_email  VARCHAR(60),
+    employment_date DATE                        NOT NULL,
+    dismissal_date  DATE,
+    created_at      TIMESTAMP WITH TIME ZONE    DEFAULT CURRENT_TIMESTAMP,
+    last_updated_at TIMESTAMP WITH TIME ZONE    DEFAULT CURRENT_TIMESTAMP,
+    deleted_at      TIMESTAMP WITH TIME ZONE    DEFAULT NULL,
+    supervisor_id   BIGINT,
+
+    CONSTRAINT fk_supervisor FOREIGN KEY (supervisor_id) REFERENCES t_users(id)
+);
+
+ALTER SEQUENCE t_users_sequence OWNED BY t_users.id;
+
+COMMENT ON TABLE t_users IS 'The table used to store the users of the application.';
+
+COMMENT ON COLUMN t_users.id               IS 'The primary key of the t_users table.';
+COMMENT ON COLUMN t_users.uuid             IS 'The UUID of the user.';
+COMMENT ON COLUMN t_users.first_name       IS 'The first name of the user.';
+COMMENT ON COLUMN t_users.last_name        IS 'The last name of the user.';
+COMMENT ON COLUMN t_users.role             IS 'The role in the system of the user.';
+COMMENT ON COLUMN t_users.position         IS 'The functional position of the user.';
+COMMENT ON COLUMN t_users.birth_date       IS 'The birth date of the user.';
+COMMENT ON COLUMN t_users.email            IS 'The e-mail (which acts as the username in the authentication process) of the user.';
+COMMENT ON COLUMN t_users.password         IS 'The hashed password of the user.';
+COMMENT ON COLUMN t_users.personal_email   IS 'The personal e-mail of the user (that is not provided by the dispatching company).';
+COMMENT ON COLUMN t_users.employment_date  IS 'The date the user was employed in the dispatching company.';
+COMMENT ON COLUMN t_users.dismissal_date   IS 'The date the user was dismissed from the dispatching company.';
+COMMENT ON COLUMN t_users.created_at       IS 'The date the user was created.';
+COMMENT ON COLUMN t_users.last_updated_at  IS 'The date the user was last updated.';
+COMMENT ON COLUMN t_users.deleted_at       IS 'The date the user was deleted.';
+COMMENT ON COLUMN t_users.supervisor_id    IS 'The foreign key that stored the identifier of the user that supervises the current user.';

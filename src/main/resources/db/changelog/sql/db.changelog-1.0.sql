@@ -84,3 +84,23 @@ COMMENT ON COLUMN t_users.created_at       IS 'The date the user was created.';
 COMMENT ON COLUMN t_users.last_updated_at  IS 'The date the user was last updated.';
 COMMENT ON COLUMN t_users.deleted_at       IS 'The date the user was deleted.';
 COMMENT ON COLUMN t_users.supervisor_id    IS 'The foreign key that stored the identifier of the user that supervises the current user.';
+
+-- changeset libra:004
+-- comment: Create the t_usercompanies table
+
+CREATE TABLE t_usercompanies (
+    user_id    BIGINT         NOT NULL,
+    company_id BIGINT         NOT NULL,
+    commission DECIMAL(10, 6),
+
+    CONSTRAINT pk_user_company PRIMARY KEY (user_id, company_id),
+
+    CONSTRAINT fk_user         FOREIGN KEY (user_id)             REFERENCES t_users(id),
+    CONSTRAINT fk_company      FOREIGN KEY (company_id)          REFERENCES t_companies(id)
+);
+
+COMMENT ON TABLE t_usercompanies IS 'The table that stores the many-to-many relationship between t_users and t_companies';
+
+COMMENT ON COLUMN t_usercompanies.user_id    IS 'The foreign key that stores the identifier of the User.';
+COMMENT ON COLUMN t_usercompanies.company_id IS 'The foreign key that stores the identifier of the Company.';
+COMMENT ON COLUMN t_usercompanies.commission IS 'The commission that a User takes from providing services for the Company.';

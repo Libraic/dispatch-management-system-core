@@ -1,5 +1,7 @@
 package io.kovin.dispatch.management.system.model.request;
 
+import java.util.List;
+
 public record CreateUserRequest(
     String firstName,
     String lastName,
@@ -10,6 +12,7 @@ public record CreateUserRequest(
     String employmentDate,
     String role,
     String position,
-    String supervisorUuid
+    String supervisorUuid,
+    List<String> companiesUuids
 ) {
 }

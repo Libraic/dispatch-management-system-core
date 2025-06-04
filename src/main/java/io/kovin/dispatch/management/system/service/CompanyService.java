@@ -1,6 +1,7 @@
 package io.kovin.dispatch.management.system.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.mapper.CompanyMapper;
@@ -45,5 +46,13 @@ public class CompanyService {
         }
 
         return companyEntityOptional.get();
+    }
+
+    public List<CompanyEntity> findByUuids(List<String> uuids) {
+        if (uuids == null) {
+            return List.of();
+        }
+
+        return companyRepository.findByUuidIn(uuids);
     }
 }

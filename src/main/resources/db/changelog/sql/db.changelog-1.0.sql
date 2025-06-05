@@ -104,3 +104,31 @@ COMMENT ON TABLE t_usercompanies IS 'The table that stores the many-to-many rela
 COMMENT ON COLUMN t_usercompanies.user_id    IS 'The foreign key that stores the identifier of the User.';
 COMMENT ON COLUMN t_usercompanies.company_id IS 'The foreign key that stores the identifier of the Company.';
 COMMENT ON COLUMN t_usercompanies.commission IS 'The commission that a User takes from providing services for the Company.';
+
+-- changeset libra:005
+-- comment: Create the t_notes table and its related dependencies
+
+CREATE SEQUENCE t_notes_sequence
+    INCREMENT BY 1
+    START WITH 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE t_notes (
+    id          BIGINT  PRIMARY KEY DEFAULT nextval('t_notes_sequence'),
+    uuid        uuid    NOT NULL UNIQUE,
+    description VARCHAR NOT NULL,
+    user_id     BIGINT,
+
+    CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES t_users(id)
+);
+
+ALTER SEQUENCE t_notes_sequence OWNED BY t_notes.id;
+
+COMMENT ON TABLE t_notes IS 'The table used to store the notes of the User.';
+
+COMMENT ON COLUMN t_notes.id          IS 'The primary key of the t_notes table.';
+COMMENT ON COLUMN t_notes.uuid        IS 'The UUID of the note.';
+COMMENT ON COLUMN t_notes.description IS 'The text of the note.';
+COMMENT ON COLUMN t_notes.user_id     IS 'The user the current note pertains to.';

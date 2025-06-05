@@ -13,6 +13,7 @@ public record CreateUserRequest(
     String role,
     String position,
     String supervisorUuid,
-    List<String> companiesUuids
+    List<String> companiesUuids,
+    List<String> notes
 ) {
 }

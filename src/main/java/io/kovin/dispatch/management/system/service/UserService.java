@@ -3,6 +3,7 @@ package io.kovin.dispatch.management.system.service;
 import java.util.List;
 import io.kovin.dispatch.management.system.mapper.UserMapper;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
+import io.kovin.dispatch.management.system.model.entity.NoteEntity;
 import io.kovin.dispatch.management.system.model.entity.UserCompanyEntity;
 import io.kovin.dispatch.management.system.model.entity.UserEntity;
 import io.kovin.dispatch.management.system.model.request.CreateUserRequest;
@@ -22,6 +23,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final CompanyService companyService;
     private final UserCompanyService userCompanyService;
+    private final NoteService noteService;
 
     public UserEntity createUser(CreateUserRequest request) {
         userValidation.validateUserCreation(request);
@@ -30,6 +32,8 @@ public class UserService {
         List<CompanyEntity> companies = companyService.findByUuids(request.companiesUuids());
         List<UserCompanyEntity> userCompanies = userCompanyService.saveUserCompanies(userEntity, companies);
         log.info("The user will be responsible for [{}] companies.", userCompanies.size());
+        List<NoteEntity> noteEntities = noteService.saveNotes(request.notes(), createdUserEntity);
+        log.info("The user has [{}] notes created.", noteEntities.size());
         return createdUserEntity;
     }
 }

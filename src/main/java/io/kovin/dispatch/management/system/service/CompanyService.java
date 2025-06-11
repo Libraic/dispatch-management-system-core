@@ -55,4 +55,8 @@ public class CompanyService {
 
         return companyRepository.findByUuidIn(uuids);
     }
+
+    public List<CompanyEntity> getCompanies() {
+        return companyRepository.findAll();
+    }
 }

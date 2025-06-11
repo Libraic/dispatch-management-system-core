@@ -1,5 +1,6 @@
 package io.kovin.dispatch.management.system.mapper;
 
+import java.util.List;
 import java.util.UUID;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
@@ -21,5 +22,11 @@ public class CompanyMapper {
             .name(companyEntity.getName())
             .uuid(companyEntity.getUuid())
             .build();
+    }
+
+    public List<CompanyData> fromCompanyEntityListToCompanyDataList(List<CompanyEntity> companyEntities) {
+        return companyEntities.stream()
+            .map(this::fromCompanyEntityToCompanyData)
+            .toList();
     }
 }

@@ -12,6 +12,9 @@ import io.kovin.dispatch.management.system.utils.ErrorMessage;
 import io.kovin.dispatch.management.system.validation.CompanyValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -56,7 +59,8 @@ public class CompanyService {
         return companyRepository.findByUuidIn(uuids);
     }
 
-    public List<CompanyEntity> getCompanies() {
-        return companyRepository.findAll();
+    public Page<CompanyEntity> getCompanies(int pageNumber, int pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        return companyRepository.findAll(page);
     }
 }

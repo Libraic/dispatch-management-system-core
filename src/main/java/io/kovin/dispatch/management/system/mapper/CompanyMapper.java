@@ -1,10 +1,10 @@
 package io.kovin.dispatch.management.system.mapper;
 
-import java.util.List;
 import java.util.UUID;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
 import io.kovin.dispatch.management.system.model.response.CompanyData;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,9 +24,7 @@ public class CompanyMapper {
             .build();
     }
 
-    public List<CompanyData> fromCompanyEntityListToCompanyDataList(List<CompanyEntity> companyEntities) {
-        return companyEntities.stream()
-            .map(this::fromCompanyEntityToCompanyData)
-            .toList();
+    public Page<CompanyData> fromCompanyEntityPageToCompanyDataPage(Page<CompanyEntity> companyEntities) {
+        return companyEntities.map(this::fromCompanyEntityToCompanyData);
     }
 }

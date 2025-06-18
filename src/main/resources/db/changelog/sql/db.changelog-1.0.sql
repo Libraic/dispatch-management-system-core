@@ -132,3 +132,15 @@ COMMENT ON COLUMN t_notes.id          IS 'The primary key of the t_notes table.'
 COMMENT ON COLUMN t_notes.uuid        IS 'The UUID of the note.';
 COMMENT ON COLUMN t_notes.description IS 'The text of the note.';
 COMMENT ON COLUMN t_notes.user_id     IS 'The user the current note pertains to.';
+
+-- changeset libra:006
+-- comment: Add nickname column to t_users table
+ALTER TABLE t_users ADD COLUMN nickname VARCHAR(100);
+
+COMMENT ON COLUMN t_users.nickname IS 'The nickname of the user.';
+
+-- changeset libra:007
+-- comment: Rename description column from t_notes table to content
+ALTER TABLE t_notes RENAME COLUMN description TO content;
+
+COMMENT ON COLUMN t_notes.content IS 'The content of the note.';

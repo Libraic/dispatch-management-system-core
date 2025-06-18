@@ -1,6 +1,8 @@
 package io.kovin.dispatch.management.system.service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import io.kovin.dispatch.management.system.mapper.UserCompanyMapper;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.entity.UserCompanyEntity;
@@ -18,11 +20,16 @@ public class UserCompanyService {
     private final UserCompanyRepository userCompanyRepository;
     private final UserCompanyMapper userCompanyMapper;
 
-    public List<UserCompanyEntity> saveUserCompanies(UserEntity user, List<CompanyEntity> companies) {
+    public List<UserCompanyEntity> saveUserCompanies(
+        UserEntity user,
+        List<CompanyEntity> companies,
+        Map<String, BigDecimal> workloadCommission
+    ) {
         List<UserCompanyEntity> userCompanyEntities = userCompanyMapper
             .fromUserEntityAndCompanyEntitiesToUserCompanyEntities(
                 user,
-                companies
+                companies,
+                workloadCommission
             );
         return userCompanyRepository.saveAll(userCompanyEntities);
     }

@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 public class Error {
 
     String message;
+    String field;
+    String area;
     HttpStatus status;
 
     public static Error of(String message, HttpStatus status) {

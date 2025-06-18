@@ -1,5 +1,6 @@
 package io.kovin.dispatch.management.system.validation;
 
+import static io.kovin.dispatch.management.system.exception.ImpactedField.COMPANY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.MISSING_COMPANY_NAME;
 
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;

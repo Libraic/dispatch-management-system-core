@@ -1,5 +1,6 @@
 package io.kovin.dispatch.management.system.mapper;
 
+import static io.kovin.dispatch.management.system.exception.ImpactedField.USER;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.SUPERVISOR_NOT_FOUND;
 
 import java.util.Optional;
@@ -31,6 +32,7 @@ public class UserMapper {
             .uuid(UUID.randomUUID().toString())
             .firstName(request.firstName())
             .lastName(request.lastName())
+            .nickname(request.nickname())
             .email(request.email())
             .password(passwordEncoder.encode(request.password()))
             .personalEmail(request.personalEmail())

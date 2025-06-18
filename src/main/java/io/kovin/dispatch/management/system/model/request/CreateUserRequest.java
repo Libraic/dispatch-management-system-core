@@ -5,6 +5,7 @@ import java.util.List;
 public record CreateUserRequest(
     String firstName,
     String lastName,
+    String nickname,
     String email,
     String password,
     String personalEmail,
@@ -13,7 +14,7 @@ public record CreateUserRequest(
     String role,
     String position,
     String supervisorUuid,
-    List<String> companiesUuids,
+    List<CreateWorkloadRequest> workloads,
     List<String> notes
 ) {
 }

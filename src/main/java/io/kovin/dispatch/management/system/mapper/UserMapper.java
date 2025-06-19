@@ -1,6 +1,5 @@
 package io.kovin.dispatch.management.system.mapper;
 
-import static io.kovin.dispatch.management.system.exception.ImpactedField.USER;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.SUPERVISOR_NOT_FOUND;
 
 import java.util.Optional;
@@ -45,7 +44,12 @@ public class UserMapper {
     }
 
     public UserData fromUserEntityToUserData(UserEntity userEntity) {
-        return UserData.builder().uuid(userEntity.getUuid()).build();
+        return UserData.builder()
+            .uuid(userEntity.getUuid())
+            .firstName(userEntity.getFirstName())
+            .lastName(userEntity.getLastName())
+            .nickname(userEntity.getNickname())
+            .build();
     }
 
     private UserEntity getSupervisor(String supervisorUuid) {

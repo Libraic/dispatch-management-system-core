@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import io.kovin.dispatch.management.system.mapper.UserMapper;
+import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.entity.NoteEntity;
 import io.kovin.dispatch.management.system.model.entity.UserCompanyEntity;
@@ -15,6 +16,7 @@ import io.kovin.dispatch.management.system.model.entity.UserEntity;
 import io.kovin.dispatch.management.system.model.request.CreateUserRequest;
 import io.kovin.dispatch.management.system.model.request.CreateWorkloadRequest;
 import io.kovin.dispatch.management.system.repository.UserRepository;
+import io.kovin.dispatch.management.system.utils.SearchCriteriaUtils;
 import io.kovin.dispatch.management.system.validation.UserValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ public class UserService {
     private final CompanyService companyService;
     private final UserCompanyService userCompanyService;
     private final NoteService noteService;
+    private final CriteriaService<UserEntity> criteriaService;
 
     public UserEntity createUser(CreateUserRequest request) {
         userValidation.validateUserCreation(request);
@@ -51,5 +54,10 @@ public class UserService {
         List<NoteEntity> noteEntities = noteService.saveNotes(request.notes(), createdUserEntity);
         log.info("The user has [{}] notes created.", noteEntities.size());
         return createdUserEntity;
+    }
+
+    public List<UserEntity> getUsers(Map<String, String> queryParams) {
+        List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams);
+        return criteriaService.getCollection(searchCriteria, UserEntity.class);
     }
 }

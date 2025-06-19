@@ -4,6 +4,9 @@ import lombok.Builder;
 
 @Builder
 public record UserData(
-    String uuid
+    String uuid,
+    String firstName,
+    String lastName,
+    String nickname
 ) {
 }

@@ -21,5 +21,6 @@ public class ErrorMessage {
     public static final String EMAIL_IN_USE = "The provided email is already in use.";
     public static final String COMPANY_UUID_MISSING = "The UUID of a company was not provided.";
     public static final String NEGATIVE_COMMISSION = "The commission cannot be negative.";
+    public static final String INVALID_SEARCH_CRITERIA = "The field=[%s] has an invalid format=[%s].";
 
 }

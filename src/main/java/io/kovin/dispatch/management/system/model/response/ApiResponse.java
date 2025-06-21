@@ -5,16 +5,16 @@ import lombok.Value;
 
 @Value
 @Builder
-public class ApiResponse<T> {
+public class ApiResponse<T, E> {
 
     T data;
-    Error error;
+    E error;
 
-    public static <T> ApiResponse<T> fromData(T data) {
+    public static <T, E> ApiResponse<T, E> fromData(T data) {
         return new ApiResponse<>(data, null);
     }
 
-    public static <T> ApiResponse<T> fromError(Error error) {
+    public static <T, E> ApiResponse<T, E> fromError(E error) {
         return new ApiResponse<>(null, error);
     }
 }

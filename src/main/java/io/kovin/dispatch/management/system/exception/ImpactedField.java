@@ -6,18 +6,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ImpactedField {
-    FIRST_NAME("firstNameError"),
-    LAST_NAME("lastNameError"),
-    PASSWORD("passwordError"),
-    BIRTH_DATE("birthDateError"),
-    EMPLOYMENT_DATE("employmentDateError"),
-    COMPANY("companyError"),
-    COMMISSION("commissionError"),
-    USER("userError"),
-    POSITION("positionError"),
-    ROLE("roleError"),
-    EMAIL("emailError"),
-    SUPERVISOR("supervisorError");
+    COMPANY("company"),
+    COMMISSION("commission"),
+    SUPERVISOR("supervisor");
 
     private final String mappedField;
 }

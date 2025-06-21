@@ -19,7 +19,7 @@ public class ErrorMessage {
     public static final String EMPLOYMENT_DATE_IS_MANDATORY = "The employment date of the user is mandatory.";
     public static final String INVALID_DATE_FORMAT = "The date=[%s] should be passed in dd-MM-YYYY format.";
     public static final String EMAIL_IN_USE = "The provided email is already in use.";
-    public static final String COMPANY_UUID_MISSING = "The UUID of a company was not provided.";
+    public static final String INVALID_COMPANY = "The company with name=[%s] does not exist.";
     public static final String NEGATIVE_COMMISSION = "The commission cannot be negative.";
     public static final String INVALID_SEARCH_CRITERIA = "The field=[%s] has an invalid format=[%s].";
 

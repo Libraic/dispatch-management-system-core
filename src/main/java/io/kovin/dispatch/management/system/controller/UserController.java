@@ -1,9 +1,14 @@
 package io.kovin.dispatch.management.system.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import io.kovin.dispatch.management.system.mapper.UserMapper;
 import io.kovin.dispatch.management.system.model.entity.UserEntity;
 import io.kovin.dispatch.management.system.model.request.CreateUserRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
+import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
+import io.kovin.dispatch.management.system.model.response.error.GroupErrorResponse;
 import io.kovin.dispatch.management.system.model.response.UserData;
 import io.kovin.dispatch.management.system.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @RestController
 @RequestMapping("api/users")
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class UserController {
     private final UserMapper userMapper;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<UserData>> createUser(@RequestBody CreateUserRequest createUserRequest) {
+    public ResponseEntity<ApiResponse<UserData, List<GroupErrorResponse>>> createUser(@RequestBody CreateUserRequest createUserRequest) {
         log.info("A request to create a User was received.");
         UserEntity userEntity = userService.createUser(createUserRequest);
         UserData userData = userMapper.fromUserEntityToUserData(userEntity);
@@ -38,7 +39,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<UserData>>> getUsersByCriteria(
+    public ResponseEntity<ApiResponse<List<UserData>, ErrorResponse>> getUsersByCriteria(
         @RequestParam(name = "firstName", required = false) String firstName,
         @RequestParam(name = "nickname", required = false) String nickname,
         @RequestParam(name = "lastName", required = false) String lastName,

@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class NoteMapper {
     
-    public List<NoteEntity> fromDescriptionsAndUserEntityToNoteEntities(List<String> descriptions, UserEntity user) {
-        return descriptions.stream()
-            .map(description -> NoteEntity.builder()
-                .description(description)
+    public List<NoteEntity> fromDescriptionsAndUserEntityToNoteEntities(List<String> contents, UserEntity user) {
+        return contents.stream()
+            .map(content -> NoteEntity.builder()
+                .content(content)
                 .uuid(UUID.randomUUID().toString())
                 .user(user)
                 .build()

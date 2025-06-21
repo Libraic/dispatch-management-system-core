@@ -1,8 +1,6 @@
 package io.kovin.dispatch.management.system.controller;
 
 import io.kovin.dispatch.management.system.mapper.UserMapper;
-import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
-import io.kovin.dispatch.management.system.model.criteria.UserCriteria;
 import io.kovin.dispatch.management.system.model.entity.UserEntity;
 import io.kovin.dispatch.management.system.model.request.CreateUserRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;

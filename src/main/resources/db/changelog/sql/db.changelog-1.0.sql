@@ -144,3 +144,9 @@ COMMENT ON COLUMN t_users.nickname IS 'The nickname of the user.';
 ALTER TABLE t_notes RENAME COLUMN description TO content;
 
 COMMENT ON COLUMN t_notes.content IS 'The content of the note.';
+
+-- changeset libra:008
+-- comment: Add full_name column to t_users table
+ALTER TABLE t_users ADD COLUMN full_name VARCHAR(200);
+
+COMMENT ON COLUMN t_users.full_name IS 'The combination of first name, nickname and last name of the user.';

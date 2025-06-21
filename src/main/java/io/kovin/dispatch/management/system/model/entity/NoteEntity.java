@@ -34,7 +34,7 @@ public class NoteEntity {
     private String uuid;
 
     @Column
-    private String description;
+    private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

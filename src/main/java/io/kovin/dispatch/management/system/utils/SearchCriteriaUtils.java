@@ -11,6 +11,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SearchCriteriaUtils {
@@ -24,11 +25,8 @@ public class SearchCriteriaUtils {
             .map(entry -> {
                 String[] operationAndValue = entry.getValue().split(":");
                 if (operationAndValue.length != 2) {
-                    throw DispatchManagementSystemException.of(String.format(
-                        INVALID_SEARCH_CRITERIA,
-                        entry.getKey(),
-                        entry.getValue()
-                    ));
+                    String message = String.format(INVALID_SEARCH_CRITERIA, entry.getKey(), entry.getValue());
+                    throw DispatchManagementSystemException.of(message, HttpStatus.BAD_REQUEST);
                 }
                 return SearchCriteria.builder()
                     .field(entry.getKey())

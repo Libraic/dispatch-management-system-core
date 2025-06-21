@@ -16,7 +16,8 @@ public enum ImpactedField {
     USER("userError"),
     POSITION("positionError"),
     ROLE("roleError"),
-    EMAIL("emailError");
+    EMAIL("emailError"),
+    SUPERVISOR("supervisorError");
 
     private final String mappedField;
 }

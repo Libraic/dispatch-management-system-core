@@ -13,7 +13,7 @@ public record CreateUserRequest(
     String employmentDate,
     String role,
     String position,
-    String supervisorUuid,
+    CreateSupervisorRequest supervisor,
     List<CreateWorkloadRequest> workloads,
     List<String> notes
 ) {

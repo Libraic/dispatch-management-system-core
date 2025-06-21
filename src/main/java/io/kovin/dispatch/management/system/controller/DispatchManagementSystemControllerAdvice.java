@@ -6,16 +6,19 @@ import io.kovin.dispatch.management.system.exception.ImpactedArea;
 import io.kovin.dispatch.management.system.exception.ImpactedField;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.Error;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
+@Slf4j
 public class DispatchManagementSystemControllerAdvice {
 
     @ExceptionHandler(DispatchManagementSystemException.class)
     public ResponseEntity<ApiResponse<?>> handleCustomException(DispatchManagementSystemException ex) {
+        log.error(ex.getLocalizedMessage());
         var errorResponse = Error.builder()
             .message(ex.getLocalizedMessage())
             .field(Optional.ofNullable(ex.getImpactedField()).map(ImpactedField::getMappedField).orElse(null))

@@ -45,6 +45,9 @@ public class UserEntity extends Auditable {
     @Column
     private String nickname;
 
+    @Column
+    private String fullName;
+
     @Enumerated(EnumType.STRING)
     @Column
     private Role role;

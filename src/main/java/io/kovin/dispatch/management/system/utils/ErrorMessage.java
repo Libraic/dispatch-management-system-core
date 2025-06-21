@@ -10,7 +10,7 @@ public class ErrorMessage {
     public static final String COMPANY_NOT_FOUND_BY_UUID = "The company with UUID=[%s] was not found.";
     public static final String BAD_ROLE = "The provided role=[%s] does not exist.";
     public static final String BAD_POSITION = "The provided position=[%s] does not exist.";
-    public static final String SUPERVISOR_NOT_FOUND = "The supervisor with UUID=[%s] was not found.";
+    public static final String SUPERVISOR_NOT_FOUND = "The supervisor with name=[%s] was not found.";
     public static final String FIRST_NAME_IS_MANDATORY = "The first name cannot be empty.";
     public static final String LAST_NAME_IS_MANDATORY = "The last name cannot be empty.";
     public static final String EMAIL_IS_MANDATORY = "The e-mail is cannot be empty.";

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import io.kovin.dispatch.management.system.mapper.UserMapper;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
@@ -21,6 +20,7 @@ import io.kovin.dispatch.management.system.validation.UserValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +35,7 @@ public class UserService {
     private final NoteService noteService;
     private final CriteriaService<UserEntity> criteriaService;
 
+    @Transactional
     public UserEntity createUser(CreateUserRequest request) {
         userValidation.validateUserCreation(request);
         UserEntity userEntity = userMapper.fromCreateUserRequestToUserEntity(request);

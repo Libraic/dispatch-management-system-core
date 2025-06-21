@@ -1,5 +1,8 @@
 package io.kovin.dispatch.management.system.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import io.kovin.dispatch.management.system.facade.CompanyFacade;
 import io.kovin.dispatch.management.system.mapper.CompanyMapper;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
@@ -24,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/company")
+@RequestMapping("api/companies")
 @RequiredArgsConstructor
 @Slf4j
 public class CompanyController {
@@ -51,7 +54,6 @@ public class CompanyController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @GetMapping
     public ResponseEntity<ApiResponse<PagedModel<EntityModel<CompanyData>>>> getCompanies(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "1") int size
@@ -64,6 +66,22 @@ public class CompanyController {
         PagedModel<EntityModel<CompanyData>> companyDataPage = companyFacade.getCompanies(getCompaniesRequest);
         ApiResponse<PagedModel<EntityModel<CompanyData>>> apiResponse = ApiResponse.fromData(companyDataPage);
         return ResponseEntity.ok(apiResponse);
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<CompanyData>>> getCompaniesByCriteria(
+        @RequestParam(name = "id", required = false) String uuid,
+        @RequestParam(name = "name", required = false) String name
+    ) {
+        log.info("A request to retrieve the companies by criteria was received.");
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("id", uuid);
+        queryParams.put("name", name);
+        List<CompanyEntity> companies = companyService.getCompanies(queryParams);
+        List<CompanyData> companiesData = companies.stream()
+            .map(companyMapper::fromCompanyEntityToCompanyData)
+            .toList();
+        return ResponseEntity.ok(ApiResponse.fromData(companiesData));
     }
 
     @DeleteMapping("/{uuid}")

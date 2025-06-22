@@ -8,6 +8,7 @@ import static io.kovin.dispatch.management.system.exception.ImpactedGroup.EMPLOY
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.FIRST_NAME;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.LAST_NAME;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.PASSWORD;
+import static io.kovin.dispatch.management.system.exception.ImpactedGroup.SUPERVISOR;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.WORKLOADS;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.BIRTH_DATE_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_COMPANY;
@@ -18,14 +19,18 @@ import static io.kovin.dispatch.management.system.utils.ErrorMessage.FIRST_NAME_
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.LAST_NAME_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.NEGATIVE_COMMISSION;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.PASSWORD_IS_MANDATORY;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.SUPERVISOR_NOT_FOUND;
 import static io.kovin.dispatch.management.system.utils.ErrorUtils.getItemsGroupFromImpactedGroupAndErrorMessage;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import ch.qos.logback.core.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemGroupException;
 import io.kovin.dispatch.management.system.exception.ImpactedGroup;
+import io.kovin.dispatch.management.system.model.entity.UserEntity;
+import io.kovin.dispatch.management.system.model.request.CreateSupervisorRequest;
 import io.kovin.dispatch.management.system.model.request.CreateUserRequest;
 import io.kovin.dispatch.management.system.model.request.CreateWorkloadRequest;
 import io.kovin.dispatch.management.system.exception.ItemError;
@@ -74,6 +79,11 @@ public class UserValidation {
             itemsGroups.add(emailItemsGroup);
         }
 
+        ItemsGroup supervisorItemsGroup = getSupervisorValidationResult(request.supervisor());
+        if (supervisorItemsGroup.hasErrors()) {
+            itemsGroups.add(supervisorItemsGroup);
+        }
+
         if (!itemsGroups.isEmpty()) {
             throw DispatchManagementSystemGroupException.of(itemsGroups, BAD_REQUEST);
         }
@@ -115,6 +125,27 @@ public class UserValidation {
         if (isTheEmailAlreadyInUse) {
             log.error(EMAIL_IN_USE);
             emailItemsGroup.addItemError(ItemError.ofError(EMAIL_IN_USE));
+        }
+
+        return emailItemsGroup;
+    }
+
+    private ItemsGroup getSupervisorValidationResult(CreateSupervisorRequest supervisor) {
+        ItemsGroup emailItemsGroup = ItemsGroup.ofGroupName(SUPERVISOR);
+        if (supervisor == null) {
+            return emailItemsGroup;
+        }
+
+        String supervisorUuid = supervisor.uuid();
+        if (supervisorUuid == null) {
+            return emailItemsGroup;
+        }
+
+        Optional<UserEntity> supervisorOptional = userRepository.findByUuid(supervisorUuid);
+        if (supervisorOptional.isEmpty()) {
+            String errorMessage = String.format(SUPERVISOR_NOT_FOUND, supervisor.fullName());
+            log.error(errorMessage);
+            emailItemsGroup.addItemError(ItemError.ofError(errorMessage));
         }
 
         return emailItemsGroup;

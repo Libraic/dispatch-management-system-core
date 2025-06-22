@@ -13,6 +13,7 @@ public enum ImpactedGroup {
     EMPLOYMENT_DATE("employmentDate"),
     EMAIL("email"),
     PASSWORD("password"),
+    SUPERVISOR("supervisor"),
     WORKLOADS("workloads");
 
     private final String groupName;

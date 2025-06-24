@@ -7,6 +7,9 @@ import lombok.Getter;
 @Getter
 public enum ImpactedGroup {
 
+    /**
+     * Fields related to User registration.
+     */
     FIRST_NAME("firstName"),
     LAST_NAME("lastName"),
     BIRTH_DATE("birthDate"),
@@ -14,7 +17,12 @@ public enum ImpactedGroup {
     EMAIL("email"),
     PASSWORD("password"),
     SUPERVISOR("supervisor"),
-    WORKLOADS("workloads");
+    WORKLOADS("workloads"),
+
+    /**
+     * Fields related to Company registration.
+     */
+    COMPANY_NAME("name");
 
     private final String groupName;
 }

@@ -1,5 +1,6 @@
 package io.kovin.dispatch.management.system.utils;
 
+import ch.qos.logback.core.util.StringUtil;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +15,10 @@ import org.springframework.http.HttpStatus;
 public class LocalDateUtils {
 
     public static LocalDate parseLocalDate(String localDate) {
+        if (StringUtil.isNullOrEmpty(localDate)) {
+            return null;
+        }
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         try {
             return LocalDate.parse(localDate, formatter);

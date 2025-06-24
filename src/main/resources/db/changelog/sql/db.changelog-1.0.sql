@@ -150,3 +150,14 @@ COMMENT ON COLUMN t_notes.content IS 'The content of the note.';
 ALTER TABLE t_users ADD COLUMN full_name VARCHAR(200);
 
 COMMENT ON COLUMN t_users.full_name IS 'The combination of first name, nickname and last name of the user.';
+
+-- changeset libra:009
+-- comment: Add mc_number, address and service_date columns to t_companies table
+ALTER TABLE t_companies
+    ADD COLUMN mc_number    VARCHAR(75),
+    ADD COLUMN address      VARCHAR(255),
+    ADD COLUMN service_date DATE;
+
+COMMENT ON COLUMN t_companies.mc_number    IS 'The MC Number of the Company.';
+COMMENT ON COLUMN t_companies.address      IS 'The physical address of the Company.';
+COMMENT ON COLUMN t_companies.service_date IS 'The date the Company was created at.';

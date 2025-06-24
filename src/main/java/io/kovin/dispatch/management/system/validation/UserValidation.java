@@ -11,6 +11,7 @@ import static io.kovin.dispatch.management.system.exception.ImpactedGroup.PASSWO
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.SUPERVISOR;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.WORKLOADS;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.BIRTH_DATE_IS_MANDATORY;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.BLANK_COMPANY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_COMPANY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.EMAIL_IN_USE;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.EMAIL_IS_MANDATORY;
@@ -95,7 +96,9 @@ public class UserValidation {
             for (CreateWorkloadRequest createWorkloadRequest : workloads) {
                 ItemError itemError = ItemError.ofItemIdentifier(createWorkloadRequest.itemIdentifier());
                 if (StringUtil.isNullOrEmpty(createWorkloadRequest.companyUuid())) {
-                    String message = String.format(INVALID_COMPANY, createWorkloadRequest.companyName());
+                    String message = StringUtil.isNullOrEmpty(createWorkloadRequest.companyName())
+                        ? BLANK_COMPANY
+                        : String.format(INVALID_COMPANY, createWorkloadRequest.companyName());
                     log.error(message);
                     itemError.addFieldError(COMPANY, message);
                 }

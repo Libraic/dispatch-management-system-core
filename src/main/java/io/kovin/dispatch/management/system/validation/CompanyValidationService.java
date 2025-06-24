@@ -1,12 +1,17 @@
 package io.kovin.dispatch.management.system.validation;
 
-import static io.kovin.dispatch.management.system.exception.ImpactedField.COMPANY;
+import static io.kovin.dispatch.management.system.exception.ImpactedGroup.COMPANY_NAME;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.MISSING_COMPANY_NAME;
+import static io.kovin.dispatch.management.system.utils.ErrorUtils.getItemsGroupFromImpactedGroupAndErrorMessage;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
-import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
+import ch.qos.logback.core.util.StringUtil;
+import java.util.ArrayList;
+import java.util.List;
+import io.kovin.dispatch.management.system.exception.DispatchManagementSystemGroupException;
+import io.kovin.dispatch.management.system.exception.ItemsGroup;
 import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,9 +19,14 @@ import org.springframework.stereotype.Service;
 public class CompanyValidationService {
 
     public void validateCompanyCreation(CreateCompanyRequest createCompanyRequest) {
-        if (createCompanyRequest.name() == null) {
+        List<ItemsGroup> itemsGroups = new ArrayList<>();
+        if (StringUtil.isNullOrEmpty(createCompanyRequest.name())) {
             log.error(MISSING_COMPANY_NAME);
-            throw DispatchManagementSystemException.of(MISSING_COMPANY_NAME, HttpStatus.BAD_REQUEST);
+            itemsGroups.add(getItemsGroupFromImpactedGroupAndErrorMessage(COMPANY_NAME, MISSING_COMPANY_NAME));
+        }
+
+        if (!itemsGroups.isEmpty()) {
+            throw DispatchManagementSystemGroupException.of(itemsGroups, BAD_REQUEST);
         }
     }
 }

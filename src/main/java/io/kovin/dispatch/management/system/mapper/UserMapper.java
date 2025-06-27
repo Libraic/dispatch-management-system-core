@@ -14,6 +14,7 @@ import io.kovin.dispatch.management.system.model.entity.Role;
 import io.kovin.dispatch.management.system.model.entity.UserEntity;
 import io.kovin.dispatch.management.system.model.request.CreateSupervisorRequest;
 import io.kovin.dispatch.management.system.model.request.CreateUserRequest;
+import io.kovin.dispatch.management.system.model.request.EmergencyContactData;
 import io.kovin.dispatch.management.system.model.response.UserData;
 import io.kovin.dispatch.management.system.repository.UserRepository;
 import io.kovin.dispatch.management.system.utils.LocalDateUtils;
@@ -31,6 +32,7 @@ public class UserMapper {
     private final UserRepository userRepository;
 
     public UserEntity fromCreateUserRequestToUserEntity(CreateUserRequest request) {
+        EmergencyContactData emergencyContact = request.emergencyContact();
         return UserEntity.builder()
             .uuid(UUID.randomUUID().toString())
             .firstName(request.firstName())
@@ -41,6 +43,9 @@ public class UserMapper {
             .password(passwordEncoder.encode(request.password()))
             .personalEmail(request.personalEmail())
             .birthDate(LocalDateUtils.parseLocalDate(request.birthDate()))
+            .emergencyContactName(emergencyContact != null ? emergencyContact.name() : null)
+            .emergencyContactRelationship(emergencyContact != null ? emergencyContact.relationship() : null)
+            .emergencyContactPhoneNumber(emergencyContact != null ? emergencyContact.phone() : null)
             .employmentDate(LocalDateUtils.parseLocalDate(request.employmentDate()))
             .role(Role.from(request.role()))
             .position(Position.from(request.position()))

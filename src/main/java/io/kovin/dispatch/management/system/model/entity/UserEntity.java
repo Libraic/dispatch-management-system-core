@@ -60,6 +60,15 @@ public class UserEntity extends Auditable {
     private LocalDate birthDate;
 
     @Column
+    private String emergencyContactName;
+
+    @Column
+    private String emergencyContactRelationship;
+
+    @Column
+    private String emergencyContactPhoneNumber;
+
+    @Column
     private String email;
 
     @Column

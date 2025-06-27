@@ -10,6 +10,7 @@ public record CreateUserRequest(
     String password,
     String personalEmail,
     String birthDate,
+    EmergencyContactData emergencyContact,
     String employmentDate,
     String role,
     String position,

@@ -161,3 +161,14 @@ ALTER TABLE t_companies
 COMMENT ON COLUMN t_companies.mc_number    IS 'The MC Number of the Company.';
 COMMENT ON COLUMN t_companies.address      IS 'The physical address of the Company.';
 COMMENT ON COLUMN t_companies.service_date IS 'The date the Company was created at.';
+
+-- changeset libra:010
+-- comment: Add name, relationship and phone_number columns to t_users table
+ALTER TABLE t_users
+    ADD COLUMN emergency_contact_name         VARCHAR(75),
+    ADD COLUMN emergency_contact_relationship VARCHAR(50),
+    ADD COLUMN emergency_contact_phone_number VARCHAR(40);
+
+COMMENT ON COLUMN t_users.emergency_contact_name         IS 'The name of the person added as the emergency contact.';
+COMMENT ON COLUMN t_users.emergency_contact_relationship IS 'The relationship between the person added as the emergency contact and the user.';
+COMMENT ON COLUMN t_users.emergency_contact_phone_number IS 'The phone number of the person added as an emergency contact.'

@@ -44,6 +44,7 @@ public class DispatchManagementSystemControllerAdvice {
 
     @ExceptionHandler({IllegalArgumentException.class, NullPointerException.class})
     public ResponseEntity<ApiResponse<?, ?>> handleNativeExceptions(RuntimeException ex) {
+        log.error("An internal error has occurred: [{}].", ex.getLocalizedMessage());
         var errorResponse = ErrorResponse.builder()
             .message(ex.getLocalizedMessage())
             .status(HttpStatus.INTERNAL_SERVER_ERROR)

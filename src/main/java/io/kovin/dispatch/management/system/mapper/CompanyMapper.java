@@ -18,6 +18,7 @@ public class CompanyMapper {
             .mcNumber(StringUtils.parseEmptyString(request.mcNumber()))
             .address(StringUtils.parseEmptyString(request.address()))
             .serviceDate(LocalDateUtils.parseLocalDate(request.serviceDate()))
+            .startDate(LocalDateUtils.parseLocalDate(request.startDate()))
             .uuid(UUID.randomUUID().toString())
             .build();
     }
@@ -26,6 +27,9 @@ public class CompanyMapper {
         return CompanyData.builder()
             .name(companyEntity.getName())
             .uuid(companyEntity.getUuid())
+            .mcNumber(companyEntity.getMcNumber())
+            .address(companyEntity.getAddress())
+            .startDate(companyEntity.getStartDate().toString())
             .build();
     }
 

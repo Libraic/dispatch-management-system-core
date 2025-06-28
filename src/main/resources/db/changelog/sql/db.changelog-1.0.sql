@@ -172,3 +172,10 @@ ALTER TABLE t_users
 COMMENT ON COLUMN t_users.emergency_contact_name         IS 'The name of the person added as the emergency contact.';
 COMMENT ON COLUMN t_users.emergency_contact_relationship IS 'The relationship between the person added as the emergency contact and the user.';
 COMMENT ON COLUMN t_users.emergency_contact_phone_number IS 'The phone number of the person added as an emergency contact.'
+
+-- changeset libra:011
+-- comment: Add start_date column to t_companies table
+ALTER TABLE t_companies
+    ADD COLUMN start_date DATE;
+
+COMMENT ON COLUMN t_companies.start_date IS 'The date the Company started to receive services from a certain group of dispatchers.';

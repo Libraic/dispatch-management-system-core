@@ -22,7 +22,8 @@ public enum ImpactedGroup {
     /**
      * Fields related to Company registration.
      */
-    COMPANY_NAME("name");
+    COMPANY_NAME("name"),
+    COMPANY_START_DATE("startDate");
 
     private final String groupName;
 }

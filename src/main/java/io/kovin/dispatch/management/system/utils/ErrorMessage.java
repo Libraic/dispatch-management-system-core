@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 public class ErrorMessage {
 
     public static final String MISSING_COMPANY_NAME = "The name of the company is missing.";
+    public static final String MISSING_COMPANY_START_DATE = "The date depicting the collaboration with the %s company is missing.";
     public static final String COMPANY_NOT_FOUND_BY_UUID = "The company with UUID=[%s] was not found.";
     public static final String BAD_ROLE = "The provided role=[%s] does not exist.";
     public static final String BAD_POSITION = "The provided position=[%s] does not exist.";

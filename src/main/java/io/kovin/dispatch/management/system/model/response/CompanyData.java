@@ -5,6 +5,9 @@ import lombok.Builder;
 @Builder
 public record CompanyData(
     String uuid,
-    String name
+    String name,
+    String mcNumber,
+    String address,
+    String startDate
 ) {
 }

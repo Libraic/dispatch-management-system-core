@@ -3,6 +3,7 @@ package io.kovin.dispatch.management.system.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import io.kovin.dispatch.management.system.facade.CompanyFacade;
 import io.kovin.dispatch.management.system.mapper.CompanyMapper;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
@@ -31,12 +32,12 @@ public class CompanyController {
 
     private final CompanyService companyService;
     private final CompanyMapper companyMapper;
+    private final CompanyFacade companyFacade;
 
     @PostMapping
     public ResponseEntity<ApiResponse<CompanyData, ErrorResponse>> createCompany(@RequestBody CreateCompanyRequest createCompanyRequest) {
         log.info("A request to create a company with name=[{}] was received.", createCompanyRequest.name());
-        CompanyEntity companyEntity = companyService.createCompany(createCompanyRequest);
-        CompanyData companyData = companyMapper.fromCompanyEntityToCompanyData(companyEntity);
+        CompanyData companyData = companyFacade.saveCompany(createCompanyRequest);
         ApiResponse<CompanyData, ErrorResponse> apiResponse = ApiResponse.fromData(companyData);
         return ResponseEntity.ok(apiResponse);
     }

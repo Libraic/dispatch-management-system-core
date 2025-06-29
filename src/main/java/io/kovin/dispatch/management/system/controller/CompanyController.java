@@ -67,12 +67,12 @@ public class CompanyController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<CompanyData>, ErrorResponse>> getCompaniesByCriteria(
-        @RequestParam(name = "id", required = false) String uuid,
+        @RequestParam(name = "uuid", required = false) String uuid,
         @RequestParam(name = "name", required = false) String name
     ) {
         log.info("A request to retrieve the companies by criteria was received.");
         Map<String, String> queryParams = new HashMap<>();
-        queryParams.put("id", uuid);
+        queryParams.put("uuid", uuid);
         queryParams.put("name", name);
         List<CompanyEntity> companies = companyService.getCompanies(queryParams);
         List<CompanyData> companiesData = companies.stream()

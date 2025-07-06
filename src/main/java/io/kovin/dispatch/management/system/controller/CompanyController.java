@@ -39,7 +39,7 @@ public class CompanyController {
         log.info("A request to create a company with name=[{}] was received.", createCompanyRequest.name());
         CompanyData companyData = companyFacade.saveCompany(createCompanyRequest);
         ApiResponse<CompanyData, ErrorResponse> apiResponse = ApiResponse.fromData(companyData);
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
     @GetMapping("/{uuid}")

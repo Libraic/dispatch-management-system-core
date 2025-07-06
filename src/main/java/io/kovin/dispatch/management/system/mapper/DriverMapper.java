@@ -1,5 +1,6 @@
 package io.kovin.dispatch.management.system.mapper;
 
+import java.util.UUID;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.entity.DriverEntity;
 import io.kovin.dispatch.management.system.model.entity.enums.DocumentStatus;
@@ -10,8 +11,6 @@ import io.kovin.dispatch.management.system.model.response.DriverData;
 import io.kovin.dispatch.management.system.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -39,6 +38,13 @@ public class DriverMapper {
     }
 
     public DriverData fromDriverEntityToDriverData(DriverEntity driver) {
-        return new DriverData();
+        return DriverData.builder()
+            .firstName(driver.getFirstName())
+            .lastName(driver.getLastName())
+            .trailerNumber(driver.getTrailerNumber())
+            .truckNumber(driver.getTruckNumber())
+            .email(driver.getEmail())
+            .phoneNumber(driver.getPhoneNumber())
+            .build();
     }
 }

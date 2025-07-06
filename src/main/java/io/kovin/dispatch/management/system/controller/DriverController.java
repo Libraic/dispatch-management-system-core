@@ -7,6 +7,7 @@ import io.kovin.dispatch.management.system.model.response.DriverData;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,6 @@ public class DriverController {
         log.info("A request to create a driver was received.");
         DriverData driverData = driverFacade.createDriver(createDriverRequest);
         ApiResponse<DriverData, ErrorResponse> apiResponse = ApiResponse.fromData(driverData);
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 }

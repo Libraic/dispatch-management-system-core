@@ -1,7 +1,8 @@
 package io.kovin.dispatch.management.system.model.entity;
 
-import io.kovin.dispatch.management.system.model.entity.enums.Position;
-import io.kovin.dispatch.management.system.model.entity.enums.Role;
+import io.kovin.dispatch.management.system.model.entity.enums.DocumentStatus;
+import io.kovin.dispatch.management.system.model.entity.enums.DriverPosition;
+import io.kovin.dispatch.management.system.model.entity.enums.TrailerType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,7 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,13 +27,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-@Table(name = "t_users")
+@Table(name = "t_drivers")
 @Entity
-public class UserEntity extends Auditable {
-
+public class DriverEntity extends Auditable {
     @Id
-    @SequenceGenerator(name = "user_sequence_generator", sequenceName = "t_users_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence_generator")
+    @SequenceGenerator(name = "driver_sequence_generator", sequenceName = "t_drivers_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "driver_sequence_generator")
     private Long id;
 
     @Column
@@ -45,54 +45,43 @@ public class UserEntity extends Auditable {
     private String lastName;
 
     @Column
-    private String nickname;
-
-    @Column
-    private String fullName;
-
-    @Enumerated(EnumType.STRING)
-    @Column
-    private Role role;
-
-    @Enumerated(EnumType.STRING)
-    @Column
-    private Position position;
-
-    @Column
-    private LocalDate birthDate;
-
-    @Column
-    private String emergencyContactName;
-
-    @Column
-    private String emergencyContactRelationship;
-
-    @Column
-    private String emergencyContactPhoneNumber;
+    private String phoneNumber;
 
     @Column
     private String email;
 
     @Column
-    private String password;
+    private String truckNumber;
 
     @Column
-    private String personalEmail;
+    private String trailerNumber;
 
     @Column
-    private LocalDate employmentDate;
+    private BigDecimal maxLegalWeightCapacity;
+
+    @Enumerated(EnumType.STRING)
+    @Column
+    private TrailerType trailerType;
 
     @Column
-    private LocalDate dismissalDate;
+    private BigDecimal trailerLength;
+
+    @Enumerated(EnumType.STRING)
+    @Column
+    private DocumentStatus documentStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column
+    private DriverPosition position;
 
     @ManyToOne
-    @JoinColumn(name = "supervisor_id")
-    private UserEntity supervisor;
+    @JoinColumn(name = "company_id")
+    private CompanyEntity company;
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        UserEntity that = (UserEntity) o;
+        DriverEntity that = (DriverEntity) o;
         return Objects.equals(id, that.id);
     }
 

@@ -179,3 +179,56 @@ ALTER TABLE t_companies
     ADD COLUMN start_date DATE;
 
 COMMENT ON COLUMN t_companies.start_date IS 'The date the Company started to receive services from a certain group of dispatchers.';
+
+-- changeset libra:012
+-- comment: Create the t_drivers table and its related dependencies
+CREATE SEQUENCE t_drivers_sequence
+    INCREMENT BY 1
+    START WITH 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE t_drivers (
+    id                        BIGINT                   PRIMARY KEY DEFAULT nextval('t_drivers_sequence'),
+    uuid                      uuid                     NOT NULL UNIQUE,
+    first_name                VARCHAR(100)             NOT NULL,
+    last_name                 VARCHAR(100)             NOT NULL,
+    phone_number              VARCHAR(30)              NOT NULL,
+    email                     VARCHAR(150)             NOT NULL,
+    truck_number              VARCHAR(50)              NOT NULL,
+    trailer_number            VARCHAR(50)              NOT NULL,
+    max_legal_weight_capacity DECIMAL(10, 2)           NOT NULL,
+    trailer_type              VARCHAR(50)              NOT NULL,
+    trailer_length            DECIMAL(10, 2)           NOT NULL,
+    document_status           VARCHAR(50)              NOT NULL,
+    position                  VARCHAR(50)              NOT NULL,
+    created_at                TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    last_updated_at           TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    deleted_at                TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+    company_id                BIGINT,
+
+    CONSTRAINT fk_company     FOREIGN KEY (company_id) REFERENCES t_companies(id)
+);
+
+ALTER SEQUENCE t_drivers_sequence OWNED BY t_drivers.id;
+
+COMMENT ON TABLE t_drivers IS 'The table used to store the drivers of a certain company.';
+
+COMMENT ON COLUMN t_drivers.id                        IS 'The primary key of the t_drivers table.';
+COMMENT ON COLUMN t_drivers.uuid                      IS 'The UUID of the driver.';
+COMMENT ON COLUMN t_drivers.first_name                IS 'The first name of the driver.';
+COMMENT ON COLUMN t_drivers.last_name                 IS 'The last name of the driver.';
+COMMENT ON COLUMN t_drivers.phone_number              IS 'The phone number of the driver.';
+COMMENT ON COLUMN t_drivers.email                     IS 'The personal email of the driver.';
+COMMENT ON COLUMN t_drivers.truck_number              IS 'The number of the truck the driver drives.';
+COMMENT ON COLUMN t_drivers.trailer_number            IS 'The number of trailer attached to the truck.';
+COMMENT ON COLUMN t_drivers.max_legal_weight_capacity IS 'The maximum legally-allowed capacity that can be carried.';
+COMMENT ON COLUMN t_drivers.trailer_type              IS 'The type of the trailer.';
+COMMENT ON COLUMN t_drivers.trailer_length            IS 'The length of the trailer.';
+COMMENT ON COLUMN t_drivers.document_status           IS 'The legal status of the driver in the country he drives.';
+COMMENT ON COLUMN t_drivers.position                  IS 'The position of the driver in the company.';
+COMMENT ON COLUMN t_drivers.created_at                IS 'The date the driver was created.';
+COMMENT ON COLUMN t_drivers.last_updated_at           IS 'The date the driver was last updated.';
+COMMENT ON COLUMN t_drivers.deleted_at                IS 'The date the driver was deleted.';
+COMMENT ON COLUMN t_drivers.company_id                IS 'The foreign key that stores the identifier of the company the driver works for.';

@@ -23,7 +23,20 @@ public enum ImpactedGroup {
      * Fields related to Company registration.
      */
     COMPANY_NAME("name"),
-    COMPANY_START_DATE("startDate");
+    COMPANY_START_DATE("startDate"),
+
+    /**
+     * Fields related to Driver registration.
+     */
+    PHONE_NUMBER("phoneNumber"),
+    TRUCK_NUMBER("truckNumber"),
+    TRAILER_NUMBER("trailerNumber"),
+    MAX_LEGAL_WEIGHT_CAPACITY("maxLegalWeightCapacity"),
+    TRAILER_TYPE("trailerType"),
+    TRAILER_LENGTH("trailerLength"),
+    DOCUMENT_STATUS("documentStatus"),
+    POSITION("position");
+
 
     private final String groupName;
 }

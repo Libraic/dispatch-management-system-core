@@ -1,4 +1,4 @@
-package io.kovin.dispatch.management.system.model.entity;
+package io.kovin.dispatch.management.system.model.entity.enums;
 
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.BAD_ROLE;
 

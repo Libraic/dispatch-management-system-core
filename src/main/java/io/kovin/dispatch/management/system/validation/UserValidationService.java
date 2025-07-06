@@ -44,7 +44,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserValidation {
+public class UserValidationService {
 
     private final UserRepository userRepository;
 

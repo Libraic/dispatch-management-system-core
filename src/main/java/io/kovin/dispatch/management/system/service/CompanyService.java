@@ -45,6 +45,7 @@ public class CompanyService {
     }
 
     public CompanyEntity getByUuid(String uuid) {
+        log.info("Retrieving the company with UUID=[{}].", uuid);
         Optional<CompanyEntity> companyEntityOptional = companyRepository.findByUuidAndDeletedAtIsNull(uuid);
         if (companyEntityOptional.isEmpty()) {
             String errorMessage = String.format(ErrorMessage.COMPANY_NOT_FOUND_BY_UUID, uuid);

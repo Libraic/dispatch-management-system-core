@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import cucumber.utils.ClassUtils;
 import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.util.List;
 import io.cucumber.java.en.Then;
 import io.cucumber.spring.ScenarioScope;
 import lombok.RequiredArgsConstructor;
@@ -23,23 +25,8 @@ public class AssertionSteps {
         Assertions.assertEquals(statusCode, httpStatusCode.value());
     }
 
-    /**
-     * The method provides a generic interface to compare two objects of the same type. The name of the class must be
-     * given, where each word that forms the name must be part of the original name of the class. Usually, in Java,
-     * each class name contains multiple words, each starting with a capital letter. For example, DriverData. Therefore,
-     * the string that depicts the name of the class must be given in the following format: "Driver Data". Basically each
-     * keyword from the name of the original class must be a standalone word, with capital first letter as well, in this
-     * plain class name parameter. The correspondence between the plain name of the class and the complete Java class
-     * name is found in the ClassUtils utility class. A dedicated map for storing all the possible combinations needed
-     * for the execution of the tests are found there.
-     *
-     * @param plainClassName the name of the class in plain text.
-     * @throws IllegalAccessException if the field is not accessible, the following exception will be thrown.
-     * @throws ClassNotFoundException if the class cannot be constructed from the provided class name, this exception
-     *                                will be thrown.
-     */
     @Then("the expected and actual {string} objects are equal")
-    public void compareObjectsFieldByField(String plainClassName) throws IllegalAccessException, ClassNotFoundException {
+    public void compareObjectsFieldByField(String plainClassName) throws ClassNotFoundException {
         String fullClassName = ClassUtils.getFullClassName(plainClassName);
         assertThat(fullClassName)
             .withFailMessage("The %s class was not found.", fullClassName)
@@ -49,26 +36,54 @@ public class AssertionSteps {
         Object actual = scenarioContext.getActual(clazz);
         Object expected = scenarioContext.getExpected(clazz);
 
-        Assertions.assertNotNull(actual);
-        Assertions.assertNotNull(expected);
-        Field[] fields = clazz.getDeclaredFields();
-        for (Field field : fields) {
-            // Since UUID is dynamically generated, comparing it will make no sense.
-            if (field.getName().equals(UUID_FIELD)) {
-                continue;
+        assertThat(actual)
+            .usingRecursiveComparison()
+            .ignoringFields(UUID_FIELD)
+            .isEqualTo(expected);
+    }
+
+    private void compareFieldByFieldRecursively(Object actual, Object expected) throws IllegalAccessException {
+        if (actual instanceof List<?> actualList && expected instanceof List<?> actualExpected) {
+            for (int i = 0; i < actualList.size(); ++i) {
+                Object currentActual = actualList.get(i);
+                Object currentExpected = actualExpected.get(i);
+                compareFieldByFieldRecursively(currentActual, currentExpected);
+            }
+        } else {
+            if (actual == null && expected == null) {
+                return;
             }
 
-            field.setAccessible(true);
-            Object actualValue = field.get(actual);
-            Object expectedValue = field.get(expected);
+            Assertions.assertNotNull(actual);
+            Assertions.assertNotNull(expected);
+            Field[] fields = actual.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                // Since UUID is dynamically generated, comparing it will make no sense.
+                if (field.getName().equals(UUID_FIELD)) {
+                    continue;
+                }
 
-            assertThat(expectedValue)
-                .withFailMessage(
-                    "Expected value for field [%s] does not match the actual value [%s].",
-                    field.getName(),
-                    expectedValue,
-                    actualValue
-                ).isEqualTo(actualValue);
+                field.setAccessible(true);
+                Object actualValue = field.get(actual);
+                Object expectedValue = field.get(expected);
+                if (!isInstanceOfPrimitiveClasses(actual)) {
+                    compareFieldByFieldRecursively(actualValue, expectedValue);
+                } else {
+                    assertThat(expectedValue)
+                        .withFailMessage(
+                            "Expected value for field [%s] does not match the actual value [%s].",
+                            field.getName(),
+                            expectedValue,
+                            actualValue
+                        ).isEqualTo(actualValue);
+                }
+            }
         }
+    }
+
+    private boolean isInstanceOfPrimitiveClasses(Object object) {
+        return object instanceof String
+            || object instanceof Number
+            || object instanceof LocalDate;
     }
 }

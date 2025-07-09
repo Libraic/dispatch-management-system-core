@@ -39,6 +39,7 @@ public class DriverMapper {
 
     public DriverData fromDriverEntityToDriverData(DriverEntity driver) {
         return DriverData.builder()
+            .uuid(driver.getUuid())
             .firstName(driver.getFirstName())
             .lastName(driver.getLastName())
             .trailerNumber(driver.getTrailerNumber())

@@ -26,27 +26,18 @@ public class DriverObjectsBuilder {
     private final Faker faker;
     private final ScenarioContext scenarioContext;
 
-    public void createCreateDriverRequest() {
-        CompanyData companyData = (CompanyData) scenarioContext.getActual(CompanyData.class);
-        String firstName = faker.name().firstName();
-        String lastName = faker.name().lastName();
-        String email = firstName.toLowerCase() + DOT + lastName.toLowerCase() + AT_SIGN + GOOGLE_DOMAIN;
-        String phoneNumber = faker.phoneNumber().cellPhone().replace(DOT, HYPHEN);
-        CreateDriverRequest request = CreateDriverRequest.builder()
-            .firstName(firstName)
-            .lastName(lastName)
-            .phoneNumber(phoneNumber)
-            .email(email)
-            .truckNumber(Integer.toString(faker.number().numberBetween(100, 999)))
-            .trailerNumber(Integer.toString(faker.number().numberBetween(100, 999)))
-            .maxLegalWeightCapacity(BigDecimal.valueOf(faker.number().numberBetween(10000, 50000)))
-            .trailerType(TrailerType.FLATBED.getType())
-            .trailerLength(BigDecimal.valueOf(faker.number().numberBetween(10, 50)))
-            .documentStatus(DocumentStatus.CITIZEN.getType())
-            .position(DriverPosition.COMPANY_DRIVER.getPosition())
-            .companyUuid(companyData.getUuid())
-            .build();
+    public void registerCompleteCreateDriverRequest() {
+        CreateDriverRequest request = getFullCreateDriverRequest();
         scenarioContext.addActual(CreateDriverRequest.class, request);
+    }
+
+    public void registerCreateDriverRequestWithoutCompany() {
+        CreateDriverRequest request = getCreateDriverRequestWithoutCompany();
+        scenarioContext.addActual(CreateDriverRequest.class, request);
+    }
+
+    public void registerEmptyCreateDriverRequest() {
+        scenarioContext.addActual(CreateDriverRequest.class, CreateDriverRequest.builder().build());
     }
 
     public void createdExpectedDriverData() {
@@ -60,5 +51,31 @@ public class DriverObjectsBuilder {
             .trailerNumber(request.trailerNumber())
             .build();
         scenarioContext.addExpected(DriverData.class, driverData);
+    }
+
+    private CreateDriverRequest getCreateDriverRequestWithoutCompany() {
+        String firstName = faker.name().firstName();
+        String lastName = faker.name().lastName();
+        String email = firstName.toLowerCase() + DOT + lastName.toLowerCase() + AT_SIGN + GOOGLE_DOMAIN;
+        String phoneNumber = faker.phoneNumber().cellPhone().replace(DOT, HYPHEN);
+        return CreateDriverRequest.builder()
+            .firstName(firstName)
+            .lastName(lastName)
+            .phoneNumber(phoneNumber)
+            .email(email)
+            .truckNumber(Integer.toString(faker.number().numberBetween(100, 999)))
+            .trailerNumber(Integer.toString(faker.number().numberBetween(100, 999)))
+            .maxLegalWeightCapacity(BigDecimal.valueOf(faker.number().numberBetween(10000, 50000)))
+            .trailerType(TrailerType.FLATBED.getType())
+            .trailerLength(BigDecimal.valueOf(faker.number().numberBetween(10, 50)))
+            .documentStatus(DocumentStatus.CITIZEN.getType())
+            .position(DriverPosition.COMPANY_DRIVER.getPosition())
+            .build();
+    }
+
+    private CreateDriverRequest getFullCreateDriverRequest() {
+        CompanyData companyData = (CompanyData) scenarioContext.getActual(CompanyData.class);
+        CreateDriverRequest createDriverRequest = getCreateDriverRequestWithoutCompany();
+        return createDriverRequest.toBuilder().companyUuid(companyData.getUuid()).build();
     }
 }

@@ -13,10 +13,16 @@ public class ClassUtils {
     private static final String BASE_PACKAGE = "io.kovin.dispatch.management.system";
     private static final String MODEL_PACKAGE = BASE_PACKAGE + DOT + "model";
     private static final String RESPONSE_MODEL_PACKAGE = MODEL_PACKAGE + DOT + "response";
+    private static final String ERROR_RESPONSE_MODEL_PACKAGE = RESPONSE_MODEL_PACKAGE + DOT + "error";
 
     private static final String DRIVER_DATA_CLASS = "DriverData";
+    private static final String GROUP_ERROR_RESPONSE_CLASS = "GroupErrorResponse";
+    private static final String ERROR_RESPONSE_CLASS = "ErrorResponse";
 
     private static final String DRIVER_DATA_CLASS_PLAIN_NAME = "Driver Data";
+
+    private static final String GROUP_ERROR_RESPONSE_CLASS_PLAIN_NAME = "Group Error Response";
+    private static final String ERROR_RESPONSE_CLASS_PLAIN_NAME = "Error Response";
 
     /**
      * A dictionary that stores the correspondence between a plain class name and the complete Java class name in
@@ -28,6 +34,8 @@ public class ClassUtils {
     static {
         FULL_CLASSES_NAMES = new HashMap<>();
         FULL_CLASSES_NAMES.put(DRIVER_DATA_CLASS_PLAIN_NAME, RESPONSE_MODEL_PACKAGE + DOT + DRIVER_DATA_CLASS);
+        FULL_CLASSES_NAMES.put(GROUP_ERROR_RESPONSE_CLASS_PLAIN_NAME, ERROR_RESPONSE_MODEL_PACKAGE + DOT + GROUP_ERROR_RESPONSE_CLASS);
+        FULL_CLASSES_NAMES.put(ERROR_RESPONSE_CLASS_PLAIN_NAME, ERROR_RESPONSE_MODEL_PACKAGE + DOT + ERROR_RESPONSE_CLASS);
     }
 
     public static String getFullClassName(String plainName) {

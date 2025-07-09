@@ -1,10 +1,9 @@
 package io.kovin.dispatch.management.system.model.request;
 
+import java.math.BigDecimal;
 import lombok.Builder;
 
-import java.math.BigDecimal;
-
-@Builder
+@Builder(toBuilder = true)
 public record CreateDriverRequest(
      String firstName,
      String lastName,

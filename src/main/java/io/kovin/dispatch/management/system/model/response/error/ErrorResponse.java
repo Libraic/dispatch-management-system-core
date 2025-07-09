@@ -1,17 +1,23 @@
 package io.kovin.dispatch.management.system.model.response.error;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Builder
-@Value
 public class ErrorResponse {
 
-    String message;
-    String field;
-    String area;
-    HttpStatus status;
+    private String message;
+    private String field;
+    private String area;
+    private HttpStatus status;
 
     public static ErrorResponse of(String message, HttpStatus status) {
         return ErrorResponse.builder()

@@ -4,12 +4,17 @@ import static cucumber.utils.RestConstants.BASE_COMPANIES_API_URL;
 import static cucumber.utils.RestConstants.BASE_DRIVERS_API_URL;
 
 import cucumber.component.RestTemplate;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import io.cucumber.java.en.When;
 import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
 import io.kovin.dispatch.management.system.model.request.CreateDriverRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.CompanyData;
 import io.kovin.dispatch.management.system.model.response.DriverData;
+import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
+import io.kovin.dispatch.management.system.model.response.error.GroupErrorResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -36,15 +41,33 @@ public class RestSteps {
         saveCreatedEntityAndStatusCode(response, DriverData.class);
     }
 
-    private <T> void saveCreatedEntityAndStatusCode(ResponseEntity<?> response, Class<T> clazz) {
+    private <T> void saveCreatedEntityAndStatusCode(
+        ResponseEntity<?> response,
+        Class<T> dataClazz
+    ) {
         if (response.getBody() != null) {
             var body = response.getBody();
             if (body instanceof ApiResponse<?, ?>) {
                 var data = ((ApiResponse<?, ?>) body).getData();
-                T companyData = objectMapper.convertValue(data, clazz);
-                scenarioContext.addActual(clazz, companyData);
+                var apiErrors = ((ApiResponse<?, ?>) body).getError();
+                T companyData = objectMapper.convertValue(data, dataClazz);
+                scenarioContext.addActual(dataClazz, companyData);
+                registerErrorsIfPresent(apiErrors);
             }
         }
         scenarioContext.addActual(HttpStatusCode.class, response.getStatusCode());
+    }
+
+    private <E> void registerErrorsIfPresent(E apiErrors) {
+        if (apiErrors instanceof ArrayList<?> apiErrorsList) {
+            List<GroupErrorResponse> errors = new ArrayList<>();
+            for (var error : apiErrorsList) {
+                errors.add(objectMapper.convertValue(error, GroupErrorResponse.class));
+            }
+            scenarioContext.addActual(GroupErrorResponse.class, errors);
+        } else if (apiErrors instanceof LinkedHashMap<?, ?> apiErrorsMap) {
+            ErrorResponse errorResponse = objectMapper.convertValue(apiErrorsMap, ErrorResponse.class);
+            scenarioContext.addActual(ErrorResponse.class, errorResponse);
+        }
     }
 }

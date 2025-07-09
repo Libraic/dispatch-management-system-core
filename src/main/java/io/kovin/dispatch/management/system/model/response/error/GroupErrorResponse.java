@@ -1,9 +1,22 @@
 package io.kovin.dispatch.management.system.model.response.error;
 
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-public record GroupErrorResponse(
-    String impactedGroup,
-    List<ItemErrorResponse> errors
-) {
+@ToString
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Builder
+public class GroupErrorResponse {
+    private String impactedGroup;
+    private List<ItemErrorResponse> errors;
 }

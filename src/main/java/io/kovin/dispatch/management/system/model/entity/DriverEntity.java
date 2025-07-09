@@ -45,6 +45,9 @@ public class DriverEntity extends Auditable {
     private String lastName;
 
     @Column
+    private String fullName;
+
+    @Column
     private String phoneNumber;
 
     @Column

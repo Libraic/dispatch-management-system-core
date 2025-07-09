@@ -232,3 +232,9 @@ COMMENT ON COLUMN t_drivers.created_at                IS 'The date the driver wa
 COMMENT ON COLUMN t_drivers.last_updated_at           IS 'The date the driver was last updated.';
 COMMENT ON COLUMN t_drivers.deleted_at                IS 'The date the driver was deleted.';
 COMMENT ON COLUMN t_drivers.company_id                IS 'The foreign key that stores the identifier of the company the driver works for.';
+
+-- changeset libra:013
+-- comment: Add the full_name column to t_drivers table
+ALTER TABLE t_drivers ADD COLUMN full_name VARCHAR(200);
+
+COMMENT ON COLUMN t_drivers.full_name IS 'The combination of first name and last name of the driver.';

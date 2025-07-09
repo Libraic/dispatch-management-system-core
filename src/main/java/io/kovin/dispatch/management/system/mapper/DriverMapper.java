@@ -1,5 +1,7 @@
 package io.kovin.dispatch.management.system.mapper;
 
+import static io.kovin.dispatch.management.system.utils.DispatchManagementSystemConstants.BLANK_SPACE;
+
 import java.util.UUID;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.entity.DriverEntity;
@@ -24,6 +26,7 @@ public class DriverMapper {
             .uuid(UUID.randomUUID().toString())
             .firstName(request.firstName())
             .lastName(request.lastName())
+            .fullName(request.firstName() + BLANK_SPACE + request.lastName())
             .phoneNumber(request.phoneNumber())
             .email(request.email())
             .truckNumber(request.truckNumber())

@@ -7,4 +7,5 @@ import lombok.NoArgsConstructor;
 public class DispatchManagementSystemConstants {
 
     public static final String BLANK_STRING = "";
+    public static final String BLANK_SPACE = " ";
 }

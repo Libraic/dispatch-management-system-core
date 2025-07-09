@@ -4,17 +4,20 @@ import static cucumber.utils.ITConstants.UUID_FIELD;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import cucumber.utils.ClassUtils;
-import java.lang.reflect.Field;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import io.cucumber.java.en.Then;
 import io.cucumber.spring.ScenarioScope;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpStatusCode;
 
 @RequiredArgsConstructor
 @ScenarioScope
+@Slf4j
 public class AssertionSteps {
 
     private final ScenarioContext scenarioContext;
@@ -42,48 +45,43 @@ public class AssertionSteps {
             .isEqualTo(expected);
     }
 
-    private void compareFieldByFieldRecursively(Object actual, Object expected) throws IllegalAccessException {
-        if (actual instanceof List<?> actualList && expected instanceof List<?> actualExpected) {
-            for (int i = 0; i < actualList.size(); ++i) {
-                Object currentActual = actualList.get(i);
-                Object currentExpected = actualExpected.get(i);
-                compareFieldByFieldRecursively(currentActual, currentExpected);
-            }
-        } else {
-            if (actual == null && expected == null) {
-                return;
-            }
+    @Then("the expected and actual {string} lists are equal")
+    public void compareListsItemByItem(String plainClassName) throws ClassNotFoundException {
+        String fullClassName = ClassUtils.getFullClassName(plainClassName);
+        assertThat(fullClassName)
+            .withFailMessage("The %s class was not found.", fullClassName)
+            .isNotNull();
 
-            Assertions.assertNotNull(actual);
-            Assertions.assertNotNull(expected);
-            Field[] fields = actual.getClass().getDeclaredFields();
-            for (Field field : fields) {
-                // Since UUID is dynamically generated, comparing it will make no sense.
-                if (field.getName().equals(UUID_FIELD)) {
-                    continue;
-                }
+        Class<?> clazz = Class.forName(fullClassName);
+        List<?> actual = scenarioContext.getActualList(clazz);
+        List<?> expected = scenarioContext.getExpectedList(clazz);
+        assertListsAreEqualIgnoringOrder(actual, expected);
+    }
 
-                field.setAccessible(true);
-                Object actualValue = field.get(actual);
-                Object expectedValue = field.get(expected);
-                if (!isInstanceOfPrimitiveClasses(actual)) {
-                    compareFieldByFieldRecursively(actualValue, expectedValue);
-                } else {
-                    assertThat(expectedValue)
-                        .withFailMessage(
-                            "Expected value for field [%s] does not match the actual value [%s].",
-                            field.getName(),
-                            expectedValue,
-                            actualValue
-                        ).isEqualTo(actualValue);
+    private void assertListsAreEqualIgnoringOrder(List<?> actual, List<?> expected) {
+        assertThat(expected.size())
+            .withFailMessage("The collections are not of the same size.")
+            .isEqualTo(actual.size());
+        Set<Integer> visited = new HashSet<>();
+        List<AssertionError> errors = new ArrayList<>();
+        for (Object item : actual) {
+            for (int i = 0; i < expected.size(); ++i) {
+                if (!visited.contains(i)) {
+                    try {
+                        assertThat(item).usingRecursiveComparison()
+                            .ignoringFields(UUID_FIELD)
+                            .isEqualTo(expected.get(i));
+                        visited.add(i);
+                        break;
+                    } catch (AssertionError e) {
+                        errors.add(e);
+                    }
                 }
             }
         }
-    }
 
-    private boolean isInstanceOfPrimitiveClasses(Object object) {
-        return object instanceof String
-            || object instanceof Number
-            || object instanceof LocalDate;
+        if (visited.size() != actual.size()) {
+            throw errors.getFirst();
+        }
     }
 }

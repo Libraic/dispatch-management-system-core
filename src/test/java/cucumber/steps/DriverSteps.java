@@ -1,6 +1,8 @@
 package cucumber.steps;
 
 import cucumber.data.DriverObjectsBuilder;
+import java.util.Map;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import lombok.RequiredArgsConstructor;
 
@@ -14,9 +16,24 @@ public class DriverSteps {
         driverObjectsBuilder.registerCompleteCreateDriverRequest();
     }
 
+    @Given("CreateDriverRequest request is created with following parameters:")
+    public void createCreateDriverRequestWithParams(Map<String, String> params) {
+        driverObjectsBuilder.registerCreateDriverRequestWithParams(params);
+    }
+
     @Given("the expected DriverData is created")
     public void createExpectedDriverData() {
         driverObjectsBuilder.createdExpectedDriverData();
+    }
+
+    @Given("the expected DriverData objects are created")
+    public void createExpectedDriverDataObjects() {
+        driverObjectsBuilder.createExpectedDriversDataFromData();
+    }
+
+    @Given("the expected DriverData objects are created from data:")
+    public void createExpectedDriverDataObjects(DataTable dataTable) {
+        driverObjectsBuilder.createExpectedDriversDataFromData(dataTable);
     }
 
     @Given("an empty CreateDriverRequest is created")

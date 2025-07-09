@@ -39,18 +39,51 @@ public class ScenarioContext {
     public Object getActual(Class<?> clazz) {
         List<Object> items = actualData.get(clazz);
         if (items == null) {
-            throw new RuntimeException("No records were found for " + clazz.getPackageName() + "class.");
+            throw new RuntimeException("No records were found for " + clazz.getName() + "class.");
         }
 
         return items.getLast();
     }
 
+    public List<?> getActualList(Class<?> clazz) {
+        List<Object> items = actualData.get(List.class);
+        return getList(items, clazz);
+    }
+
+    public List<?> getExpectedList(Class<?> clazz) {
+        List<Object> items = expectedData.get(List.class);
+        return getList(items, clazz);
+    }
+
     public Object getExpected(Class<?> clazz) {
         List<Object> items = expectedData.get(clazz);
         if (items == null) {
-            throw new RuntimeException("No records were found for " + clazz.getPackageName() + "class.");
+            throw new RuntimeException("No records were found for " + clazz.getName() + "class.");
         }
 
         return items.getLast();
+    }
+
+    public List<Object> getAllActualOfType(Class<?> clazz) {
+        List<Object> items = actualData.get(clazz);
+        if (items == null) {
+            throw new RuntimeException("No records were found for " + clazz.getName() + "class.");
+        }
+        return items;
+    }
+
+    private List<?> getList(List<Object> items, Class<?> clazz) {
+        if (items == null) {
+            throw new RuntimeException("No records were found for List class.");
+        }
+
+        for (int i = items.size() - 1; i >= 0; --i) {
+            Object item = items.get(i);
+            if (item instanceof List<?> list && clazz.isInstance(list.getFirst())) {
+                return list;
+            }
+        }
+
+        throw new RuntimeException("No list of records were found for " + clazz.getName() + "class.");
     }
 }

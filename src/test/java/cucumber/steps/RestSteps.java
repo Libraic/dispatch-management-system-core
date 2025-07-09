@@ -7,6 +7,7 @@ import cucumber.component.RestTemplate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import io.cucumber.java.en.When;
 import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
 import io.kovin.dispatch.management.system.model.request.CreateDriverRequest;
@@ -41,6 +42,15 @@ public class RestSteps {
         saveCreatedEntityAndStatusCode(response, DriverData.class);
     }
 
+    @When("the Drivers are retrieved by the following query params:")
+    public void fetchDrivers(Map<String, String> queryParams) {
+        ResponseEntity<ApiResponse<List<DriverData>, ErrorResponse>> response = restTemplate.getEntities(
+            BASE_DRIVERS_API_URL,
+            queryParams
+        );
+        saveCreatedEntitiesAndStatusCode(response, DriverData.class);
+    }
+
     private <T> void saveCreatedEntityAndStatusCode(
         ResponseEntity<?> response,
         Class<T> dataClazz
@@ -50,8 +60,31 @@ public class RestSteps {
             if (body instanceof ApiResponse<?, ?>) {
                 var data = ((ApiResponse<?, ?>) body).getData();
                 var apiErrors = ((ApiResponse<?, ?>) body).getError();
-                T companyData = objectMapper.convertValue(data, dataClazz);
-                scenarioContext.addActual(dataClazz, companyData);
+                T convertedData = objectMapper.convertValue(data, dataClazz);
+                scenarioContext.addActual(dataClazz, convertedData);
+                registerErrorsIfPresent(apiErrors);
+            }
+        }
+        scenarioContext.addActual(HttpStatusCode.class, response.getStatusCode());
+    }
+
+    private <T> void saveCreatedEntitiesAndStatusCode(
+        ResponseEntity<?> response,
+        Class<T> dataClazz
+    ) {
+        if (response.getBody() != null) {
+            var body = response.getBody();
+            if (body instanceof ApiResponse<?, ?>) {
+                var data = ((ApiResponse<?, ?>) body).getData();
+                var apiErrors = ((ApiResponse<?, ?>) body).getError();
+                if (data instanceof List<?> list) {
+                    List<T> convertedItems = new ArrayList<>();
+                    for (Object item : list) {
+                        T convertedData = objectMapper.convertValue(item, dataClazz);
+                        convertedItems.add(convertedData);
+                    }
+                    scenarioContext.addActual(List.class, convertedItems);
+                }
                 registerErrorsIfPresent(apiErrors);
             }
         }

@@ -62,6 +62,8 @@ public class DriverObjectsBuilder {
             .phoneNumber(request.phoneNumber())
             .truckNumber(request.truckNumber())
             .trailerNumber(request.trailerNumber())
+            .documentsStatus(request.documentStatus())
+            .maxLegalWeightCapacity(request.maxLegalWeightCapacity())
             .build();
         scenarioContext.addExpected(DriverData.class, driverData);
     }
@@ -115,6 +117,10 @@ public class DriverObjectsBuilder {
     }
 
     private CreateDriverRequest constructNewObjectFromData(CreateDriverRequest request, Map<String, String> data) {
+        String mlwc = data.get("maxLegalWeightCapacity");
+        BigDecimal maxLegalWeightCapacity = mlwc != null
+            ? BigDecimal.valueOf(Double.parseDouble(mlwc))
+            : request.maxLegalWeightCapacity();
         return request.toBuilder()
             .firstName(data.getOrDefault("firstName", request.firstName()))
             .lastName(data.getOrDefault("lastName", request.lastName()))
@@ -122,10 +128,15 @@ public class DriverObjectsBuilder {
             .trailerNumber(data.getOrDefault("trailerNumber", request.trailerNumber()))
             .truckNumber(data.getOrDefault("truckNumber", request.truckNumber()))
             .email(data.getOrDefault("email", request.email()))
+            .maxLegalWeightCapacity(maxLegalWeightCapacity)
             .build();
     }
 
     private DriverData constructDriverData(CreateDriverRequest request, Map<String, String> driverData) {
+        String mlwc = driverData.get("maxLegalWeightCapacity");
+        BigDecimal maxLegalWeightCapacity = mlwc != null
+            ? BigDecimal.valueOf(Double.parseDouble(mlwc))
+            : request.maxLegalWeightCapacity();
         return DriverData.builder()
             .firstName(driverData.getOrDefault("firstName", request.firstName()))
             .lastName(driverData.getOrDefault("lastName", request.lastName()))
@@ -133,6 +144,8 @@ public class DriverObjectsBuilder {
             .phoneNumber(driverData.getOrDefault("phoneNumber", request.phoneNumber()))
             .truckNumber(driverData.getOrDefault("truckNumber", request.truckNumber()))
             .trailerNumber(driverData.getOrDefault("trailerNumber", request.trailerNumber()))
+            .maxLegalWeightCapacity(maxLegalWeightCapacity)
+            .documentsStatus(driverData.getOrDefault("documentsStatus", request.documentStatus()))
             .build();
     }
 }

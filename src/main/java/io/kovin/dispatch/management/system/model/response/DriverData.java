@@ -1,5 +1,6 @@
 package io.kovin.dispatch.management.system.model.response;
 
+import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -21,4 +22,6 @@ public class DriverData {
     private String trailerNumber;
     private String email;
     private String phoneNumber;
+    private BigDecimal maxLegalWeightCapacity;
+    private String documentsStatus;
 }

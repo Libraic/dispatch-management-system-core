@@ -49,6 +49,8 @@ public class DriverMapper {
             .truckNumber(driver.getTruckNumber())
             .email(driver.getEmail())
             .phoneNumber(driver.getPhoneNumber())
+            .maxLegalWeightCapacity(driver.getMaxLegalWeightCapacity())
+            .documentsStatus(driver.getDocumentStatus().getType())
             .build();
     }
 }

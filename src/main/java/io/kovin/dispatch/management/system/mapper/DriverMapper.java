@@ -34,8 +34,10 @@ public class DriverMapper {
             .maxLegalWeightCapacity(request.maxLegalWeightCapacity())
             .trailerType(TrailerType.from(request.trailerType()))
             .trailerLength(request.trailerLength())
-            .documentStatus(DocumentStatus.from(request.documentStatus()))
+            .documentStatus(DocumentStatus.from(request.documentsStatus()))
             .position(DriverPosition.from(request.position()))
+            .state(request.state())
+            .city(request.city())
             .company(company)
             .build();
     }
@@ -51,6 +53,8 @@ public class DriverMapper {
             .phoneNumber(driver.getPhoneNumber())
             .maxLegalWeightCapacity(driver.getMaxLegalWeightCapacity())
             .documentsStatus(driver.getDocumentStatus().getType())
+            .state(driver.getState())
+            .city(driver.getCity())
             .build();
     }
 }

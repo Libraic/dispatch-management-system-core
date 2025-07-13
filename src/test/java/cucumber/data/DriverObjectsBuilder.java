@@ -62,8 +62,10 @@ public class DriverObjectsBuilder {
             .phoneNumber(request.phoneNumber())
             .truckNumber(request.truckNumber())
             .trailerNumber(request.trailerNumber())
-            .documentsStatus(request.documentStatus())
+            .documentsStatus(request.documentsStatus())
             .maxLegalWeightCapacity(request.maxLegalWeightCapacity())
+            .state(request.state())
+            .city(request.city())
             .build();
         scenarioContext.addExpected(DriverData.class, driverData);
     }
@@ -107,6 +109,8 @@ public class DriverObjectsBuilder {
             .trailerLength(BigDecimal.valueOf(faker.number().numberBetween(10, 50)))
             .documentStatus(DocumentStatus.CITIZEN.getType())
             .position(DriverPosition.COMPANY_DRIVER.getPosition())
+            .state(faker.address().state())
+            .city(faker.address().city())
             .build();
     }
 
@@ -145,7 +149,7 @@ public class DriverObjectsBuilder {
             .truckNumber(driverData.getOrDefault("truckNumber", request.truckNumber()))
             .trailerNumber(driverData.getOrDefault("trailerNumber", request.trailerNumber()))
             .maxLegalWeightCapacity(maxLegalWeightCapacity)
-            .documentsStatus(driverData.getOrDefault("documentsStatus", request.documentStatus()))
+            .documentsStatus(driverData.getOrDefault("documentsStatus", request.documentsStatus()))
             .build();
     }
 }

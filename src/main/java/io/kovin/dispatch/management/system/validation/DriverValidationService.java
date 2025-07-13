@@ -1,5 +1,6 @@
 package io.kovin.dispatch.management.system.validation;
 
+import static io.kovin.dispatch.management.system.exception.ImpactedGroup.CITY;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.DOCUMENT_STATUS;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.EMAIL;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.FIRST_NAME;
@@ -7,10 +8,12 @@ import static io.kovin.dispatch.management.system.exception.ImpactedGroup.LAST_N
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.MAX_LEGAL_WEIGHT_CAPACITY;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.PHONE_NUMBER;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.POSITION;
+import static io.kovin.dispatch.management.system.exception.ImpactedGroup.STATE;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.TRAILER_LENGTH;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.TRAILER_NUMBER;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.TRAILER_TYPE;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.TRUCK_NUMBER;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.CITY_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.EMAIL_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.FIRST_NAME_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_DOCUMENT_STATUS;
@@ -20,6 +23,7 @@ import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_TRA
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_TRAILER_TYPE;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.LAST_NAME_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.PHONE_NUMBER_IS_MANDATORY;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.STATE_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.TRAILER_NUMBER_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.TRUCK_NUMBER_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorUtils.getItemsGroupFromImpactedGroupAndErrorMessage;
@@ -82,12 +86,20 @@ public class DriverValidationService {
             itemsGroups.add(getItemsGroup(TRAILER_LENGTH, INVALID_TRAILER_LENGTH));
         }
 
-        if (DocumentStatus.from(request.documentStatus()) == null) {
+        if (DocumentStatus.from(request.documentsStatus()) == null) {
             itemsGroups.add(getItemsGroup(DOCUMENT_STATUS, INVALID_DOCUMENT_STATUS));
         }
 
         if (DriverPosition.from(request.position()) == null) {
             itemsGroups.add(getItemsGroup(POSITION, INVALID_DRIVER_POSITION));
+        }
+
+        if (StringUtil.isNullOrEmpty(request.state())) {
+            itemsGroups.add(getItemsGroup(STATE, STATE_IS_MANDATORY));
+        }
+
+        if (StringUtil.isNullOrEmpty(request.city())) {
+            itemsGroups.add(getItemsGroup(CITY, CITY_IS_MANDATORY));
         }
 
         if (!itemsGroups.isEmpty()) {

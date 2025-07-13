@@ -34,9 +34,10 @@ public enum ImpactedGroup {
     MAX_LEGAL_WEIGHT_CAPACITY("maxLegalWeightCapacity"),
     TRAILER_TYPE("trailerType"),
     TRAILER_LENGTH("trailerLength"),
-    DOCUMENT_STATUS("documentStatus"),
-    POSITION("position");
-
+    DOCUMENT_STATUS("documentsStatus"),
+    POSITION("position"),
+    STATE("state"),
+    CITY("city");
 
     private final String groupName;
 }

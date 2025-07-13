@@ -25,6 +25,8 @@ public class ErrorMessage {
     public static final String INVALID_TRAILER_LENGTH = "The length of the trailer is not valid.";
     public static final String INVALID_DOCUMENT_STATUS = "The status of the documents is not valid.";
     public static final String INVALID_DRIVER_POSITION = "The position of the driver is not valid.";
+    public static final String STATE_IS_MANDATORY = "The state the driver is making deliveries in is mandatory.";
+    public static final String CITY_IS_MANDATORY = "The city the driver is making deliveries in is mandatory.";
     public static final String TRAILER_NUMBER_IS_MANDATORY = "The trailer number cannot be empty.";
     public static final String INVALID_DATE_FORMAT = "The date=[%s] should be passed in dd-MM-YYYY format.";
     public static final String EMAIL_IN_USE = "The provided email is already in use.";

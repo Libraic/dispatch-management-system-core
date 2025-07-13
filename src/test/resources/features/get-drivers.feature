@@ -40,4 +40,4 @@ Feature: Get Drivers by Criteria
       | firstName | lastName | phoneNumber     | trailerNumber | truckNumber | email               | documentsStatus | maxLegalWeightCapacity |
       | Joana     | Moe      | +373-11-222-333 | 508           | 412         | joana.moe@gmail.com | Citizen         | 20000                  |
       | John      | Doe      | +373-65-123-456 | 123           | 456         | john.doe@gmail.com  | Citizen         | 10000                  |
-    Then the expected and actual "Driver Data" lists are equal
+    Then the expected and actual "Driver Data" lists are equal ignoring fields "state,city"

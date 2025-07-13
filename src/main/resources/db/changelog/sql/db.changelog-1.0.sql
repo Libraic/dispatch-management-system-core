@@ -238,3 +238,12 @@ COMMENT ON COLUMN t_drivers.company_id                IS 'The foreign key that s
 ALTER TABLE t_drivers ADD COLUMN full_name VARCHAR(200);
 
 COMMENT ON COLUMN t_drivers.full_name IS 'The combination of first name and last name of the driver.';
+
+-- changeset libra:014
+-- comment: Add the state and city column to t_drivers table
+ALTER TABLE t_drivers
+    ADD COLUMN state VARCHAR(100),
+    ADD COLUMN city  VARCHAR(100);
+
+COMMENT ON COLUMN t_drivers.state IS 'The state the driver is currently making deliveries in.';
+COMMENT ON COLUMN t_drivers.city  IS 'The city the driver is currently making deliveries in.';

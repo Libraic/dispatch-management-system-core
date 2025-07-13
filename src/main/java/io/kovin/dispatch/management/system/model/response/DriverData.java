@@ -24,4 +24,6 @@ public class DriverData {
     private String phoneNumber;
     private BigDecimal maxLegalWeightCapacity;
     private String documentsStatus;
+    private String state;
+    private String city;
 }

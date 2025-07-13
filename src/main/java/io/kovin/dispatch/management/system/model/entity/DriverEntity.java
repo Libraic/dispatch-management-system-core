@@ -77,6 +77,12 @@ public class DriverEntity extends Auditable {
     @Column
     private DriverPosition position;
 
+    @Column
+    private String state;
+
+    @Column
+    private String city;
+
     @ManyToOne
     @JoinColumn(name = "company_id")
     private CompanyEntity company;

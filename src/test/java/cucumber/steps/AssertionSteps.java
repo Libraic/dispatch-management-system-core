@@ -45,6 +45,20 @@ public class AssertionSteps {
             .isEqualTo(expected);
     }
 
+    @Then("the expected and actual {string} lists are equal ignoring fields {string}")
+    public void compareListsItemByItemIgnoringFields(String plainClassName, String fields) throws ClassNotFoundException {
+        String fullClassName = ClassUtils.getFullClassName(plainClassName);
+        assertThat(fullClassName)
+            .withFailMessage("The %s class was not found.", fullClassName)
+            .isNotNull();
+
+        String[] f = fields.split(",");
+        Class<?> clazz = Class.forName(fullClassName);
+        List<?> actual = scenarioContext.getActualList(clazz);
+        List<?> expected = scenarioContext.getExpectedList(clazz);
+        assertListsAreEqualIgnoringOrder(actual, expected, f);
+    }
+
     @Then("the expected and actual {string} lists are equal")
     public void compareListsItemByItem(String plainClassName) throws ClassNotFoundException {
         String fullClassName = ClassUtils.getFullClassName(plainClassName);
@@ -58,7 +72,8 @@ public class AssertionSteps {
         assertListsAreEqualIgnoringOrder(actual, expected);
     }
 
-    private void assertListsAreEqualIgnoringOrder(List<?> actual, List<?> expected) {
+    private void assertListsAreEqualIgnoringOrder(List<?> actual, List<?> expected, String... fields) {
+        String[] fieldsToIgnore = getFieldsToIgnore(fields);
         assertThat(expected.size())
             .withFailMessage("The collections are not of the same size.")
             .isEqualTo(actual.size());
@@ -69,7 +84,7 @@ public class AssertionSteps {
                 if (!visited.contains(i)) {
                     try {
                         assertThat(item).usingRecursiveComparison()
-                            .ignoringFields(UUID_FIELD)
+                            .ignoringFields(fieldsToIgnore)
                             .isEqualTo(expected.get(i));
                         visited.add(i);
                         break;
@@ -83,5 +98,16 @@ public class AssertionSteps {
         if (visited.size() != actual.size()) {
             throw errors.getFirst();
         }
+    }
+
+    private String[] getFieldsToIgnore(String... fields) {
+        if (fields == null || fields.length == 0) {
+            return new String[]{ UUID_FIELD };
+        }
+
+        String[] fieldsToIgnore = new String[fields.length + 1];
+        System.arraycopy(fields, 0, fieldsToIgnore, 0, fields.length);
+        fieldsToIgnore[fieldsToIgnore.length - 1] = UUID_FIELD;
+        return fieldsToIgnore;
     }
 }

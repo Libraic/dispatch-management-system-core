@@ -14,8 +14,10 @@ public record CreateDriverRequest(
      BigDecimal maxLegalWeightCapacity,
      String trailerType,
      BigDecimal trailerLength,
-     String documentStatus,
+     String documentsStatus,
      String position,
+     String state,
+     String city,
      String companyUuid
 ) {
 }

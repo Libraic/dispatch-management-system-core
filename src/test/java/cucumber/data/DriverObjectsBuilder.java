@@ -107,7 +107,7 @@ public class DriverObjectsBuilder {
             .maxLegalWeightCapacity(BigDecimal.valueOf(faker.number().numberBetween(10000, 50000)))
             .trailerType(TrailerType.FLATBED.getType())
             .trailerLength(BigDecimal.valueOf(faker.number().numberBetween(10, 50)))
-            .documentStatus(DocumentStatus.CITIZEN.getType())
+            .documentsStatus(DocumentStatus.CITIZEN.getType())
             .position(DriverPosition.COMPANY_DRIVER.getPosition())
             .state(faker.address().state())
             .city(faker.address().city())

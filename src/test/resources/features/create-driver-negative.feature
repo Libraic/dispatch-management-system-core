@@ -14,7 +14,7 @@ Feature: Negative scenarios on creating the Driver in the system
       | maxLegalWeightCapacity | The format of max legal weight capacity is invalid.        |
       | trailerType            | The trailer type is not valid.                             |
       | trailerLength          | The length of the trailer is not valid.                    |
-      | documentStatus         | The status of the documents is not valid.                  |
+      | documentsStatus        | The status of the documents is not valid.                  |
       | position               | The position of the driver is not valid.                   |
       | state                  | The state the driver is making deliveries in is mandatory. |
       | city                   | The city the driver is making deliveries in is mandatory.  |

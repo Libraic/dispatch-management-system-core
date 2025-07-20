@@ -4,6 +4,7 @@ import static io.kovin.dispatch.management.system.exception.ImpactedGroup.CITY;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.DOCUMENT_STATUS;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.EMAIL;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.FIRST_NAME;
+import static io.kovin.dispatch.management.system.exception.ImpactedGroup.TRAILER_HEIGHT;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.LAST_NAME;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.MAX_LEGAL_WEIGHT_CAPACITY;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.PHONE_NUMBER;
@@ -18,6 +19,7 @@ import static io.kovin.dispatch.management.system.utils.ErrorMessage.EMAIL_IS_MA
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.FIRST_NAME_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_DOCUMENT_STATUS;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_DRIVER_POSITION;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_TRAILER_HEIGHT;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_MAX_LEGAL_WEIGHT_CAPACITY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_TRAILER_LENGTH;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_TRAILER_TYPE;
@@ -71,7 +73,11 @@ public class DriverValidationService {
             addError(groupsErrors, TRUCK_NUMBER, TRUCK_NUMBER_IS_MANDATORY);
         }
 
-        if (BigDecimalUtils.isLessOrEqualToZeroSafe(request.maxLegalWeightCapacity())) {
+        if (request.trailerHeight() == null || BigDecimalUtils.isLessOrEqualToZeroSafe(request.trailerHeight())) {
+            addError(groupsErrors, TRAILER_HEIGHT, INVALID_TRAILER_HEIGHT);
+        }
+
+        if (request.maxLegalWeightCapacity() == null || BigDecimalUtils.isLessOrEqualToZeroSafe(request.maxLegalWeightCapacity())) {
             addError(groupsErrors, MAX_LEGAL_WEIGHT_CAPACITY, INVALID_MAX_LEGAL_WEIGHT_CAPACITY);
         }
 
@@ -79,7 +85,7 @@ public class DriverValidationService {
             addError(groupsErrors, TRAILER_TYPE, INVALID_TRAILER_TYPE);
         }
 
-        if (BigDecimalUtils.isLessOrEqualToZeroSafe(request.trailerLength())) {
+        if (request.trailerLength() == null || BigDecimalUtils.isLessOrEqualToZeroSafe(request.trailerLength())) {
             addError(groupsErrors, TRAILER_LENGTH, INVALID_TRAILER_LENGTH);
         }
 

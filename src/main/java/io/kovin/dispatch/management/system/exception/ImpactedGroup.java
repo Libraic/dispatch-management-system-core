@@ -31,6 +31,7 @@ public enum ImpactedGroup {
     PHONE_NUMBER("phoneNumber"),
     TRUCK_NUMBER("truckNumber"),
     TRAILER_NUMBER("trailerNumber"),
+    TRAILER_HEIGHT("trailerHeight"),
     MAX_LEGAL_WEIGHT_CAPACITY("maxLegalWeightCapacity"),
     TRAILER_TYPE("trailerType"),
     TRAILER_LENGTH("trailerLength"),

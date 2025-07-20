@@ -6,12 +6,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum TrailerType {
-    FLATBED("Flatbed"),
-    STEPDECK("Stepdeck"),
-    FLATBED_CONESTOGA("Flatbed Conestoga"),
-    STEPDECK_CONESTOGA("Stepdeck Conestoga");
+    FLATBED("Flatbed", "FB"),
+    STEPDECK("Stepdeck", "SD"),
+    FLATBED_CONESTOGA("Flatbed Conestoga", "FB Cong"),
+    STEPDECK_CONESTOGA("Stepdeck Conestoga", "SD Cong");
 
     private final String type;
+    private final String code;
 
     public static TrailerType from(String type) {
         if (type == null) {

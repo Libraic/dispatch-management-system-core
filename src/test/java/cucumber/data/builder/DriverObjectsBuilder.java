@@ -61,9 +61,12 @@ public class DriverObjectsBuilder {
             .truckNumber(request.truckNumber())
             .trailerNumber(request.trailerNumber())
             .documentsStatus(request.documentsStatus())
+            .trailerHeight(request.trailerHeight())
             .maxLegalWeightCapacity(request.maxLegalWeightCapacity())
             .state(request.state())
             .city(request.city())
+            .trailerType(TrailerType.FLATBED.getCode())
+            .trailerLength(request.trailerLength())
             .build();
         scenarioContext.addExpected(DriverData.class, driverData);
     }
@@ -99,6 +102,7 @@ public class DriverObjectsBuilder {
             .lastName(lastName)
             .phoneNumber(phoneNumber)
             .email(generateEmailFromFirstAndLastName(firstName, lastName))
+            .trailerHeight(BigDecimal.valueOf(faker.number().numberBetween(90, 110)))
             .truckNumber(Integer.toString(faker.number().numberBetween(100, 999)))
             .trailerNumber(Integer.toString(faker.number().numberBetween(100, 999)))
             .maxLegalWeightCapacity(BigDecimal.valueOf(faker.number().numberBetween(10000, 50000)))
@@ -118,10 +122,6 @@ public class DriverObjectsBuilder {
     }
 
     private CreateDriverRequest constructNewObjectFromData(CreateDriverRequest request, Map<String, String> data) {
-        String mlwc = data.get("maxLegalWeightCapacity");
-        BigDecimal maxLegalWeightCapacity = mlwc != null
-            ? BigDecimal.valueOf(Double.parseDouble(mlwc))
-            : request.maxLegalWeightCapacity();
         return request.toBuilder()
             .firstName(data.getOrDefault("firstName", request.firstName()))
             .lastName(data.getOrDefault("lastName", request.lastName()))
@@ -129,15 +129,12 @@ public class DriverObjectsBuilder {
             .trailerNumber(data.getOrDefault("trailerNumber", request.trailerNumber()))
             .truckNumber(data.getOrDefault("truckNumber", request.truckNumber()))
             .email(data.getOrDefault("email", request.email()))
-            .maxLegalWeightCapacity(maxLegalWeightCapacity)
+            .trailerHeight(extractBigDecimalFieldByName(data, "trailerHeight", request.trailerHeight()))
+            .maxLegalWeightCapacity(extractBigDecimalFieldByName(data, "maxLegalWeightCapacity", request.maxLegalWeightCapacity()))
             .build();
     }
 
     private DriverData constructDriverData(CreateDriverRequest request, Map<String, String> driverData) {
-        String mlwc = driverData.get("maxLegalWeightCapacity");
-        BigDecimal maxLegalWeightCapacity = mlwc != null
-            ? BigDecimal.valueOf(Double.parseDouble(mlwc))
-            : request.maxLegalWeightCapacity();
         return DriverData.builder()
             .firstName(driverData.getOrDefault("firstName", request.firstName()))
             .lastName(driverData.getOrDefault("lastName", request.lastName()))
@@ -145,8 +142,14 @@ public class DriverObjectsBuilder {
             .phoneNumber(driverData.getOrDefault("phoneNumber", request.phoneNumber()))
             .truckNumber(driverData.getOrDefault("truckNumber", request.truckNumber()))
             .trailerNumber(driverData.getOrDefault("trailerNumber", request.trailerNumber()))
-            .maxLegalWeightCapacity(maxLegalWeightCapacity)
+            .trailerHeight(extractBigDecimalFieldByName(driverData, "trailerHeight", request.trailerHeight()))
+            .maxLegalWeightCapacity(extractBigDecimalFieldByName(driverData, "maxLegalWeightCapacity", request.maxLegalWeightCapacity()))
             .documentsStatus(driverData.getOrDefault("documentsStatus", request.documentsStatus()))
             .build();
+    }
+
+    private BigDecimal extractBigDecimalFieldByName(Map<String, String> data, String name, BigDecimal fallbackValue) {
+        String field = data.get(name);
+        return field != null ? BigDecimal.valueOf(Double.parseDouble(field)) : fallbackValue;
     }
 }

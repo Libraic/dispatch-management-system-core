@@ -247,3 +247,10 @@ ALTER TABLE t_drivers
 
 COMMENT ON COLUMN t_drivers.state IS 'The state the driver is currently making deliveries in.';
 COMMENT ON COLUMN t_drivers.city  IS 'The city the driver is currently making deliveries in.';
+
+-- changeset libra:015
+-- comment: Add the height of the truck
+ALTER TABLE t_drivers
+    ADD COLUMN trailer_height DECIMAL(10, 2);
+
+COMMENT ON COLUMN t_drivers.trailer_height IS 'The height of the trailer.';

@@ -20,6 +20,7 @@ public class ErrorMessage {
     public static final String EMPLOYMENT_DATE_IS_MANDATORY = "The employment date of the user is mandatory.";
     public static final String PHONE_NUMBER_IS_MANDATORY = "The phone number cannot be empty.";
     public static final String TRUCK_NUMBER_IS_MANDATORY = "The truck number cannot be empty.";
+    public static final String INVALID_TRAILER_HEIGHT = "The format of trailer height is invalid.";
     public static final String INVALID_MAX_LEGAL_WEIGHT_CAPACITY = "The format of max legal weight capacity is invalid.";
     public static final String INVALID_TRAILER_TYPE = "The trailer type is not valid.";
     public static final String INVALID_TRAILER_LENGTH = "The length of the trailer is not valid.";

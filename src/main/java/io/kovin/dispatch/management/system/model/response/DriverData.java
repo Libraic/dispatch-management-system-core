@@ -22,8 +22,11 @@ public class DriverData {
     private String trailerNumber;
     private String email;
     private String phoneNumber;
+    private BigDecimal trailerHeight;
     private BigDecimal maxLegalWeightCapacity;
     private String documentsStatus;
     private String state;
     private String city;
+    private String trailerType;
+    private BigDecimal trailerLength;
 }

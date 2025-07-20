@@ -39,6 +39,7 @@ public class DriverMapper {
             .state(request.state())
             .city(request.city())
             .company(company)
+            .trailerHeight(request.trailerHeight())
             .build();
     }
 
@@ -51,10 +52,13 @@ public class DriverMapper {
             .truckNumber(driver.getTruckNumber())
             .email(driver.getEmail())
             .phoneNumber(driver.getPhoneNumber())
+            .trailerHeight(driver.getTrailerHeight())
             .maxLegalWeightCapacity(driver.getMaxLegalWeightCapacity())
             .documentsStatus(driver.getDocumentStatus().getType())
             .state(driver.getState())
             .city(driver.getCity())
+            .trailerType(driver.getTrailerType().getCode())
+            .trailerLength(driver.getTrailerLength())
             .build();
     }
 }

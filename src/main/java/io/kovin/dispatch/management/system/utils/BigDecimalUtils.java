@@ -10,7 +10,7 @@ public class BigDecimalUtils {
 
     public static boolean isLessOrEqualToZeroSafe(BigDecimal value) {
         if (value == null) {
-            return true;
+            return false;
         }
 
         return value.compareTo(BigDecimal.ZERO) <= 0;

@@ -11,6 +11,7 @@ public record CreateDriverRequest(
      String email,
      String truckNumber,
      String trailerNumber,
+     BigDecimal trailerHeight,
      BigDecimal maxLegalWeightCapacity,
      String trailerType,
      BigDecimal trailerLength,

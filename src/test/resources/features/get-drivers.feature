@@ -12,6 +12,7 @@ Feature: Get Drivers by Criteria
       | truckNumber            | 456                |
       | email                  | john.doe@gmail.com |
       | maxLegalWeightCapacity | 10000              |
+      | trailerHeight          | 98                 |
     When the Driver is registered in the system
     Then the status code is 201
     Given CreateDriverRequest request is created with following parameters:
@@ -31,13 +32,14 @@ Feature: Get Drivers by Criteria
       | truckNumber            | 412                 |
       | email                  | joana.moe@gmail.com |
       | maxLegalWeightCapacity | 20000               |
+      | trailerHeight          | 100                 |
     When the Driver is registered in the system
     Then the status code is 201
     When the Drivers are retrieved by the following query params:
       | firstName | like:Jo |
     Then the status code is 200
     Given the expected DriverData objects are created from data:
-      | firstName | lastName | phoneNumber     | trailerNumber | truckNumber | email               | documentsStatus | maxLegalWeightCapacity |
-      | Joana     | Moe      | +373-11-222-333 | 508           | 412         | joana.moe@gmail.com | Citizen         | 20000                  |
-      | John      | Doe      | +373-65-123-456 | 123           | 456         | john.doe@gmail.com  | Citizen         | 10000                  |
-    Then the expected and actual "Driver Data" lists are equal ignoring fields "state,city"
+      | firstName | lastName | phoneNumber     | trailerNumber | truckNumber | email               | documentsStatus | maxLegalWeightCapacity | trailerHeight |
+      | Joana     | Moe      | +373-11-222-333 | 508           | 412         | joana.moe@gmail.com | Citizen         | 20000                  | 100           |
+      | John      | Doe      | +373-65-123-456 | 123           | 456         | john.doe@gmail.com  | Citizen         | 10000                  | 98            |
+    Then the expected and actual "Driver Data" lists are equal ignoring fields "state,city,trailerLength,trailerType"

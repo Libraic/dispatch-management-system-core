@@ -60,6 +60,9 @@ public class DriverEntity extends Auditable {
     private String trailerNumber;
 
     @Column
+    private BigDecimal trailerHeight;
+
+    @Column
     private BigDecimal maxLegalWeightCapacity;
 
     @Enumerated(EnumType.STRING)

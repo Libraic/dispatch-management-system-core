@@ -11,6 +11,7 @@ Feature: Negative scenarios on creating the Driver in the system
       | phoneNumber            | The phone number cannot be empty.                          |
       | trailerNumber          | The trailer number cannot be empty.                        |
       | truckNumber            | The truck number cannot be empty.                          |
+      | trailerHeight          | The format of trailer height is invalid.                   |
       | maxLegalWeightCapacity | The format of max legal weight capacity is invalid.        |
       | trailerType            | The trailer type is not valid.                             |
       | trailerLength          | The length of the trailer is not valid.                    |

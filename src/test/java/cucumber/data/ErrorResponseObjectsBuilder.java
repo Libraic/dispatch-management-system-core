@@ -16,7 +16,7 @@ public class ErrorResponseObjectsBuilder {
 
     private final ScenarioContext scenarioContext;
 
-    public void registerErrorResponseFromData(Map<String, String> errorData) throws IllegalAccessException {
+    public void registerErrorResponseFromData(Map<String, String> errorData) {
         String message = errorData.get("message");
         HttpStatus status = Optional.ofNullable(errorData.get("status")).map(HttpStatus::valueOf).orElse(null);
         ErrorResponse errorResponse = ErrorResponse.builder()

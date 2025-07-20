@@ -8,8 +8,8 @@ import io.kovin.dispatch.management.system.model.entity.UserEntity;
 import io.kovin.dispatch.management.system.model.request.CreateUserRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
-import io.kovin.dispatch.management.system.model.response.error.GroupErrorResponse;
 import io.kovin.dispatch.management.system.model.response.UserData;
+import io.kovin.dispatch.management.system.model.response.error.GroupsErrors;
 import io.kovin.dispatch.management.system.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class UserController {
     private final UserMapper userMapper;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<UserData, List<GroupErrorResponse>>> createUser(@RequestBody CreateUserRequest createUserRequest) {
+    public ResponseEntity<ApiResponse<UserData, List<GroupsErrors>>> createUser(@RequestBody CreateUserRequest createUserRequest) {
         log.info("A request to create a User was received.");
         UserEntity userEntity = userService.createUser(createUserRequest);
         UserData userData = userMapper.fromUserEntityToUserData(userEntity);

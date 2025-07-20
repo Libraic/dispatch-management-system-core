@@ -10,4 +10,5 @@ public class RestConstants {
     public static final String BASE_URL = "http://localhost:";
     public static final String BASE_COMPANIES_API_URL = "/api/companies";
     public static final String BASE_DRIVERS_API_URL = "/api/drivers";
+    public static final String BASE_USERS_API_URL = "/api/users";
 }

@@ -2,27 +2,35 @@ package cucumber.steps;
 
 import static cucumber.utils.RestConstants.BASE_COMPANIES_API_URL;
 import static cucumber.utils.RestConstants.BASE_DRIVERS_API_URL;
+import static cucumber.utils.RestConstants.BASE_USERS_API_URL;
 
 import cucumber.component.RestTemplate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import io.cucumber.java.en.When;
 import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
 import io.kovin.dispatch.management.system.model.request.CreateDriverRequest;
+import io.kovin.dispatch.management.system.model.request.CreateUserRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.CompanyData;
 import io.kovin.dispatch.management.system.model.response.DriverData;
+import io.kovin.dispatch.management.system.model.response.UserData;
+import io.kovin.dispatch.management.system.model.response.error.Error;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
-import io.kovin.dispatch.management.system.model.response.error.GroupErrorResponse;
+import io.kovin.dispatch.management.system.model.response.error.GroupsErrorResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import org.testcontainers.shaded.org.checkerframework.checker.units.qual.A;
 
 @RequiredArgsConstructor
 public class RestSteps {
+
+    private static final String GROUPS_ERROR_RESPONSE_KEYWORD = "errors";
 
     private final RestTemplate restTemplate;
     private final ScenarioContext scenarioContext;
@@ -49,6 +57,13 @@ public class RestSteps {
             queryParams
         );
         saveCreatedEntitiesAndStatusCode(response, DriverData.class);
+    }
+
+    @When("the User is registered in the system")
+    public void saveUser() {
+        CreateUserRequest request = (CreateUserRequest) scenarioContext.getActual(CreateUserRequest.class);
+        ResponseEntity<?> response = restTemplate.post(ApiResponse.class, BASE_USERS_API_URL, request);
+        saveCreatedEntityAndStatusCode(response, UserData.class);
     }
 
     private <T> void saveCreatedEntityAndStatusCode(
@@ -92,15 +107,28 @@ public class RestSteps {
     }
 
     private <E> void registerErrorsIfPresent(E apiErrors) {
-        if (apiErrors instanceof ArrayList<?> apiErrorsList) {
-            List<GroupErrorResponse> errors = new ArrayList<>();
-            for (var error : apiErrorsList) {
-                errors.add(objectMapper.convertValue(error, GroupErrorResponse.class));
+        if (apiErrors instanceof LinkedHashMap<?, ?> apiErrorsMap) {
+            Object apiGroupsErrors = apiErrorsMap.get(GROUPS_ERROR_RESPONSE_KEYWORD);
+            if (apiGroupsErrors instanceof LinkedHashMap<?, ?> apiGroupsErrorsMap) {
+                Map<String, Object> errors = new HashMap<>();
+                for (Map.Entry<?, ?> groupErrors : apiGroupsErrorsMap.entrySet()) {
+                    if (groupErrors.getValue() instanceof List<?> fieldsErrors) {
+                        List<Error> errs = new ArrayList<>();
+                        for (Object fieldError : fieldsErrors) {
+                            Error error = objectMapper.convertValue(fieldError, Error.class);
+                            errs.add(error);
+                        }
+                        errors.put((String) groupErrors.getKey(), errs);
+                    } else {
+                        Error error = objectMapper.convertValue(groupErrors.getValue(), Error.class);
+                        errors.put((String) groupErrors.getKey(), error);
+                    }
+                }
+                scenarioContext.addActual(GroupsErrorResponse.class, errors);
+            } else {
+                ErrorResponse errorResponse = objectMapper.convertValue(apiErrorsMap, ErrorResponse.class);
+                scenarioContext.addActual(ErrorResponse.class, errorResponse);
             }
-            scenarioContext.addActual(GroupErrorResponse.class, errors);
-        } else if (apiErrors instanceof LinkedHashMap<?, ?> apiErrorsMap) {
-            ErrorResponse errorResponse = objectMapper.convertValue(apiErrorsMap, ErrorResponse.class);
-            scenarioContext.addActual(ErrorResponse.class, errorResponse);
         }
     }
 }

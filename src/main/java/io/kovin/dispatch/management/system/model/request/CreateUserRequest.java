@@ -1,7 +1,9 @@
 package io.kovin.dispatch.management.system.model.request;
 
 import java.util.List;
+import lombok.Builder;
 
+@Builder
 public record CreateUserRequest(
     String firstName,
     String lastName,

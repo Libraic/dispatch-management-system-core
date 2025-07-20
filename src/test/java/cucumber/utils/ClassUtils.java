@@ -16,12 +16,12 @@ public class ClassUtils {
     private static final String ERROR_RESPONSE_MODEL_PACKAGE = RESPONSE_MODEL_PACKAGE + DOT + "error";
 
     private static final String DRIVER_DATA_CLASS = "DriverData";
-    private static final String GROUP_ERROR_RESPONSE_CLASS = "GroupErrorResponse";
+    private static final String GROUP_ERROR_RESPONSE_CLASS = "GroupsErrorResponse";
     private static final String ERROR_RESPONSE_CLASS = "ErrorResponse";
 
     private static final String DRIVER_DATA_CLASS_PLAIN_NAME = "Driver Data";
 
-    private static final String GROUP_ERROR_RESPONSE_CLASS_PLAIN_NAME = "Group Error Response";
+    private static final String GROUPS_ERROR_RESPONSE_CLASS_PLAIN_NAME = "Groups Error Response";
     private static final String ERROR_RESPONSE_CLASS_PLAIN_NAME = "Error Response";
 
     /**
@@ -34,7 +34,7 @@ public class ClassUtils {
     static {
         FULL_CLASSES_NAMES = new HashMap<>();
         FULL_CLASSES_NAMES.put(DRIVER_DATA_CLASS_PLAIN_NAME, RESPONSE_MODEL_PACKAGE + DOT + DRIVER_DATA_CLASS);
-        FULL_CLASSES_NAMES.put(GROUP_ERROR_RESPONSE_CLASS_PLAIN_NAME, ERROR_RESPONSE_MODEL_PACKAGE + DOT + GROUP_ERROR_RESPONSE_CLASS);
+        FULL_CLASSES_NAMES.put(GROUPS_ERROR_RESPONSE_CLASS_PLAIN_NAME, ERROR_RESPONSE_MODEL_PACKAGE + DOT + GROUP_ERROR_RESPONSE_CLASS);
         FULL_CLASSES_NAMES.put(ERROR_RESPONSE_CLASS_PLAIN_NAME, ERROR_RESPONSE_MODEL_PACKAGE + DOT + ERROR_RESPONSE_CLASS);
     }
 

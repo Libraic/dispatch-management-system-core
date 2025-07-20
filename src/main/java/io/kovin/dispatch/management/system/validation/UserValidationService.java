@@ -10,6 +10,7 @@ import static io.kovin.dispatch.management.system.exception.ImpactedGroup.LAST_N
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.PASSWORD;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.SUPERVISOR;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.WORKLOADS;
+import static io.kovin.dispatch.management.system.utils.DispatchManagementSystemConstants.BLANK_STRING;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.BIRTH_DATE_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.BLANK_COMPANY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_COMPANY;
@@ -21,21 +22,16 @@ import static io.kovin.dispatch.management.system.utils.ErrorMessage.LAST_NAME_I
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.NEGATIVE_COMMISSION;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.PASSWORD_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.SUPERVISOR_NOT_FOUND;
-import static io.kovin.dispatch.management.system.utils.ErrorUtils.getItemsGroupFromImpactedGroupAndErrorMessage;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import ch.qos.logback.core.util.StringUtil;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemGroupException;
 import io.kovin.dispatch.management.system.exception.ImpactedGroup;
-import io.kovin.dispatch.management.system.model.entity.UserEntity;
 import io.kovin.dispatch.management.system.model.request.CreateSupervisorRequest;
 import io.kovin.dispatch.management.system.model.request.CreateUserRequest;
 import io.kovin.dispatch.management.system.model.request.CreateWorkloadRequest;
-import io.kovin.dispatch.management.system.exception.ItemError;
-import io.kovin.dispatch.management.system.exception.ItemsGroup;
+import io.kovin.dispatch.management.system.model.response.error.GroupsErrors;
 import io.kovin.dispatch.management.system.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,113 +45,81 @@ public class UserValidationService {
     private final UserRepository userRepository;
 
     public void validateUserCreation(CreateUserRequest request) {
-        List<ItemsGroup> itemsGroups = new ArrayList<>();
+        log.info("Validating the request to create the user.");
+        GroupsErrors groupsErrors = new GroupsErrors();
         if (StringUtil.isNullOrEmpty(request.firstName())) {
-            itemsGroups.add(getItemsGroup(FIRST_NAME, FIRST_NAME_IS_MANDATORY));
+            addError(groupsErrors, FIRST_NAME, FIRST_NAME_IS_MANDATORY);
         }
 
         if (StringUtil.isNullOrEmpty(request.lastName())) {
-            itemsGroups.add(getItemsGroup(LAST_NAME, LAST_NAME_IS_MANDATORY));
+            addError(groupsErrors, LAST_NAME, LAST_NAME_IS_MANDATORY);
         }
 
         if (StringUtil.isNullOrEmpty(request.password())) {
-            itemsGroups.add(getItemsGroup(PASSWORD, PASSWORD_IS_MANDATORY));
+            addError(groupsErrors, PASSWORD, PASSWORD_IS_MANDATORY);
         }
 
         if (StringUtil.isNullOrEmpty(request.birthDate())) {
-            itemsGroups.add(getItemsGroup(BIRTH_DATE, BIRTH_DATE_IS_MANDATORY));
+            addError(groupsErrors, BIRTH_DATE, BIRTH_DATE_IS_MANDATORY);
         }
 
         if (StringUtil.isNullOrEmpty(request.employmentDate())) {
-            itemsGroups.add(getItemsGroup(EMPLOYMENT_DATE, EMPLOYMENT_DATE_IS_MANDATORY));
+            addError(groupsErrors, EMPLOYMENT_DATE, EMPLOYMENT_DATE_IS_MANDATORY);
         }
 
-        ItemsGroup workloadsItemsGroup = getWorkloadsValidationResult(request.workloads());
-        if (workloadsItemsGroup.hasErrors()) {
-            itemsGroups.add(workloadsItemsGroup);
-        }
+        validateWorkloads(request.workloads(), groupsErrors);
+        validateEmail(request.email(), groupsErrors);
+        validateSupervisor(request.supervisor(), groupsErrors);
 
-        ItemsGroup emailItemsGroup = getEmailValidationResult(request.email());
-        if (emailItemsGroup.hasErrors()) {
-            itemsGroups.add(emailItemsGroup);
-        }
-
-        ItemsGroup supervisorItemsGroup = getSupervisorValidationResult(request.supervisor());
-        if (supervisorItemsGroup.hasErrors()) {
-            itemsGroups.add(supervisorItemsGroup);
-        }
-
-        if (!itemsGroups.isEmpty()) {
-            throw DispatchManagementSystemGroupException.of(itemsGroups, BAD_REQUEST);
+        if (groupsErrors.hasErrors()) {
+            throw DispatchManagementSystemGroupException.of(groupsErrors, BAD_REQUEST);
         }
     }
 
-    private ItemsGroup getWorkloadsValidationResult(List<CreateWorkloadRequest> workloads) {
-        ItemsGroup itemsGroup = ItemsGroup.ofGroupName(WORKLOADS);
+    private void validateWorkloads(List<CreateWorkloadRequest> workloads, GroupsErrors groupsErrors) {
         if (workloads != null) {
             for (CreateWorkloadRequest createWorkloadRequest : workloads) {
-                ItemError itemError = ItemError.ofItemIdentifier(createWorkloadRequest.itemIdentifier());
+                String groupIdentifier = createWorkloadRequest.itemIdentifier();
                 if (StringUtil.isNullOrEmpty(createWorkloadRequest.companyUuid())) {
                     String message = StringUtil.isNullOrEmpty(createWorkloadRequest.companyName())
                         ? BLANK_COMPANY
                         : String.format(INVALID_COMPANY, createWorkloadRequest.companyName());
                     log.error(message);
-                    itemError.addFieldError(COMPANY, message);
+                    groupsErrors.addError(WORKLOADS, COMPANY, message, groupIdentifier);
                 }
 
                 if (createWorkloadRequest.commission() < 0) {
                     log.error(NEGATIVE_COMMISSION);
-                    itemError.addFieldError(COMMISSION, NEGATIVE_COMMISSION);
-                }
-
-                if (itemError.hasErrors()) {
-                    itemsGroup.addItemError(itemError);
+                    groupsErrors.addError(WORKLOADS, COMMISSION, NEGATIVE_COMMISSION, groupIdentifier);
                 }
             }
         }
-
-        return itemsGroup;
     }
 
-    private ItemsGroup getEmailValidationResult(String email) {
-        ItemsGroup emailItemsGroup = ItemsGroup.ofGroupName(EMAIL);
+    private void validateEmail(String email, GroupsErrors groupsErrors) {
         if (StringUtil.isNullOrEmpty(email)) {
             log.error(EMAIL_IS_MANDATORY);
-            emailItemsGroup.addItemError(ItemError.ofError(EMAIL_IS_MANDATORY));
-        }
-
-        boolean isTheEmailAlreadyInUse = userRepository.existsByEmail(email);
-        if (isTheEmailAlreadyInUse) {
+            groupsErrors.addError(EMAIL, EMAIL_IS_MANDATORY);
+        } else if (userRepository.existsByEmail(email)) {
             log.error(EMAIL_IN_USE);
-            emailItemsGroup.addItemError(ItemError.ofError(EMAIL_IN_USE));
+            groupsErrors.addError(EMAIL, EMAIL_IN_USE);
         }
-
-        return emailItemsGroup;
     }
 
-    private ItemsGroup getSupervisorValidationResult(CreateSupervisorRequest supervisor) {
-        ItemsGroup emailItemsGroup = ItemsGroup.ofGroupName(SUPERVISOR);
-        if (supervisor == null) {
-            return emailItemsGroup;
+    private void validateSupervisor(CreateSupervisorRequest supervisor, GroupsErrors groupsErrors) {
+        if (supervisor != null) {
+            String supervisorUuid = supervisor.uuid();
+            String supervisorFullName = supervisor.fullName() != null ? supervisor.fullName() : BLANK_STRING;
+            if (supervisorUuid == null || userRepository.findByUuid(supervisorUuid).isEmpty()) {
+                String errorMessage = String.format(SUPERVISOR_NOT_FOUND, supervisorFullName);
+                log.error(errorMessage);
+                groupsErrors.addError(SUPERVISOR, errorMessage);
+            }
         }
-
-        String supervisorUuid = supervisor.uuid();
-        if (supervisorUuid == null) {
-            return emailItemsGroup;
-        }
-
-        Optional<UserEntity> supervisorOptional = userRepository.findByUuid(supervisorUuid);
-        if (supervisorOptional.isEmpty()) {
-            String errorMessage = String.format(SUPERVISOR_NOT_FOUND, supervisor.fullName());
-            log.error(errorMessage);
-            emailItemsGroup.addItemError(ItemError.ofError(errorMessage));
-        }
-
-        return emailItemsGroup;
     }
 
-    private ItemsGroup getItemsGroup(ImpactedGroup impactedGroup, String message) {
-        log.error(message);
-        return getItemsGroupFromImpactedGroupAndErrorMessage(impactedGroup, message);
+    private void addError(GroupsErrors groupsErrors, ImpactedGroup impactedGroup, String errorMessage) {
+        log.error(errorMessage);
+        groupsErrors.addError(impactedGroup, errorMessage);
     }
 }

@@ -1,4 +1,4 @@
-package cucumber.data;
+package cucumber.data.builder;
 
 import com.github.javafaker.Faker;
 import cucumber.utils.RandomUtils;

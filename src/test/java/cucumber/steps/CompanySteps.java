@@ -6,6 +6,8 @@ import io.cucumber.spring.ScenarioScope;
 import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
+
 @RequiredArgsConstructor
 @ScenarioScope
 public class CompanySteps {

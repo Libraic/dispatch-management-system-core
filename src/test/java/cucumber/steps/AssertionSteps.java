@@ -75,7 +75,7 @@ public class AssertionSteps {
     private void assertListsAreEqualIgnoringOrder(List<?> actual, List<?> expected, String... fields) {
         String[] fieldsToIgnore = getFieldsToIgnore(fields);
         assertThat(expected.size())
-            .withFailMessage("The collections are not of the same size.")
+            .withFailMessage(String.format("The collections are not of the same size. Actual size=[%s]. Expected size=[%s].", actual.size(), expected.size()))
             .isEqualTo(actual.size());
         Set<Integer> visited = new HashSet<>();
         List<AssertionError> errors = new ArrayList<>();

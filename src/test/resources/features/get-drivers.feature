@@ -43,3 +43,40 @@ Feature: Get Drivers by Criteria
       | Joana     | Moe      | +373-11-222-333 | 508           | 412         | joana.moe@gmail.com | Citizen         | 20000                  | 100           |
       | John      | Doe      | +373-65-123-456 | 123           | 456         | john.doe@gmail.com  | Citizen         | 10000                  | 98            |
     Then the expected and actual "Driver Data" lists are equal ignoring fields "state,city,trailerLength,trailerType"
+
+  Scenario: When the Drivers are retrieved by the Company, should only fetch the Drivers of that specific Company
+    Given CreateCompanyRequest request is created
+    When the Company is registered in the system
+    Then the status code is 201
+    Given CreateDriverRequest request is created with following parameters:
+      | firstName     | Michael                  |
+      | lastName      | Dalton                   |
+      | phoneNumber   | +373-65-123-456          |
+      | trailerNumber | 123                      |
+      | truckNumber   | 456                      |
+      | email         | michael.dalton@gmail.com |
+      | trailerHeight | 98                       |
+    When the Driver is registered in the system
+    Then the status code is 201
+
+    Given CreateCompanyRequest request is created
+    When the Company is registered in the system
+    Then the status code is 201
+    Given CreateDriverRequest request is created with following parameters:
+      | firstName     | Angelina                 |
+      | lastName      | Jolie                    |
+      | phoneNumber   | +373-65-421-678          |
+      | trailerNumber | 567                      |
+      | truckNumber   | 980                      |
+      | email         | angelina.jolie@gmail.com |
+      | trailerHeight | 100                      |
+    When the Driver is registered in the system
+    Then the status code is 201
+
+    When the Drivers are retrieved by the following query params:
+      | companyId | join |
+    Then the status code is 200
+    Given the expected DriverData objects are created from data:
+      | firstName | lastName | phoneNumber     | trailerNumber | truckNumber | email                    | documentsStatus | trailerHeight |
+      | Angelina  | Jolie    | +373-65-421-678 | 567           | 980         | angelina.jolie@gmail.com | Citizen         | 100           |
+    Then the expected and actual "Driver Data" lists are equal ignoring fields "state,city,trailerLength,trailerType,maxLegalWeightCapacity"

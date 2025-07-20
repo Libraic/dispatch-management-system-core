@@ -4,9 +4,11 @@ import cucumber.data.builder.DriverObjectsBuilder;
 import java.util.Map;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
+import io.cucumber.spring.ScenarioScope;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@ScenarioScope
 public class DriverSteps {
 
     private final DriverObjectsBuilder driverObjectsBuilder;

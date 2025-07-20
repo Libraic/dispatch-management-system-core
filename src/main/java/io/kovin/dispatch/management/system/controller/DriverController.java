@@ -42,13 +42,16 @@ public class DriverController {
     public ResponseEntity<ApiResponse<List<DriverData>, ErrorResponse>> getDriversByCriteria(
         @RequestParam(name = "firstName", required = false) String firstName,
         @RequestParam(name = "lastName", required = false) String lastName,
-        @RequestParam(name = "fullName", required = false) String fullName
+        @RequestParam(name = "fullName", required = false) String fullName,
+        @RequestParam(name = "companyId", required = false) String companyId
     ) {
         log.info("A request to fetch Drivers by criteria was received.");
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("firstName", firstName);
         queryParams.put("lastName", lastName);
         queryParams.put("fullName", fullName);
+        queryParams.put("company", companyId);
+        log.trace("The query parameters are the following: [{}].", queryParams);
         List<DriverData> usersData = driverFacade.getDriversByCriteria(queryParams);
         return ResponseEntity.ok(ApiResponse.fromData(usersData));
     }

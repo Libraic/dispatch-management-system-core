@@ -1,12 +1,16 @@
 package io.kovin.dispatch.management.system.utils;
 
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_SEARCH_CRITERIA;
+import static io.kovin.dispatch.management.system.utils.SearchOperations.EQUAL;
+import static io.kovin.dispatch.management.system.utils.SearchOperations.JOIN;
+import static io.kovin.dispatch.management.system.utils.SearchOperations.LIKE;
 
 import java.util.List;
 import java.util.Map;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.AccessLevel;
@@ -36,16 +40,29 @@ public class SearchCriteriaUtils {
             }).toList();
     }
 
-    public static Predicate getPredicate(SearchCriteria criteria, CriteriaBuilder criteriaBuilder, Root<?> root) {
+    public static <S, T> Join<S, T> getJoin(Root<S> root, String joinableField) {
+        return root.join(joinableField);
+    }
+
+    public static Predicate getPredicate(
+        SearchCriteria criteria,
+        CriteriaBuilder criteriaBuilder,
+        Root<?> root,
+        Join<?, ?> join
+    ) {
         return switch (criteria.getOperation()) {
-            case "like" ->
+            case LIKE ->
                 // We use cb.lower() to make the WHERE clause case-insensitive
                 criteriaBuilder.like(
                     criteriaBuilder.lower(root.get(criteria.getField())),
                     "%" + criteria.getValue().toLowerCase() + "%"
                 );
-            case "eq" -> criteriaBuilder.equal(
+            case EQUAL -> criteriaBuilder.equal(
                 root.get(criteria.getField()),
+                criteria.getValue()
+            );
+            case JOIN -> criteriaBuilder.equal(
+                join.get("uuid"),
                 criteria.getValue()
             );
             default -> null;

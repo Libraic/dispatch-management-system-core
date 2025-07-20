@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import io.cucumber.java.en.When;
+import io.cucumber.spring.ScenarioScope;
 import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
 import io.kovin.dispatch.management.system.model.request.CreateDriverRequest;
 import io.kovin.dispatch.management.system.model.request.CreateUserRequest;
@@ -25,9 +26,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
-import org.testcontainers.shaded.org.checkerframework.checker.units.qual.A;
 
 @RequiredArgsConstructor
+@ScenarioScope
 public class RestSteps {
 
     private static final String GROUPS_ERROR_RESPONSE_KEYWORD = "errors";
@@ -52,9 +53,16 @@ public class RestSteps {
 
     @When("the Drivers are retrieved by the following query params:")
     public void fetchDrivers(Map<String, String> queryParams) {
+        Map<String, String> modifiableQueryParams = new HashMap<>(queryParams);
+        if (modifiableQueryParams.containsKey("companyId")) {
+            CompanyData companyData = (CompanyData) scenarioContext.getActual(CompanyData.class);
+            String companyUuid = companyData.getUuid();
+            modifiableQueryParams.put("companyId", "join:" + companyUuid);
+        }
+
         ResponseEntity<ApiResponse<List<DriverData>, ErrorResponse>> response = restTemplate.getEntities(
             BASE_DRIVERS_API_URL,
-            queryParams
+            modifiableQueryParams
         );
         saveCreatedEntitiesAndStatusCode(response, DriverData.class);
     }

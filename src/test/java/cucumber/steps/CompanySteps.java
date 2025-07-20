@@ -1,6 +1,6 @@
 package cucumber.steps;
 
-import cucumber.data.CompanyObjectsBuilder;
+import cucumber.data.builder.CompanyObjectsBuilder;
 import io.cucumber.java.en.Given;
 import io.cucumber.spring.ScenarioScope;
 import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;

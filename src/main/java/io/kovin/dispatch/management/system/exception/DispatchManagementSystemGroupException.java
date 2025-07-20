@@ -1,22 +1,21 @@
 package io.kovin.dispatch.management.system.exception;
 
-import java.util.List;
-
+import io.kovin.dispatch.management.system.model.response.error.GroupsErrors;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
 public class DispatchManagementSystemGroupException extends RuntimeException {
 
-    private final List<ItemsGroup> itemsGroups;
+    private final GroupsErrors groupsErrors;
     private final HttpStatus httpStatus;
 
-    private DispatchManagementSystemGroupException(List<ItemsGroup> itemsGroups, HttpStatus httpStatus) {
-        this.itemsGroups = itemsGroups;
+    private DispatchManagementSystemGroupException(GroupsErrors groupsErrors, HttpStatus httpStatus) {
+        this.groupsErrors = groupsErrors;
         this.httpStatus = httpStatus;
     }
 
-    public static DispatchManagementSystemGroupException of(List<ItemsGroup> itemsGroups, HttpStatus httpStatus) {
-        throw new DispatchManagementSystemGroupException(itemsGroups, httpStatus);
+    public static DispatchManagementSystemGroupException of(GroupsErrors groupsErrors, HttpStatus httpStatus) {
+        throw new DispatchManagementSystemGroupException(groupsErrors, httpStatus);
     }
 }

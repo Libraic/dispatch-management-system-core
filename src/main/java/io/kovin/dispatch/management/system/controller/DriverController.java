@@ -8,7 +8,7 @@ import io.kovin.dispatch.management.system.model.request.CreateDriverRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.DriverData;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
-import io.kovin.dispatch.management.system.model.response.error.GroupErrorResponse;
+import io.kovin.dispatch.management.system.model.response.error.GroupsErrors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,12 +29,12 @@ public class DriverController {
     private final DriverFacade driverFacade;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<DriverData, List<GroupErrorResponse>>> createDriver(
+    public ResponseEntity<ApiResponse<DriverData, List<GroupsErrors>>> createDriver(
         @RequestBody CreateDriverRequest createDriverRequest
     ) {
         log.info("A request to create a driver was received.");
         DriverData driverData = driverFacade.createDriver(createDriverRequest);
-        ApiResponse<DriverData, List<GroupErrorResponse>> apiResponse = ApiResponse.fromData(driverData);
+        ApiResponse<DriverData, List<GroupsErrors>> apiResponse = ApiResponse.fromData(driverData);
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 

@@ -16,7 +16,7 @@ public class ErrorMessage {
     public static final String LAST_NAME_IS_MANDATORY = "The last name cannot be empty.";
     public static final String EMAIL_IS_MANDATORY = "The e-mail cannot be empty.";
     public static final String PASSWORD_IS_MANDATORY = "The password is mandatory.";
-    public static final String BIRTH_DATE_IS_MANDATORY = "The day, month and year of birth are mandatory.";
+    public static final String BIRTH_DATE_IS_MANDATORY = "The birth date is mandatory.";
     public static final String EMPLOYMENT_DATE_IS_MANDATORY = "The employment date of the user is mandatory.";
     public static final String PHONE_NUMBER_IS_MANDATORY = "The phone number cannot be empty.";
     public static final String TRUCK_NUMBER_IS_MANDATORY = "The truck number cannot be empty.";

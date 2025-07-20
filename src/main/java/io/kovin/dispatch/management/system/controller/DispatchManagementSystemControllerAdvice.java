@@ -1,15 +1,15 @@
 package io.kovin.dispatch.management.system.controller;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemGroupException;
 import io.kovin.dispatch.management.system.exception.ImpactedArea;
 import io.kovin.dispatch.management.system.exception.ImpactedField;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
-import io.kovin.dispatch.management.system.model.response.error.GroupErrorResponse;
-import io.kovin.dispatch.management.system.utils.ErrorUtils;
+import io.kovin.dispatch.management.system.model.response.error.GroupsErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +22,14 @@ public class DispatchManagementSystemControllerAdvice {
 
     @ExceptionHandler(DispatchManagementSystemGroupException.class)
     public ResponseEntity<ApiResponse<?, ?>> handleDispatchManagementSystemGroupException(DispatchManagementSystemGroupException ex) {
-        List<GroupErrorResponse> groupErrorResponses = ErrorUtils.getGroupsErrors(ex.getItemsGroups());
+        Map<String, Object> errors = ex.getGroupsErrors().getErrors()
+            .entrySet()
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getValue()));
+        GroupsErrorResponse groupsErrorResponse = new GroupsErrorResponse(errors);
         return ResponseEntity
             .status(ex.getHttpStatus())
-            .body(ApiResponse.fromError(groupErrorResponses));
+            .body(ApiResponse.fromError(groupsErrorResponse));
     }
 
     @ExceptionHandler(DispatchManagementSystemException.class)

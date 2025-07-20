@@ -4,7 +4,7 @@ Feature: Negative scenarios on creating the Driver in the system
     Given an empty CreateDriverRequest is created
     When the Driver is registered in the system
     Then the status code is 400
-    Given the expected GroupErrorResponse list is created from the following data:
+    Given the expected GroupsErrorResponse list is created from the following data:
       | firstName              | The first name cannot be empty.                            |
       | lastName               | The last name cannot be empty.                             |
       | email                  | The e-mail cannot be empty.                                |
@@ -18,7 +18,7 @@ Feature: Negative scenarios on creating the Driver in the system
       | position               | The position of the driver is not valid.                   |
       | state                  | The state the driver is making deliveries in is mandatory. |
       | city                   | The city the driver is making deliveries in is mandatory.  |
-    Then the expected and actual "Group Error Response" objects are equal
+    Then the expected and actual "Groups Error Response" objects are equal
 
   Scenario: When the Driver is created without the Company, should raise an error
     Given a CreateDriverRequest without Company is created

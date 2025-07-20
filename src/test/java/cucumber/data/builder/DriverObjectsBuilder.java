@@ -1,9 +1,8 @@
-package cucumber.data;
+package cucumber.data.builder;
 
-import static cucumber.utils.ITConstants.AT_SIGN;
 import static cucumber.utils.ITConstants.DOT;
-import static cucumber.utils.ITConstants.GOOGLE_DOMAIN;
 import static cucumber.utils.ITConstants.HYPHEN;
+import static cucumber.utils.RandomUtils.generateEmailFromFirstAndLastName;
 
 import com.github.javafaker.Faker;
 import cucumber.steps.ScenarioContext;
@@ -11,7 +10,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import io.cucumber.datatable.DataTable;
 import io.cucumber.spring.ScenarioScope;
 import io.kovin.dispatch.management.system.model.entity.enums.DocumentStatus;
@@ -95,13 +93,12 @@ public class DriverObjectsBuilder {
     private CreateDriverRequest getCreateDriverRequestWithoutCompany() {
         String firstName = faker.name().firstName();
         String lastName = faker.name().lastName();
-        String email = firstName.toLowerCase() + DOT + lastName.toLowerCase() + AT_SIGN + GOOGLE_DOMAIN;
         String phoneNumber = faker.phoneNumber().cellPhone().replace(DOT, HYPHEN);
         return CreateDriverRequest.builder()
             .firstName(firstName)
             .lastName(lastName)
             .phoneNumber(phoneNumber)
-            .email(email)
+            .email(generateEmailFromFirstAndLastName(firstName, lastName))
             .truckNumber(Integer.toString(faker.number().numberBetween(100, 999)))
             .trailerNumber(Integer.toString(faker.number().numberBetween(100, 999)))
             .maxLegalWeightCapacity(BigDecimal.valueOf(faker.number().numberBetween(10000, 50000)))

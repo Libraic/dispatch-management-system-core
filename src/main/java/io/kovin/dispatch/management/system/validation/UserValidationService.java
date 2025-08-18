@@ -110,6 +110,10 @@ public class UserValidationService {
         if (supervisor != null) {
             String supervisorUuid = supervisor.uuid();
             String supervisorFullName = supervisor.fullName() != null ? supervisor.fullName() : BLANK_STRING;
+            if (supervisorUuid == null && supervisorFullName.equals(BLANK_STRING)) {
+                return;
+            }
+
             if (supervisorUuid == null || userRepository.findByUuid(supervisorUuid).isEmpty()) {
                 String errorMessage = String.format(SUPERVISOR_NOT_FOUND, supervisorFullName);
                 log.error(errorMessage);

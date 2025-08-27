@@ -14,14 +14,15 @@ import org.springframework.http.HttpStatus;
 @Slf4j
 public class LocalDateUtils {
 
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
     public static LocalDate parseLocalDate(String localDate) {
         if (StringUtil.isNullOrEmpty(localDate)) {
             return null;
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         try {
-            return LocalDate.parse(localDate, formatter);
+            return LocalDate.parse(localDate, FORMATTER);
         } catch (DateTimeParseException e) {
             String errorMessage = String.format(ErrorMessage.INVALID_DATE_FORMAT, localDate);
             log.error(errorMessage);

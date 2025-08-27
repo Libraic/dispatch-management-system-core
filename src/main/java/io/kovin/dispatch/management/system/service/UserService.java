@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import io.kovin.dispatch.management.system.mapper.UserMapper;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
@@ -55,6 +57,12 @@ public class UserService {
         List<NoteEntity> noteEntities = noteService.saveNotes(request.notes(), createdUserEntity);
         log.info("The user has [{}] notes created.", noteEntities.size());
         return createdUserEntity;
+    }
+
+    public Map<String, UserEntity> getUsersMapByUuids(List<String> uuids) {
+        return userRepository.findByUuidIn(uuids)
+            .stream()
+            .collect(Collectors.toMap(UserEntity::getUuid, Function.identity()));
     }
 
     public List<UserEntity> getUsers(Map<String, String> queryParams) {

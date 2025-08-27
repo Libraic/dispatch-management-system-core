@@ -254,3 +254,42 @@ ALTER TABLE t_drivers
     ADD COLUMN trailer_height DECIMAL(10, 2);
 
 COMMENT ON COLUMN t_drivers.trailer_height IS 'The height of the trailer.';
+
+-- changeset libra:016
+-- comment: Create the t_drivers_mileage table and its related dependencies
+CREATE SEQUENCE t_drivers_mileage_sequence
+    INCREMENT BY 1
+    START WITH 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE t_drivers_mileage (
+    id              BIGINT PRIMARY KEY DEFAULT nextval('t_drivers_mileage_sequence'),
+    uuid            uuid   NOT NULL UNIQUE,
+    created_at      TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    last_updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    deleted_at      TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+    dispatcher_id   BIGINT,
+    company_id      BIGINT,
+    driver_id       BIGINT,
+    mileage_data    JSONB,
+
+    CONSTRAINT fk_mileage_dispatcher   FOREIGN KEY (dispatcher_id) REFERENCES t_users(id),
+    CONSTRAINT fk_mileage_company      FOREIGN KEY (company_id)    REFERENCES t_companies(id),
+    CONSTRAINT fk_mileage_driver       FOREIGN KEY (driver_id)     REFERENCES t_drivers(id)
+);
+
+ALTER SEQUENCE t_drivers_mileage_sequence OWNED BY t_drivers_mileage.id;
+
+COMMENT ON TABLE t_drivers_mileage IS 'The table used to store the mileage data of Drivers from a certain Company.';
+
+COMMENT ON COLUMN t_drivers_mileage.id              IS 'The primary key of the t_drivers_mileage table.';
+COMMENT ON COLUMN t_drivers_mileage.uuid            IS 'The UUID of the Driver Mileage.';
+COMMENT ON COLUMN t_drivers_mileage.created_at      IS 'The date the Driver Mileage was created.';
+COMMENT ON COLUMN t_drivers_mileage.last_updated_at IS 'The date the Driver Mileage was last updated.';
+COMMENT ON COLUMN t_drivers_mileage.deleted_at      IS 'The date the Driver Mileage was deleted.';
+COMMENT ON COLUMN t_drivers_mileage.dispatcher_id   IS 'The ID of the Dispatcher that is guiding the Driver.';
+COMMENT ON COLUMN t_drivers_mileage.company_id      IS 'The ID of the Company the Driver works for.';
+COMMENT ON COLUMN t_drivers_mileage.driver_id       IS 'The ID of the Driver.';
+COMMENT ON COLUMN t_drivers_mileage.mileage_data    IS 'The data that describes the Driver Mileage.';

@@ -38,7 +38,17 @@ public enum ImpactedGroup {
     DOCUMENT_STATUS("documentsStatus"),
     POSITION("position"),
     STATE("state"),
-    CITY("city");
+    CITY("city"),
+
+    /**
+     * Fields related to Mileage registration.
+     */
+    MILEAGE("mileage"),
+    MILEAGE_DATA("mileageData"),
+    COMPANY("company"),
+    DRIVER("driver"),
+    DISPATCHER("dispatcher"),
+    ;
 
     private final String groupName;
 }

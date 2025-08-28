@@ -28,9 +28,17 @@ public class GroupsErrors {
         String message,
         String identifier
     ) {
-        String group = impactedGroup.getGroupName();
+        addError(impactedGroup.getGroupName(), impactedField, message, identifier);
+    }
+
+    public void addError(
+        String impactedGroup,
+        ImpactedField impactedField,
+        String message,
+        String identifier
+    ) {
         String field = impactedField.getMappedField();
-        ErrorContainer errorContainer = errors.computeIfAbsent(group, (k) -> new MultipleErrorsContainer());
+        ErrorContainer errorContainer = errors.computeIfAbsent(impactedGroup, (k) -> new MultipleErrorsContainer());
         Error error = new Error(field, message, identifier);
         errorContainer.addError(error);
     }

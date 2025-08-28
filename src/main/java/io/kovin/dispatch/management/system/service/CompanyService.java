@@ -44,6 +44,10 @@ public class CompanyService {
         companyRepository.save(companyEntity);
     }
 
+    public Optional<CompanyEntity> findByUuid(String uuid) {
+        return companyRepository.findByUuidAndDeletedAtIsNull(uuid);
+    }
+
     public CompanyEntity getByUuid(String uuid) {
         log.info("Retrieving the company with UUID=[{}].", uuid);
         Optional<CompanyEntity> companyEntityOptional = companyRepository.findByUuidAndDeletedAtIsNull(uuid);

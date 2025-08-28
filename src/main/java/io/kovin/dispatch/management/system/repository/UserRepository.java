@@ -20,4 +20,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
             "LIKE LOWER(CONCAT('%', :fullName, '%'))"
     )
     List<UserEntity> searchByFullName(@Param("fullName") String fullName);
+
+    List<UserEntity> findByUuidIn(List<String> uuids);
 }

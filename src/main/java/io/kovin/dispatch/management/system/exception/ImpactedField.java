@@ -8,7 +8,14 @@ import lombok.Getter;
 public enum ImpactedField {
     COMPANY("company"),
     COMMISSION("commission"),
-    SUPERVISOR("supervisor");
+    SUPERVISOR("supervisor"),
+
+    DISPATCHER("dispatcher"),
+    DRIVER("driver"),
+    REVENUE("revenue"),
+    MILES("miles")
+
+    ;
 
     private final String mappedField;
 }

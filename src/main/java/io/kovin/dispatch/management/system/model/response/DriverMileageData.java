@@ -12,5 +12,5 @@ public class DriverMileageData {
     DriverData driver;
     UserData dispatcher;
     String itemIdentifier;
-    List<Mileage> mileage;
+    List<Mileage> mileageData;
 }

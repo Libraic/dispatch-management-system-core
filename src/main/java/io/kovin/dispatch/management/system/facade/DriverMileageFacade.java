@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.mapper.DriverMileageMapper;
+import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.entity.DriverEntity;
 import io.kovin.dispatch.management.system.model.entity.DriverMileageEntity;
@@ -17,10 +18,12 @@ import io.kovin.dispatch.management.system.model.request.DriverMileage;
 import io.kovin.dispatch.management.system.model.request.UpsertDriverMileageRequest;
 import io.kovin.dispatch.management.system.model.response.DriverMileageData;
 import io.kovin.dispatch.management.system.service.CompanyService;
+import io.kovin.dispatch.management.system.service.CriteriaService;
 import io.kovin.dispatch.management.system.service.DriverService;
 import io.kovin.dispatch.management.system.service.DriverMileageService;
 import io.kovin.dispatch.management.system.service.UserService;
 import io.kovin.dispatch.management.system.utils.CollectionUtils;
+import io.kovin.dispatch.management.system.utils.SearchCriteriaUtils;
 import io.kovin.dispatch.management.system.validation.DriverMileageValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +42,7 @@ public class DriverMileageFacade {
     private final UserService userService;
     private final DriverService driverService;
     private final DriverMileageService driverMileageService;
+    private final CriteriaService<DriverMileageEntity> criteriaService;
 
     private final DriverMileageMapper driverMileageMapper;
 
@@ -73,6 +77,13 @@ public class DriverMileageFacade {
         );
         List<DriverMileageEntity> savedMileageEntities = driverMileageService.saveMileageEntities(driverMileageEntities);
         return driverMileageMapper.fromDriverMileageEntitiesToDriverMileageDataList(savedMileageEntities);
+    }
+
+    public List<DriverMileageData> getDriversMileageByCriteria(Map<String, String> queryParams) {
+        List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams);
+        List<DriverMileageEntity> driverMileageEntities = criteriaService.getCollection(searchCriteria, DriverMileageEntity.class);
+        log.info("Found [{}] drivers that match the search criteria.", driverMileageEntities.size());
+        return driverMileageMapper.fromDriverMileageEntitiesToDriverMileageDataList(driverMileageEntities);
     }
 
     private Tuple<List<String>, List<String>, List<String>> getAffiliatedEntitiesUuids(List<DriverMileage> driverMileageList) {

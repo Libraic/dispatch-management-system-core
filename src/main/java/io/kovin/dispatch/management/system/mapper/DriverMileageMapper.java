@@ -72,7 +72,7 @@ public class DriverMileageMapper {
                 .driver(driverMapper.fromDriverEntityToDriverData(driverMileageEntity.getDriver()))
                 .dispatcher(userMapper.fromUserEntityToUserData(driverMileageEntity.getDispatcher()))
                 .itemIdentifier(driverMileageEntity.getItemIdentifier())
-                .mileage(fromMileageDataListToMileageList(driverMileageEntity.getMileageData()))
+                .mileageData(fromMileageDataListToMileageList(driverMileageEntity.getMileageData()))
                 .build()
             ).toList();
     }
@@ -81,7 +81,6 @@ public class DriverMileageMapper {
         List<Mileage> mileageList
     ) {
         return mileageList.stream()
-            .filter(NON_EMPTY_MILEAGE)
             .collect(Collectors.toMap(
                 Mileage::date,
                 mileage -> MileageData.builder()

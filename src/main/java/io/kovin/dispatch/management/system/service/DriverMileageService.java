@@ -9,6 +9,7 @@ import io.kovin.dispatch.management.system.repository.DriverMileageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -26,5 +27,11 @@ public class DriverMileageService {
         return driverMileageRepository.findByUuidIn(uuids)
             .stream()
             .collect(Collectors.toMap(DriverMileageEntity::getUuid, Function.identity()));
+    }
+
+    @Transactional
+    public void deleteDriversMileageByUuids(List<String> uuids) {
+        driverMileageRepository.deleteAllByUuidIn(uuids);
+        log.trace("[{}] records were deleted.", uuids);
     }
 }

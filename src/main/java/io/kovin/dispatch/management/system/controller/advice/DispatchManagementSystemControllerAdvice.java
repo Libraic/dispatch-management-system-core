@@ -1,4 +1,4 @@
-package io.kovin.dispatch.management.system.controller;
+package io.kovin.dispatch.management.system.controller.advice;
 
 import java.util.Map;
 import java.util.Optional;

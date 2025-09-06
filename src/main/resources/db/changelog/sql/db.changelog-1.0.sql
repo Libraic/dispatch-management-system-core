@@ -293,3 +293,34 @@ COMMENT ON COLUMN t_drivers_mileage.dispatcher_id   IS 'The ID of the Dispatcher
 COMMENT ON COLUMN t_drivers_mileage.company_id      IS 'The ID of the Company the Driver works for.';
 COMMENT ON COLUMN t_drivers_mileage.driver_id       IS 'The ID of the Driver.';
 COMMENT ON COLUMN t_drivers_mileage.mileage_data    IS 'The data that describes the Driver Mileage.';
+
+-- changeset libra:017
+-- comment: Add start_date and end_date column to t_drivers_mileage table
+ALTER TABLE t_drivers_mileage
+    ADD COLUMN start_date DATE,
+    ADD COLUMN end_date   DATE;
+
+COMMENT ON COLUMN t_drivers_mileage.start_date IS 'The start date of a particular mileage.';
+COMMENT ON COLUMN t_drivers_mileage.end_date   IS 'The end date of a particular mileage.';
+
+-- changeset libra:018
+-- comment: Populate the start_date and end_date columns from t_drivers_mileage table with the corresponding data from mileage_data column
+UPDATE t_drivers_mileage tdm
+SET start_date = temp.min_date,
+    end_date   = temp.max_date
+FROM (
+    SELECT
+        id,
+        MIN(to_date(temp_key, 'DD-MM-YYYY')) AS min_date,
+        MAX(to_date(temp_key, 'DD-MM-YYYY')) AS max_date
+    FROM t_drivers_mileage
+    CROSS JOIN LATERAL jsonb_object_keys(mileage_data) AS temp_key
+    GROUP BY id
+) temp
+WHERE tdm.id = temp.id;
+
+-- changeset libra:019
+-- comment: Drop the null constraint on start_date and end_date columns from t_drivers_mileage table
+ALTER TABLE t_drivers_mileage
+    ALTER COLUMN start_date SET NOT NULL,
+    ALTER COLUMN end_date   SET NOT NULL;

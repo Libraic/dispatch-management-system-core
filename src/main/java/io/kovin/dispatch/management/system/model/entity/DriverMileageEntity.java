@@ -10,6 +10,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Objects;
 
@@ -49,6 +51,12 @@ public class DriverMileageEntity extends Auditable {
     @ManyToOne
     @JoinColumn(name = "driver_id")
     private DriverEntity driver;
+
+    @Column
+    private LocalDate startDate;
+
+    @Column
+    private LocalDate endDate;
 
     @Transient
     private String itemIdentifier;

@@ -42,11 +42,15 @@ public class DriverMileageController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<DriverMileageData>, ErrorResponse>> getDriversMileageByCriteria(
-        @RequestParam(name = "companyId", required = false) String companyId
+        @RequestParam(name = "companyId", required = false) String companyId,
+        @RequestParam(name = "startDate", required = false) String startDate,
+        @RequestParam(name = "endDate", required = false) String endDate
     ) {
         log.info("A request to retrieve the drivers mileage by criteria was received.");
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("company", companyId);
+        queryParams.put("startDate", startDate);
+        queryParams.put("endDate", endDate);
         log.trace("The query parameters are the following: [{}].", queryParams);
         List<DriverMileageData> usersData = driverMileageFacade.getDriversMileageByCriteria(queryParams);
         return ResponseEntity.ok(ApiResponse.fromData(usersData));

@@ -34,23 +34,24 @@ public class DriverMileageMapper {
     ) {
         List<DriverMileageEntity> mileageEntities = new ArrayList<>();
         for (DriverMileage driverMileage : driverMileageList) {
+            DriverMileageEntity.DriverMileageEntityBuilder builder = DriverMileageEntity.builder()
+                .dispatcher(dispatchersMap.get(driverMileage.dispatcherUuid()))
+                .driver(driversMap.get(driverMileage.driverUuid()))
+                .mileageData(fromMileageDataRequestToMileageDataEntity(driverMileage.mileage()))
+                .itemIdentifier(driverMileage.itemIdentifier())
+                .startDate(driverMileage.startDate())
+                .endDate(driverMileage.endDate());
             DriverMileageEntity current = mileageMap.get(driverMileage.mileageUuid());
             if (current != null) {
-                DriverMileageEntity updated = current.toBuilder()
-                    .dispatcher(dispatchersMap.get(driverMileage.dispatcherUuid()))
-                    .driver(driversMap.get(driverMileage.driverUuid()))
-                    .mileageData(fromMileageDataRequestToMileageDataEntity(driverMileage.mileage()))
-                    .itemIdentifier(driverMileage.itemIdentifier())
+                DriverMileageEntity updated = builder
+                    .uuid(current.getUuid())
+                    .company(current.getCompany())
                     .build();
                 mileageEntities.add(updated);
             } else {
-                DriverMileageEntity newEntity = DriverMileageEntity.builder()
+                DriverMileageEntity newEntity = builder
                     .uuid(UUID.randomUUID().toString())
                     .company(company)
-                    .dispatcher(dispatchersMap.get(driverMileage.dispatcherUuid()))
-                    .driver(driversMap.get(driverMileage.driverUuid()))
-                    .itemIdentifier(driverMileage.itemIdentifier())
-                    .mileageData(fromMileageDataRequestToMileageDataEntity(driverMileage.mileage()))
                     .build();
                 mileageEntities.add(newEntity);
             }
@@ -72,6 +73,8 @@ public class DriverMileageMapper {
                 .driver(driverMapper.fromDriverEntityToDriverData(driverMileageEntity.getDriver()))
                 .dispatcher(userMapper.fromUserEntityToUserData(driverMileageEntity.getDispatcher()))
                 .itemIdentifier(driverMileageEntity.getItemIdentifier())
+                .startDate(driverMileageEntity.getStartDate())
+                .endDate(driverMileageEntity.getEndDate())
                 .mileageData(fromMileageDataListToMileageList(driverMileageEntity.getMileageData()))
                 .build()
             ).toList();

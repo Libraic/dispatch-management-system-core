@@ -1,10 +1,14 @@
 package io.kovin.dispatch.management.system.utils;
 
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_SEARCH_CRITERIA;
+import static io.kovin.dispatch.management.system.utils.LocalDateUtils.LITTLE_ENDIAN_FORMAT_REGEX;
 import static io.kovin.dispatch.management.system.utils.SearchOperations.EQUAL;
+import static io.kovin.dispatch.management.system.utils.SearchOperations.GREATER_OR_EQUAL;
 import static io.kovin.dispatch.management.system.utils.SearchOperations.JOIN;
+import static io.kovin.dispatch.management.system.utils.SearchOperations.LESS_OR_EQUAL;
 import static io.kovin.dispatch.management.system.utils.SearchOperations.LIKE;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
@@ -65,6 +69,22 @@ public class SearchCriteriaUtils {
                 join.get("uuid"),
                 criteria.getValue()
             );
+            case GREATER_OR_EQUAL -> {
+                String value = criteria.getValue();
+                if (value.matches(LITTLE_ENDIAN_FORMAT_REGEX)) {
+                    LocalDate dateValue = LocalDateUtils.parseLocalDate(value);
+                    yield criteriaBuilder.greaterThanOrEqualTo(root.get(criteria.getField()), dateValue);
+                }
+                yield null;
+            }
+            case LESS_OR_EQUAL -> {
+                String value = criteria.getValue();
+                if (value.matches(LITTLE_ENDIAN_FORMAT_REGEX)) {
+                    LocalDate dateValue = LocalDateUtils.parseLocalDate(value);
+                    yield criteriaBuilder.lessThanOrEqualTo(root.get(criteria.getField()), dateValue);
+                }
+                yield null;
+            }
             default -> null;
         };
     }

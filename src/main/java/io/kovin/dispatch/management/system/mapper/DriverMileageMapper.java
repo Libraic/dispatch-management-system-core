@@ -1,11 +1,13 @@
 package io.kovin.dispatch.management.system.mapper;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import io.kovin.dispatch.management.system.model.entity.Auditable;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.entity.DriverEntity;
 import io.kovin.dispatch.management.system.model.entity.MileageData;
@@ -34,24 +36,25 @@ public class DriverMileageMapper {
     ) {
         List<DriverMileageEntity> mileageEntities = new ArrayList<>();
         for (DriverMileage driverMileage : driverMileageList) {
-            DriverMileageEntity.DriverMileageEntityBuilder builder = DriverMileageEntity.builder()
-                .dispatcher(dispatchersMap.get(driverMileage.dispatcherUuid()))
-                .driver(driversMap.get(driverMileage.driverUuid()))
-                .mileageData(fromMileageDataRequestToMileageDataEntity(driverMileage.mileage()))
-                .itemIdentifier(driverMileage.itemIdentifier())
-                .startDate(driverMileage.startDate())
-                .endDate(driverMileage.endDate());
             DriverMileageEntity current = mileageMap.get(driverMileage.mileageUuid());
             if (current != null) {
-                DriverMileageEntity updated = builder
-                    .uuid(current.getUuid())
-                    .company(current.getCompany())
+                DriverMileageEntity updated = current.toBuilder()
+                    .dispatcher(dispatchersMap.get(driverMileage.dispatcherUuid()))
+                    .driver(driversMap.get(driverMileage.driverUuid()))
+                    .mileageData(fromMileageDataRequestToMileageDataEntity(driverMileage.mileage()))
+                    .itemIdentifier(driverMileage.itemIdentifier())
                     .build();
                 mileageEntities.add(updated);
             } else {
-                DriverMileageEntity newEntity = builder
+                DriverMileageEntity newEntity = DriverMileageEntity.builder()
                     .uuid(UUID.randomUUID().toString())
                     .company(company)
+                    .dispatcher(dispatchersMap.get(driverMileage.dispatcherUuid()))
+                    .driver(driversMap.get(driverMileage.driverUuid()))
+                    .mileageData(fromMileageDataRequestToMileageDataEntity(driverMileage.mileage()))
+                    .itemIdentifier(driverMileage.itemIdentifier())
+                    .startDate(driverMileage.startDate())
+                    .endDate(driverMileage.endDate())
                     .build();
                 mileageEntities.add(newEntity);
             }
@@ -68,6 +71,7 @@ public class DriverMileageMapper {
      */
     public List<DriverMileageData> fromDriverMileageEntitiesToDriverMileageDataList(List<DriverMileageEntity> entities) {
         return entities.stream()
+            .sorted(Comparator.comparing(Auditable::getCreatedAt))
             .map(driverMileageEntity -> DriverMileageData.builder()
                 .uuid(driverMileageEntity.getUuid())
                 .driver(driverMapper.fromDriverEntityToDriverData(driverMileageEntity.getDriver()))
@@ -77,7 +81,8 @@ public class DriverMileageMapper {
                 .endDate(driverMileageEntity.getEndDate())
                 .mileageData(fromMileageDataListToMileageList(driverMileageEntity.getMileageData()))
                 .build()
-            ).toList();
+            )
+            .toList();
     }
 
     private Map<String, MileageData> fromMileageDataRequestToMileageDataEntity(
@@ -104,11 +109,8 @@ public class DriverMileageMapper {
                 BigDecimalUtils.getBigDecimalFromDouble(entry.getValue().getRevenue()),
                 BigDecimalUtils.getBigDecimalFromDouble(entry.getValue().getMiles()),
                 entry.getValue().getNote()
-            )).toList();
+            ))
+            .sorted(Comparator.comparing(Mileage::date))
+            .toList();
     }
-
-    private final Predicate<Mileage> NON_EMPTY_MILEAGE = value -> value.destinationNote() != null
-        || value.note() != null
-        || value.revenue() != null
-        || value.miles() != null;
 }

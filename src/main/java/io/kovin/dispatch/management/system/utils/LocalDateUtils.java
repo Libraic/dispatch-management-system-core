@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 @Slf4j
 public class LocalDateUtils {
 
-    public static final String LITTLE_ENDIAN_FORMAT_REGEX = "^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\\d{4}$";
+    public static final String ISO_8601_FORMAT_REGEX = "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$";
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 

@@ -1,7 +1,9 @@
 package io.kovin.dispatch.management.system.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import io.kovin.dispatch.management.system.model.entity.DriverMileageEntity;
@@ -27,6 +29,20 @@ public class DriverMileageService {
         return driverMileageRepository.findByUuidIn(uuids)
             .stream()
             .collect(Collectors.toMap(DriverMileageEntity::getUuid, Function.identity()));
+    }
+
+    public Optional<DriverMileageEntity> getByDispatcherAndDriverAndStartDateAndEndDate(
+        String dispatcherUuid,
+        String driverUuid,
+        LocalDate startDate,
+        LocalDate endDate
+    ) {
+        return driverMileageRepository.findByDispatcher_UuidAndDriver_UuidAndStartDateAndEndDate(
+            dispatcherUuid,
+            driverUuid,
+            startDate,
+            endDate
+        );
     }
 
     @Transactional

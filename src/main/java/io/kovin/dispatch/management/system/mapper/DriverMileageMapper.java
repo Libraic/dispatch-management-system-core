@@ -1,12 +1,11 @@
 package io.kovin.dispatch.management.system.mapper;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import io.kovin.dispatch.management.system.model.entity.Auditable;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.entity.DriverEntity;
@@ -27,40 +26,25 @@ public class DriverMileageMapper {
     private final DriverMapper driverMapper;
     private final UserMapper userMapper;
 
-    public List<DriverMileageEntity> fromMileageDataListToMileageEntityList(
-        List<DriverMileage> driverMileageList,
+    public DriverMileageEntity createTransientDriverMileageEntity(
+        DriverMileage driverMileage,
+        Map<String, MileageData> mileageDataMap,
         CompanyEntity company,
         Map<String, UserEntity> dispatchersMap,
-        Map<String, DriverMileageEntity> mileageMap,
-        Map<String, DriverEntity> driversMap
+        Map<String, DriverEntity> driversMap,
+        LocalDate startDate,
+        LocalDate endDate
     ) {
-        List<DriverMileageEntity> mileageEntities = new ArrayList<>();
-        for (DriverMileage driverMileage : driverMileageList) {
-            DriverMileageEntity current = mileageMap.get(driverMileage.mileageUuid());
-            if (current != null) {
-                DriverMileageEntity updated = current.toBuilder()
-                    .dispatcher(dispatchersMap.get(driverMileage.dispatcherUuid()))
-                    .driver(driversMap.get(driverMileage.driverUuid()))
-                    .mileageData(fromMileageDataRequestToMileageDataEntity(driverMileage.mileage()))
-                    .itemIdentifier(driverMileage.itemIdentifier())
-                    .build();
-                mileageEntities.add(updated);
-            } else {
-                DriverMileageEntity newEntity = DriverMileageEntity.builder()
-                    .uuid(UUID.randomUUID().toString())
-                    .company(company)
-                    .dispatcher(dispatchersMap.get(driverMileage.dispatcherUuid()))
-                    .driver(driversMap.get(driverMileage.driverUuid()))
-                    .mileageData(fromMileageDataRequestToMileageDataEntity(driverMileage.mileage()))
-                    .itemIdentifier(driverMileage.itemIdentifier())
-                    .startDate(driverMileage.startDate())
-                    .endDate(driverMileage.endDate())
-                    .build();
-                mileageEntities.add(newEntity);
-            }
-        }
-
-        return mileageEntities;
+        return DriverMileageEntity.builder()
+            .uuid(UUID.randomUUID().toString())
+            .company(company)
+            .dispatcher(dispatchersMap.get(driverMileage.dispatcherUuid()))
+            .driver(driversMap.get(driverMileage.driverUuid()))
+            .mileageData(mileageDataMap)
+            .itemIdentifier(driverMileage.itemIdentifier())
+            .startDate(startDate)
+            .endDate(endDate)
+            .build();
     }
 
     /**
@@ -85,7 +69,35 @@ public class DriverMileageMapper {
             .toList();
     }
 
-    private Map<String, MileageData> fromMileageDataRequestToMileageDataEntity(
+    public DriverMileageEntity createDriverMileageEntity(
+        DriverMileageEntity current,
+        DriverMileage driverMileage,
+        UserEntity dispatcher,
+        DriverEntity driver,
+        CompanyEntity company
+    ) {
+        if (current != null) {
+            return current.toBuilder()
+                .dispatcher(dispatcher)
+                .driver(driver)
+                .mileageData(fromMileageDataRequestToMileageDataEntity(driverMileage.mileage()))
+                .itemIdentifier(driverMileage.itemIdentifier())
+                .build();
+        }
+
+        return DriverMileageEntity.builder()
+            .uuid(UUID.randomUUID().toString())
+            .company(company)
+            .dispatcher(dispatcher)
+            .driver(driver)
+            .mileageData(fromMileageDataRequestToMileageDataEntity(driverMileage.mileage()))
+            .itemIdentifier(driverMileage.itemIdentifier())
+            .startDate(driverMileage.startDate())
+            .endDate(driverMileage.endDate())
+            .build();
+    }
+
+    public Map<String, MileageData> fromMileageDataRequestToMileageDataEntity(
         List<Mileage> mileageList
     ) {
         return mileageList.stream()

@@ -40,7 +40,6 @@ public class ErrorMessage {
      * Error messages related to Drivers.
      */
     public static final String PHONE_NUMBER_IS_MANDATORY = "The phone number cannot be empty.";
-    public static final String TRUCK_NUMBER_IS_MANDATORY = "The truck number cannot be empty.";
     public static final String INVALID_TRAILER_HEIGHT = "The format of trailer height is invalid.";
     public static final String INVALID_MAX_LEGAL_WEIGHT_CAPACITY = "The format of max legal weight capacity is invalid.";
     public static final String INVALID_TRAILER_TYPE = "The trailer type is not valid.";
@@ -49,7 +48,6 @@ public class ErrorMessage {
     public static final String INVALID_DRIVER_POSITION = "The position of the driver is not valid.";
     public static final String STATE_IS_MANDATORY = "The state the driver is making deliveries in is mandatory.";
     public static final String CITY_IS_MANDATORY = "The city the driver is making deliveries in is mandatory.";
-    public static final String TRAILER_NUMBER_IS_MANDATORY = "The trailer number cannot be empty.";
 
     /**
      * Error messages related to Drivers Mileage.
@@ -61,4 +59,23 @@ public class ErrorMessage {
     public static final String DISPATCHER_IS_MANDATORY = "The dispatcher is missing.";
     public static final String NEGATIVE_REVENUE = "The revenue cannot be negative.";
     public static final String NEGATIVE_MILES = "The miles cannot be negative.";
+
+    /**
+     * Error messages related to Trailer.
+     */
+    public static final String TRAILER_NUMBER_IS_MANDATORY = "The trailer number cannot be empty.";
+    public static final String VIN_NUMBER_IS_MANDATORY = "The VIN number cannot be empty.";
+    public static final String VIN_NUMBER_EXISTS = "The VIN number is taken.";
+    public static final String TRAILER_YEAR_INVALID = "The trailer year is not valid.";
+    public static final String EQUIPMENT_TYPE_IS_MANDATORY = "The equipment type cannot be empty.";
+    public static final String EQUIPMENT_SIZE_INVALID = "The equipment size is not valid.";
+    public static final String PALLET_CAPACITY_INVALID = "The pallet capacity is not valid.";
+    public static final String MAX_WEIGHT_INVALID = "The max weight is not valid.";
+
+    /**
+     * Error messages related to Trucks.
+     */
+    public static final String TRUCK_NUMBER_IS_MANDATORY = "The truck number cannot be empty.";
+    public static final String TRUCK_YEAR_INVALID = "The truck year is not valid.";
+    public static final String TRUCK_WEIGHT_INVALID = "The truck weight is not valid.";
 }

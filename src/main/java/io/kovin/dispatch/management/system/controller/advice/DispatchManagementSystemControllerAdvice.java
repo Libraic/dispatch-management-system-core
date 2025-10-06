@@ -1,12 +1,9 @@
 package io.kovin.dispatch.management.system.controller.advice;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemGroupException;
-import io.kovin.dispatch.management.system.exception.ImpactedArea;
-import io.kovin.dispatch.management.system.exception.ImpactedField;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
 import io.kovin.dispatch.management.system.model.response.error.GroupsErrorResponse;
@@ -34,11 +31,8 @@ public class DispatchManagementSystemControllerAdvice {
 
     @ExceptionHandler(DispatchManagementSystemException.class)
     public ResponseEntity<ApiResponse<?, ?>> handleDispatchManagementSystemException(DispatchManagementSystemException ex) {
-        log.error(ex.getLocalizedMessage());
         var errorResponse = ErrorResponse.builder()
             .message(ex.getLocalizedMessage())
-            .field(Optional.ofNullable(ex.getImpactedField()).map(ImpactedField::getMappedField).orElse(null))
-            .area(Optional.ofNullable(ex.getImpactedArea()).map(ImpactedArea::getArea).orElse(null))
             .status(ex.getHttpStatus())
             .build();
         return ResponseEntity

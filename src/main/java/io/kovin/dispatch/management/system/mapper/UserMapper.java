@@ -1,7 +1,5 @@
 package io.kovin.dispatch.management.system.mapper;
 
-import static io.kovin.dispatch.management.system.exception.ImpactedArea.EMPLOYMENT_INFORMATION;
-import static io.kovin.dispatch.management.system.exception.ImpactedField.SUPERVISOR;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.SUPERVISOR_NOT_FOUND;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
@@ -76,7 +74,7 @@ public class UserMapper {
         if (supervisorOptional.isEmpty()) {
             String errorMessage = String.format(SUPERVISOR_NOT_FOUND, supervisor.fullName());
             log.error(errorMessage);
-            throw DispatchManagementSystemException.of(errorMessage, BAD_REQUEST, SUPERVISOR, EMPLOYMENT_INFORMATION);
+            throw DispatchManagementSystemException.of(errorMessage, BAD_REQUEST);
         }
 
         return supervisorOptional.get();

@@ -15,23 +15,12 @@ import org.springframework.http.HttpStatus;
 public class ErrorResponse {
 
     private String message;
-    private String field;
-    private String area;
     private HttpStatus status;
 
     public static ErrorResponse of(String message, HttpStatus status) {
         return ErrorResponse.builder()
             .message(message)
             .status(status)
-            .build();
-    }
-
-    public static ErrorResponse of(String message, HttpStatus status, String field, String area) {
-        return ErrorResponse.builder()
-            .message(message)
-            .status(status)
-            .field(field)
-            .area(area)
             .build();
     }
 }

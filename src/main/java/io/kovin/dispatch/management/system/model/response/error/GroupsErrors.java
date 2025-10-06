@@ -22,6 +22,17 @@ public class GroupsErrors {
         errors.put(group, errorContainer);
     }
 
+    public void addError(ImpactedField impactedField, String message) {
+        String field = impactedField.getMappedField();
+        Error error = new Error(field, message, null);
+        ErrorContainer errorContainer = new SingleErrorContainer(error);
+        errors.put(field, errorContainer);
+    }
+
+    public void addError(ImpactedGroup impactedGroup, ImpactedField impactedField, String message) {
+        addError(impactedGroup.getGroupName(), impactedField, message, null);
+    }
+
     public void addError(
         ImpactedGroup impactedGroup,
         ImpactedField impactedField,

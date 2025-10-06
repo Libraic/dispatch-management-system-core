@@ -48,7 +48,13 @@ public enum ImpactedGroup {
     COMPANY("company"),
     DRIVER("driver"),
     DISPATCHER("dispatcher"),
-    ;
 
+    /**
+     * Groups related to Asset registration.
+     */
+    TRAILER("trailer"),
+    TRUCK("truck")
+
+    ;
     private final String groupName;
 }

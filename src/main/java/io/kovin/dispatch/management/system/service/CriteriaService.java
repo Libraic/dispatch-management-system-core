@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
+import static io.kovin.dispatch.management.system.utils.QueryConstants.CURSOR_FIELD;
+
 @Service
 public class CriteriaService<T> {
 
@@ -23,8 +25,7 @@ public class CriteriaService<T> {
         criteriaBuilder = entityManager.getCriteriaBuilder();
     }
 
-    public List<T> getCollection(List<SearchCriteria> searchCriteria, Class<T> clazz) {
-
+    public List<T> getCollection(List<SearchCriteria> searchCriteria, Class<T> clazz, int size) {
         // Creates a typed query that will return results of type clazz
         CriteriaQuery<T> query = criteriaBuilder.createQuery(clazz);
 
@@ -41,7 +42,11 @@ public class CriteriaService<T> {
                 predicates.add(predicate);
             }
         }
-        query.select(root).where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
-        return entityManager.createQuery(query).getResultList();
+        query.select(root)
+            .where(criteriaBuilder.and(predicates.toArray(new Predicate[0])))
+            .orderBy(criteriaBuilder.desc(root.get(CURSOR_FIELD)));
+        return entityManager.createQuery(query)
+            .setMaxResults(size)
+            .getResultList();
     }
 }

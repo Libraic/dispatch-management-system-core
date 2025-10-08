@@ -21,6 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import static io.kovin.dispatch.management.system.utils.DispatchManagementSystemConstants.PAGE_BATCH_SIZE;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -74,7 +76,7 @@ public class CompanyService {
     }
 
     public List<CompanyEntity> getCompanies(Map<String, String> queryParams) {
-        List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams);
-        return criteriaService.getCollection(searchCriteria, CompanyEntity.class);
+        List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams, LocalDateTime.now());
+        return criteriaService.getCollection(searchCriteria, CompanyEntity.class, Integer.parseInt(PAGE_BATCH_SIZE));
     }
 }

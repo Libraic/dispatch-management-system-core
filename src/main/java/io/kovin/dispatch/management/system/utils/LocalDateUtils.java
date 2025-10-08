@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 public class LocalDateUtils {
 
     public static final String ISO_8601_FORMAT_REGEX = "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$";
+    public static final String ISO_8601_LOCAL_DATE_TIME_FORMAT_REGEX = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,9})?$";
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 

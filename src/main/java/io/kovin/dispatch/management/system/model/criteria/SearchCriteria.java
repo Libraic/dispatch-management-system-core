@@ -1,6 +1,6 @@
 package io.kovin.dispatch.management.system.model.criteria;
 
-import io.kovin.dispatch.management.system.utils.SearchOperations;
+import io.kovin.dispatch.management.system.utils.QueryConstants;
 import lombok.Builder;
 import lombok.Value;
 
@@ -13,6 +13,6 @@ public class SearchCriteria {
     String value;
 
     public boolean isJoinOperation() {
-        return operation.equals(SearchOperations.JOIN);
+        return operation.equals(QueryConstants.JOIN);
     }
 }

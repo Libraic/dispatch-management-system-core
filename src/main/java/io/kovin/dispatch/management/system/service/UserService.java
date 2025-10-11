@@ -1,6 +1,7 @@
 package io.kovin.dispatch.management.system.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static io.kovin.dispatch.management.system.utils.DispatchManagementSystemConstants.PAGE_BATCH_SIZE;
 
 @Service
 @RequiredArgsConstructor
@@ -66,7 +69,7 @@ public class UserService {
     }
 
     public List<UserEntity> getUsers(Map<String, String> queryParams) {
-        List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams);
-        return criteriaService.getCollection(searchCriteria, UserEntity.class);
+        List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams, LocalDateTime.now());
+        return criteriaService.getCollection(searchCriteria, UserEntity.class, Integer.parseInt(PAGE_BATCH_SIZE));
     }
 }

@@ -59,6 +59,7 @@ public class DriverMapper {
             .city(driver.getCity())
             .trailerType(driver.getTrailerType().getCode())
             .trailerLength(driver.getTrailerLength())
+            .createdAt(driver.getCreatedAt())
             .build();
     }
 }

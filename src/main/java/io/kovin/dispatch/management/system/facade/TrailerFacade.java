@@ -1,14 +1,20 @@
 package io.kovin.dispatch.management.system.facade;
 
+import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import io.kovin.dispatch.management.system.mapper.TrailerMapper;
+import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.entity.TrailerEntity;
 import io.kovin.dispatch.management.system.model.request.CreateTrailerRequest;
 import io.kovin.dispatch.management.system.model.response.TrailerData;
 import io.kovin.dispatch.management.system.service.CompanyService;
+import io.kovin.dispatch.management.system.service.CriteriaService;
 import io.kovin.dispatch.management.system.service.TrailerService;
+import io.kovin.dispatch.management.system.utils.SearchCriteriaUtils;
 import io.kovin.dispatch.management.system.validation.TrailerValidationService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,19 +25,31 @@ public class TrailerFacade {
     private final TrailerValidationService trailerValidationService;
     private final TrailerService trailerService;
     private final CompanyService companyService;
+    private final CriteriaService<TrailerEntity> criteriaService;
 
     private final TrailerMapper trailerMapper;
 
     @Transactional
     public TrailerData createTrailer(CreateTrailerRequest request) {
         if (request == null) {
-            return new TrailerData(null);
+            return TrailerData.builder().build();
         }
 
         CompanyEntity company = companyService.getByUuid(request.companyUuid());
         trailerValidationService.validateTrailerCreation(request);
         TrailerEntity trailerEntity = trailerMapper.fromCreateTrailerRequestToTrailerEntity(request, company);
         trailerService.saveTrailerEntity(trailerEntity);
-        return new TrailerData(trailerEntity.getUuid());
+        return trailerMapper.fromTrailerEntityToTrailerData(trailerEntity);
+    }
+
+    public List<TrailerData> getTrailersByCriteria(
+        Map<String, String> queryParams, LocalDateTime cursor, int size) {
+        LocalDateTime createdAtCursor = cursor != null ? cursor : LocalDateTime.now();
+        List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(
+            queryParams,
+            createdAtCursor
+        );
+        List<TrailerEntity> trucks = criteriaService.getCollection(searchCriteria, TrailerEntity.class, size);
+        return trucks.stream().map(trailerMapper::fromTrailerEntityToTrailerData).toList();
     }
 }

@@ -57,7 +57,7 @@ public class DriverController {
         queryParams.put("fullName", fullName);
         queryParams.put("company", companyId);
         log.trace("The query parameters are the following: [{}].", queryParams);
-        List<DriverData> usersData = driverFacade.getDriversByCriteria(queryParams, cursor, size);
-        return ResponseEntity.ok(ApiResponse.fromData(usersData));
+        List<DriverData> driversData = driverFacade.getDriversByCriteria(queryParams, cursor, size);
+        return ResponseEntity.ok(ApiResponse.fromData(driversData));
     }
 }

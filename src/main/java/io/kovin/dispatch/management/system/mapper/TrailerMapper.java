@@ -4,6 +4,7 @@ import java.util.UUID;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.entity.TrailerEntity;
 import io.kovin.dispatch.management.system.model.request.CreateTrailerRequest;
+import io.kovin.dispatch.management.system.model.response.TrailerData;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,6 +23,14 @@ public class TrailerMapper {
             .maxWeight(request.maxWeight())
             .tireSize(request.tireSize())
             .company(company)
+            .build();
+    }
+
+    public TrailerData fromTrailerEntityToTrailerData(TrailerEntity trailerEntity) {
+        return TrailerData.builder()
+            .uuid(trailerEntity.getUuid())
+            .trailerNumber(trailerEntity.getTrailerNumber())
+            .createdAt(trailerEntity.getCreatedAt())
             .build();
     }
 }

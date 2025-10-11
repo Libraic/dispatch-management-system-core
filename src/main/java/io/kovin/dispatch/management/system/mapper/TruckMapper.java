@@ -1,11 +1,11 @@
 package io.kovin.dispatch.management.system.mapper;
 
+import java.util.UUID;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.entity.TruckEntity;
 import io.kovin.dispatch.management.system.model.request.CreateTruckRequest;
+import io.kovin.dispatch.management.system.model.response.TruckData;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 @Component
 public class TruckMapper {
@@ -21,6 +21,15 @@ public class TruckMapper {
             .fuelType(request.fuelType())
             .color(request.color())
             .weight(request.weight())
+            .company(company)
+            .build();
+    }
+
+    public TruckData fromTruckEntityToTruckData(TruckEntity truckEntity) {
+        return TruckData.builder()
+            .uuid(truckEntity.getUuid())
+            .truckNumber(truckEntity.getTruckNumber())
+            .createdAt(truckEntity.getCreatedAt())
             .build();
     }
 }

@@ -4,3 +4,7 @@ spring:
     username: kovin
     password: kovin
     driver-class-name: org.postgresql.Driver
+
+logging:
+  file:
+    name: logs/dms-core.log

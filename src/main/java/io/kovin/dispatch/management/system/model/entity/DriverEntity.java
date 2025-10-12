@@ -2,7 +2,6 @@ package io.kovin.dispatch.management.system.model.entity;
 
 import io.kovin.dispatch.management.system.model.entity.enums.DocumentStatus;
 import io.kovin.dispatch.management.system.model.entity.enums.DriverPosition;
-import io.kovin.dispatch.management.system.model.entity.enums.TrailerType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,7 +13,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,25 +51,6 @@ public class DriverEntity extends Auditable {
     @Column
     private String email;
 
-    @Column
-    private String truckNumber;
-
-    @Column
-    private String trailerNumber;
-
-    @Column
-    private BigDecimal trailerHeight;
-
-    @Column
-    private BigDecimal maxLegalWeightCapacity;
-
-    @Enumerated(EnumType.STRING)
-    @Column
-    private TrailerType trailerType;
-
-    @Column
-    private BigDecimal trailerLength;
-
     @Enumerated(EnumType.STRING)
     @Column
     private DocumentStatus documentStatus;
@@ -89,6 +68,14 @@ public class DriverEntity extends Auditable {
     @ManyToOne
     @JoinColumn(name = "company_id")
     private CompanyEntity company;
+
+    @ManyToOne
+    @JoinColumn(name = "truck_id")
+    private TruckEntity truck;
+
+    @ManyToOne
+    @JoinColumn(name = "trailer_id")
+    private TrailerEntity trailer;
 
     @Override
     public boolean equals(Object o) {

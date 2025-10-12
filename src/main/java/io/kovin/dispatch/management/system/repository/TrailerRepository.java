@@ -6,5 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TrailerRepository extends JpaRepository<TrailerEntity, Long> {
 
-    Optional<TrailerEntity> findByVinNumber(String vinNumber);
+    Optional<TrailerEntity> findByVinNumberAndDeletedAtIsNull(String vinNumber);
+
+    Optional<TrailerEntity> findByUuidAndDeletedAtIsNull(String uuid);
 }

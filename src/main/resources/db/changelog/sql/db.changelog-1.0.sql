@@ -420,3 +420,29 @@ COMMENT ON COLUMN t_trucks.fuel_type       IS 'The fuel type of the Truck.';
 COMMENT ON COLUMN t_trucks.color           IS 'The color of the Truck.';
 COMMENT ON COLUMN t_trucks.weight          IS 'The weight the Truck is allowed to carry.';
 COMMENT ON COLUMN t_trucks.company_id      IS 'The identifier of the Company this truck was created for.';
+
+-- changeset libra:022
+-- comment: Remove truck_number, trailer_number, max_legal_weight_capacity, trailer_type and trailer_length columns from t_drivers table.
+ALTER TABLE t_drivers
+    DROP COLUMN truck_number,
+    DROP COLUMN trailer_number,
+    DROP COLUMN max_legal_weight_capacity,
+    DROP COLUMN trailer_type,
+    DROP COLUMN trailer_length;
+
+-- changeset libra:023
+-- comment: Add truck_id (t_trucks table) and trailer_id (t_trailers table) as foreign keys to t_drivers table.
+ALTER TABLE t_drivers
+    ADD COLUMN truck_id   BIGINT,
+    ADD COLUMN trailer_id BIGINT,
+
+    ADD CONSTRAINT fk_driver_truck   FOREIGN KEY (truck_id)   REFERENCES t_trucks(id),
+    ADD CONSTRAINT fk_driver_trailer FOREIGN KEY (trailer_id) REFERENCES t_trailers(id);
+
+COMMENT ON COLUMN t_drivers.truck_id   IS 'The identifier of the Truck that is currently assigned to this Driver.';
+COMMENT ON COLUMN t_drivers.trailer_id IS 'The identifier of the Trailer that is currently assigned to this Driver.';
+
+-- changeset libra:024
+-- comment: Remove trailer_height column from t_drivers table.
+ALTER TABLE t_drivers
+    DROP COLUMN trailer_height;

@@ -2,15 +2,16 @@ package io.kovin.dispatch.management.system.mapper;
 
 import static io.kovin.dispatch.management.system.utils.DispatchManagementSystemConstants.BLANK_SPACE;
 
+import java.util.Optional;
 import java.util.UUID;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.entity.DriverEntity;
+import io.kovin.dispatch.management.system.model.entity.TrailerEntity;
+import io.kovin.dispatch.management.system.model.entity.TruckEntity;
 import io.kovin.dispatch.management.system.model.entity.enums.DocumentStatus;
 import io.kovin.dispatch.management.system.model.entity.enums.DriverPosition;
-import io.kovin.dispatch.management.system.model.entity.enums.TrailerType;
 import io.kovin.dispatch.management.system.model.request.CreateDriverRequest;
 import io.kovin.dispatch.management.system.model.response.DriverData;
-import io.kovin.dispatch.management.system.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,10 +19,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DriverMapper {
 
-    private final CompanyService companyService;
-
-    public DriverEntity fromCreateDriverRequestToDriverEntity(CreateDriverRequest request) {
-        CompanyEntity company = companyService.getByUuid(request.companyUuid());
+    public DriverEntity fromCreateDriverRequestToDriverEntity(
+        CreateDriverRequest request,
+        CompanyEntity company,
+        TrailerEntity trailer,
+        TruckEntity truck
+    ) {;
         return DriverEntity.builder()
             .uuid(UUID.randomUUID().toString())
             .firstName(request.firstName())
@@ -29,17 +32,13 @@ public class DriverMapper {
             .fullName(request.firstName() + BLANK_SPACE + request.lastName())
             .phoneNumber(request.phoneNumber())
             .email(request.email())
-            .truckNumber(request.truckNumber())
-            .trailerNumber(request.trailerNumber())
-            .maxLegalWeightCapacity(request.maxLegalWeightCapacity())
-            .trailerType(TrailerType.from(request.trailerType()))
-            .trailerLength(request.trailerLength())
             .documentStatus(DocumentStatus.from(request.documentsStatus()))
             .position(DriverPosition.from(request.position()))
             .state(request.state())
             .city(request.city())
             .company(company)
-            .trailerHeight(request.trailerHeight())
+            .trailer(trailer)
+            .truck(truck)
             .build();
     }
 
@@ -48,17 +47,13 @@ public class DriverMapper {
             .uuid(driver.getUuid())
             .firstName(driver.getFirstName())
             .lastName(driver.getLastName())
-            .trailerNumber(driver.getTrailerNumber())
-            .truckNumber(driver.getTruckNumber())
+            .trailerNumber(Optional.ofNullable(driver.getTrailer()).map(TrailerEntity::getTrailerNumber).orElse(null))
+            .truckNumber(Optional.ofNullable(driver.getTruck()).map(TruckEntity::getTruckNumber).orElse(null))
             .email(driver.getEmail())
             .phoneNumber(driver.getPhoneNumber())
-            .trailerHeight(driver.getTrailerHeight())
-            .maxLegalWeightCapacity(driver.getMaxLegalWeightCapacity())
             .documentsStatus(driver.getDocumentStatus().getType())
             .state(driver.getState())
             .city(driver.getCity())
-            .trailerType(driver.getTrailerType().getCode())
-            .trailerLength(driver.getTrailerLength())
             .createdAt(driver.getCreatedAt())
             .build();
     }

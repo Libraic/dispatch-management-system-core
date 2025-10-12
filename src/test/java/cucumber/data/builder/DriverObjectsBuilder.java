@@ -6,7 +6,6 @@ import static cucumber.utils.RandomUtils.generateEmailFromFirstAndLastName;
 
 import com.github.javafaker.Faker;
 import cucumber.steps.ScenarioContext;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,6 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.spring.ScenarioScope;
 import io.kovin.dispatch.management.system.model.entity.enums.DocumentStatus;
 import io.kovin.dispatch.management.system.model.entity.enums.DriverPosition;
-import io.kovin.dispatch.management.system.model.entity.enums.TrailerType;
 import io.kovin.dispatch.management.system.model.request.CreateDriverRequest;
 import io.kovin.dispatch.management.system.model.response.CompanyData;
 import io.kovin.dispatch.management.system.model.response.DriverData;
@@ -58,15 +56,9 @@ public class DriverObjectsBuilder {
             .lastName(request.lastName())
             .email(request.email())
             .phoneNumber(request.phoneNumber())
-            .truckNumber(request.truckNumber())
-            .trailerNumber(request.trailerNumber())
             .documentsStatus(request.documentsStatus())
-            .trailerHeight(request.trailerHeight())
-            .maxLegalWeightCapacity(request.maxLegalWeightCapacity())
             .state(request.state())
             .city(request.city())
-            .trailerType(TrailerType.FLATBED.getCode())
-            .trailerLength(request.trailerLength())
             .build();
         scenarioContext.addExpected(DriverData.class, driverData);
     }
@@ -102,12 +94,6 @@ public class DriverObjectsBuilder {
             .lastName(lastName)
             .phoneNumber(phoneNumber)
             .email(generateEmailFromFirstAndLastName(firstName, lastName))
-            .trailerHeight(BigDecimal.valueOf(faker.number().numberBetween(90, 110)))
-            .truckNumber(Integer.toString(faker.number().numberBetween(100, 999)))
-            .trailerNumber(Integer.toString(faker.number().numberBetween(100, 999)))
-            .maxLegalWeightCapacity(BigDecimal.valueOf(faker.number().numberBetween(10000, 50000)))
-            .trailerType(TrailerType.FLATBED.getType())
-            .trailerLength(BigDecimal.valueOf(faker.number().numberBetween(10, 50)))
             .documentsStatus(DocumentStatus.CITIZEN.getType())
             .position(DriverPosition.COMPANY_DRIVER.getPosition())
             .state(faker.address().state())
@@ -126,11 +112,7 @@ public class DriverObjectsBuilder {
             .firstName(data.getOrDefault("firstName", request.firstName()))
             .lastName(data.getOrDefault("lastName", request.lastName()))
             .phoneNumber(data.getOrDefault("phoneNumber", request.phoneNumber()))
-            .trailerNumber(data.getOrDefault("trailerNumber", request.trailerNumber()))
-            .truckNumber(data.getOrDefault("truckNumber", request.truckNumber()))
             .email(data.getOrDefault("email", request.email()))
-            .trailerHeight(extractBigDecimalFieldByName(data, "trailerHeight", request.trailerHeight()))
-            .maxLegalWeightCapacity(extractBigDecimalFieldByName(data, "maxLegalWeightCapacity", request.maxLegalWeightCapacity()))
             .build();
     }
 
@@ -140,16 +122,7 @@ public class DriverObjectsBuilder {
             .lastName(driverData.getOrDefault("lastName", request.lastName()))
             .email(driverData.getOrDefault("email", request.email()))
             .phoneNumber(driverData.getOrDefault("phoneNumber", request.phoneNumber()))
-            .truckNumber(driverData.getOrDefault("truckNumber", request.truckNumber()))
-            .trailerNumber(driverData.getOrDefault("trailerNumber", request.trailerNumber()))
-            .trailerHeight(extractBigDecimalFieldByName(driverData, "trailerHeight", request.trailerHeight()))
-            .maxLegalWeightCapacity(extractBigDecimalFieldByName(driverData, "maxLegalWeightCapacity", request.maxLegalWeightCapacity()))
             .documentsStatus(driverData.getOrDefault("documentsStatus", request.documentsStatus()))
             .build();
-    }
-
-    private BigDecimal extractBigDecimalFieldByName(Map<String, String> data, String name, BigDecimal fallbackValue) {
-        String field = data.get(name);
-        return field != null ? BigDecimal.valueOf(Double.parseDouble(field)) : fallbackValue;
     }
 }

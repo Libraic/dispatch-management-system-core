@@ -5,57 +5,44 @@ Feature: Get Drivers by Criteria
     When the Company is registered in the system
     Then the status code is 201
     Given CreateDriverRequest request is created with following parameters:
-      | firstName              | John               |
-      | lastName               | Doe                |
-      | phoneNumber            | +373-65-123-456    |
-      | trailerNumber          | 123                |
-      | truckNumber            | 456                |
-      | email                  | john.doe@gmail.com |
-      | maxLegalWeightCapacity | 10000              |
-      | trailerHeight          | 98                 |
+      | firstName   | John               |
+      | lastName    | Doe                |
+      | phoneNumber | +373-65-123-456    |
+      | email       | john.doe@gmail.com |
     When the Driver is registered in the system
     Then the status code is 201
     Given CreateDriverRequest request is created with following parameters:
-      | firstName     | Brad                |
-      | lastName      | Pitt                |
-      | phoneNumber   | +373-65-421-678     |
-      | trailerNumber | 567                 |
-      | truckNumber   | 980                 |
-      | email         | brad.pitt@gmail.com |
+      | firstName   | Brad                |
+      | lastName    | Pitt                |
+      | phoneNumber | +373-65-421-678     |
+      | email       | brad.pitt@gmail.com |
     When the Driver is registered in the system
     Then the status code is 201
     Given CreateDriverRequest request is created with following parameters:
-      | firstName              | Joana               |
-      | lastName               | Moe                 |
-      | phoneNumber            | +373-11-222-333     |
-      | trailerNumber          | 508                 |
-      | truckNumber            | 412                 |
-      | email                  | joana.moe@gmail.com |
-      | maxLegalWeightCapacity | 20000               |
-      | trailerHeight          | 100                 |
+      | firstName   | Joana               |
+      | lastName    | Moe                 |
+      | phoneNumber | +373-11-222-333     |
+      | email       | joana.moe@gmail.com |
     When the Driver is registered in the system
     Then the status code is 201
     When the Drivers are retrieved by the following query params:
       | firstName | like:Jo |
     Then the status code is 200
     Given the expected DriverData objects are created from data:
-      | firstName | lastName | phoneNumber     | trailerNumber | truckNumber | email               | documentsStatus | maxLegalWeightCapacity | trailerHeight |
-      | Joana     | Moe      | +373-11-222-333 | 508           | 412         | joana.moe@gmail.com | Citizen         | 20000                  | 100           |
-      | John      | Doe      | +373-65-123-456 | 123           | 456         | john.doe@gmail.com  | Citizen         | 10000                  | 98            |
-    Then the expected and actual "Driver Data" lists are equal ignoring fields "state,city,trailerLength,trailerType"
+      | firstName | lastName | phoneNumber     | email               | documentsStatus |
+      | Joana     | Moe      | +373-11-222-333 | joana.moe@gmail.com | Citizen         |
+      | John      | Doe      | +373-65-123-456 | john.doe@gmail.com  | Citizen         |
+    Then the expected and actual "Driver Data" lists are equal ignoring fields "state,city"
 
   Scenario: When the Drivers are retrieved by the Company, should only fetch the Drivers of that specific Company
     Given CreateCompanyRequest request is created
     When the Company is registered in the system
     Then the status code is 201
     Given CreateDriverRequest request is created with following parameters:
-      | firstName     | Michael                  |
-      | lastName      | Dalton                   |
-      | phoneNumber   | +373-65-123-456          |
-      | trailerNumber | 123                      |
-      | truckNumber   | 456                      |
-      | email         | michael.dalton@gmail.com |
-      | trailerHeight | 98                       |
+      | firstName   | Michael                  |
+      | lastName    | Dalton                   |
+      | phoneNumber | +373-65-123-456          |
+      | email       | michael.dalton@gmail.com |
     When the Driver is registered in the system
     Then the status code is 201
 
@@ -63,13 +50,10 @@ Feature: Get Drivers by Criteria
     When the Company is registered in the system
     Then the status code is 201
     Given CreateDriverRequest request is created with following parameters:
-      | firstName     | Angelina                 |
-      | lastName      | Jolie                    |
-      | phoneNumber   | +373-65-421-678          |
-      | trailerNumber | 567                      |
-      | truckNumber   | 980                      |
-      | email         | angelina.jolie@gmail.com |
-      | trailerHeight | 100                      |
+      | firstName   | Angelina                 |
+      | lastName    | Jolie                    |
+      | phoneNumber | +373-65-421-678          |
+      | email       | angelina.jolie@gmail.com |
     When the Driver is registered in the system
     Then the status code is 201
 
@@ -77,6 +61,6 @@ Feature: Get Drivers by Criteria
       | companyId | join |
     Then the status code is 200
     Given the expected DriverData objects are created from data:
-      | firstName | lastName | phoneNumber     | trailerNumber | truckNumber | email                    | documentsStatus | trailerHeight |
-      | Angelina  | Jolie    | +373-65-421-678 | 567           | 980         | angelina.jolie@gmail.com | Citizen         | 100           |
-    Then the expected and actual "Driver Data" lists are equal ignoring fields "state,city,trailerLength,trailerType,maxLegalWeightCapacity"
+      | firstName | lastName | phoneNumber     | email                    | documentsStatus |
+      | Angelina  | Jolie    | +373-65-421-678 | angelina.jolie@gmail.com | Citizen         |
+    Then the expected and actual "Driver Data" lists are equal ignoring fields "state,city"

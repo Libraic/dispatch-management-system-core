@@ -28,11 +28,6 @@ public class DriverSteps {
         driverObjectsBuilder.createdExpectedDriverData();
     }
 
-    @Given("the expected DriverData objects are created")
-    public void createExpectedDriverDataObjects() {
-        driverObjectsBuilder.createExpectedDriversDataFromData();
-    }
-
     @Given("the expected DriverData objects are created from data:")
     public void createExpectedDriverDataObjects(DataTable dataTable) {
         driverObjectsBuilder.createExpectedDriversDataFromData(dataTable);

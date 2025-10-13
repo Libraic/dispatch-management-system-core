@@ -1,11 +1,9 @@
 package io.kovin.dispatch.management.system.facade;
 
-import static io.kovin.dispatch.management.system.utils.DispatchManagementSystemConstants.PAGE_BATCH_SIZE;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.COMPANY_IS_MANDATORY;
 
 import ch.qos.logback.core.util.StringUtil;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -91,12 +89,13 @@ public class DriverMileageFacade {
         return driverMileageMapper.fromDriverMileageEntitiesToDriverMileageDataList(currentWeekEntities);
     }
 
-    public List<DriverMileageData> getDriversMileageByCriteria(Map<String, String> queryParams) {
-        List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams, LocalDateTime.now());
+    public List<DriverMileageData> getDriversMileageByCriteria(Map<String, String> queryParams, int page, int size) {
+        List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams);
         List<DriverMileageEntity> driverMileageEntities = criteriaService.getCollection(
             searchCriteria,
             DriverMileageEntity.class,
-            Integer.parseInt(PAGE_BATCH_SIZE)
+            page,
+            size
         );
         log.info("Found [{}] drivers that match the search criteria.", driverMileageEntities.size());
         return driverMileageMapper.fromDriverMileageEntitiesToDriverMileageDataList(driverMileageEntities);

@@ -1,6 +1,5 @@
 package io.kovin.dispatch.management.system.facade;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import io.kovin.dispatch.management.system.mapper.TruckMapper;
@@ -42,14 +41,9 @@ public class TruckFacade {
         return truckMapper.fromTruckEntityToTruckData(truckEntity);
     }
 
-    public List<TruckData> getTrucksByCriteria(
-        Map<String, String> queryParams, LocalDateTime cursor, int size) {
-        LocalDateTime createdAtCursor = cursor != null ? cursor : LocalDateTime.now();
-        List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(
-            queryParams,
-            createdAtCursor
-        );
-        List<TruckEntity> trucks = criteriaService.getCollection(searchCriteria, TruckEntity.class, size);
+    public List<TruckData> getTrucksByCriteria(Map<String, String> queryParams, int page, int size) {
+        List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams);
+        List<TruckEntity> trucks = criteriaService.getCollection(searchCriteria, TruckEntity.class, page, size);
         return trucks.stream().map(truckMapper::fromTruckEntityToTruckData).toList();
     }
 }

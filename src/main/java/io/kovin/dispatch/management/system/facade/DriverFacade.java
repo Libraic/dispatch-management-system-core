@@ -45,13 +45,9 @@ public class DriverFacade {
         return driverMapper.fromDriverEntityToDriverData(savedDriverEntity);
     }
 
-    public List<DriverData> getDriversByCriteria(Map<String, String> queryParams, LocalDateTime cursor, int size) {
-        LocalDateTime createdAtCursor = cursor != null ? cursor : LocalDateTime.now();
-        List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(
-            queryParams,
-            createdAtCursor
-        );
-        List<DriverEntity> drivers = criteriaService.getCollection(searchCriteria, DriverEntity.class, size);
+    public List<DriverData> getDriversByCriteria(Map<String, String> queryParams, int page, int size) {
+        List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams);
+        List<DriverEntity> drivers = criteriaService.getCollection(searchCriteria, DriverEntity.class, page, size);
         log.info("Found [{}] drivers that match the search criteria.", drivers.size());
         return drivers.stream().map(driverMapper::fromDriverEntityToDriverData).toList();
     }

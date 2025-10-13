@@ -3,6 +3,8 @@ package io.kovin.dispatch.management.system.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import io.kovin.dispatch.management.system.facade.UserFacade;
 import io.kovin.dispatch.management.system.mapper.UserMapper;
 import io.kovin.dispatch.management.system.model.entity.UserEntity;
 import io.kovin.dispatch.management.system.model.request.CreateUserRequest;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class UserController {
 
+    private final UserFacade userFacade;
     private final UserService userService;
     private final UserMapper userMapper;
 
@@ -40,6 +43,8 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserData>, ErrorResponse>> getUsersByCriteria(
+        @RequestParam(name = "page", required = false) Integer page,
+        @RequestParam(name = "size", required = false) Integer size,
         @RequestParam(name = "firstName", required = false) String firstName,
         @RequestParam(name = "nickname", required = false) String nickname,
         @RequestParam(name = "lastName", required = false) String lastName,
@@ -51,11 +56,9 @@ public class UserController {
         fields.put("nickname", nickname);
         fields.put("lastName", lastName);
         fields.put("fullName", fullName);
-
-        List<UserEntity> users = userService.getUsers(fields);
-        List<UserData> usersData = users.stream()
-            .map(userMapper::fromUserEntityToUserData)
-            .toList();
+        int finalPage = page == null ? 0 : page;
+        int finalSize = size == null ? 0 : size;
+        List<UserData> usersData = userFacade.getUsersByCriteria(fields, finalPage, finalSize);
         return ResponseEntity.ok(ApiResponse.fromData(usersData));
     }
 }

@@ -1,8 +1,5 @@
 package io.kovin.dispatch.management.system.controller;
 
-import static io.kovin.dispatch.management.system.utils.DispatchManagementSystemConstants.PAGE_BATCH_SIZE;
-
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +40,8 @@ public class DriverController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<DriverData>, ErrorResponse>> getDriversByCriteria(
-        @RequestParam(name = "cursor", required = false) LocalDateTime cursor,
-        @RequestParam(name = "size", required = false, defaultValue = PAGE_BATCH_SIZE) int size,
+        @RequestParam(name = "page", required = false) Integer page,
+        @RequestParam(name = "size", required = false) Integer size,
         @RequestParam(name = "firstName", required = false) String firstName,
         @RequestParam(name = "lastName", required = false) String lastName,
         @RequestParam(name = "fullName", required = false) String fullName,
@@ -57,7 +54,10 @@ public class DriverController {
         queryParams.put("fullName", fullName);
         queryParams.put("company", companyId);
         log.trace("The query parameters are the following: [{}].", queryParams);
-        List<DriverData> driversData = driverFacade.getDriversByCriteria(queryParams, cursor, size);
+
+        int finalPage = page == null ? 0 : page;
+        int finalSize = size == null ? 0 : size;
+        List<DriverData> driversData = driverFacade.getDriversByCriteria(queryParams, finalPage, finalSize);
         return ResponseEntity.ok(ApiResponse.fromData(driversData));
     }
 }

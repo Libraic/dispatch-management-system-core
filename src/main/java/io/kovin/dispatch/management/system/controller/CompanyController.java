@@ -51,22 +51,10 @@ public class CompanyController {
         return ResponseEntity.ok(apiResponse);
     }
 
-//    public ResponseEntity<ApiResponse<PagedModel<EntityModel<CompanyData>>>> getCompanies(
-//        @RequestParam(defaultValue = "0") int page,
-//        @RequestParam(defaultValue = "1") int size
-//    ) {
-//        log.info("A request to retrieve all companies was received.");
-//        GetCompaniesRequest getCompaniesRequest = GetCompaniesRequest.builder()
-//            .page(page)
-//            .size(size)
-//            .build();
-//        PagedModel<EntityModel<CompanyData>> companyDataPage = companyFacade.getCompanies(getCompaniesRequest);
-//        ApiResponse<PagedModel<EntityModel<CompanyData>>> apiResponse = ApiResponse.fromData(companyDataPage);
-//        return ResponseEntity.ok(apiResponse);
-//    }
-
     @GetMapping
     public ResponseEntity<ApiResponse<List<CompanyData>, ErrorResponse>> getCompaniesByCriteria(
+        @RequestParam(name = "page", required = false) Integer page,
+        @RequestParam(name = "size", required = false) Integer size,
         @RequestParam(name = "uuid", required = false) String uuid,
         @RequestParam(name = "name", required = false) String name
     ) {
@@ -74,10 +62,9 @@ public class CompanyController {
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("uuid", uuid);
         queryParams.put("name", name);
-        List<CompanyEntity> companies = companyService.getCompanies(queryParams);
-        List<CompanyData> companiesData = companies.stream()
-            .map(companyMapper::fromCompanyEntityToCompanyData)
-            .toList();
+        int finalPage = page == null ? 0 : page;
+        int finalSize = size == null ? 0 : size;
+        List<CompanyData> companiesData = companyFacade.getCompaniesByCriteria(queryParams, finalPage, finalSize);
         return ResponseEntity.ok(ApiResponse.fromData(companiesData));
     }
 

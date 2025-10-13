@@ -2,26 +2,18 @@ package io.kovin.dispatch.management.system.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.mapper.CompanyMapper;
-import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
 import io.kovin.dispatch.management.system.repository.CompanyRepository;
 import io.kovin.dispatch.management.system.utils.ErrorMessage;
-import io.kovin.dispatch.management.system.utils.SearchCriteriaUtils;
 import io.kovin.dispatch.management.system.validation.CompanyValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import static io.kovin.dispatch.management.system.utils.DispatchManagementSystemConstants.PAGE_BATCH_SIZE;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +23,6 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
     private final CompanyValidationService companyValidationService;
-    private final CriteriaService<CompanyEntity> criteriaService;
 
     public CompanyEntity createCompany(CreateCompanyRequest createCompanyRequest) {
         companyValidationService.validateCompanyCreation(createCompanyRequest);
@@ -68,15 +59,5 @@ public class CompanyService {
         }
 
         return companyRepository.findByUuidIn(uuids);
-    }
-
-    public Page<CompanyEntity> getCompanies(int pageNumber, int pageSize) {
-        Pageable page = PageRequest.of(pageNumber, pageSize);
-        return companyRepository.findAll(page);
-    }
-
-    public List<CompanyEntity> getCompanies(Map<String, String> queryParams) {
-        List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams, LocalDateTime.now());
-        return criteriaService.getCollection(searchCriteria, CompanyEntity.class, Integer.parseInt(PAGE_BATCH_SIZE));
     }
 }

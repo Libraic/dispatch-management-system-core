@@ -4,7 +4,6 @@ import static io.kovin.dispatch.management.system.utils.DispatchManagementSystem
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_SEARCH_CRITERIA;
 import static io.kovin.dispatch.management.system.utils.LocalDateUtils.ISO_8601_FORMAT_REGEX;
 import static io.kovin.dispatch.management.system.utils.LocalDateUtils.ISO_8601_LOCAL_DATE_TIME_FORMAT_REGEX;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.CURSOR_FIELD;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.EQUAL;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.GREATER_OR_EQUAL;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.JOIN;
@@ -33,8 +32,8 @@ import org.springframework.http.HttpStatus;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SearchCriteriaUtils {
 
-    public static List<SearchCriteria> getSearchCriteriaListFromQueryParams(Map<String, String> queryParams, LocalDateTime cursor) {
-        List<SearchCriteria> criteria = queryParams.entrySet()
+    public static List<SearchCriteria> getSearchCriteriaListFromQueryParams(Map<String, String> queryParams) {
+        return queryParams.entrySet()
             .stream()
             .filter(entry -> entry.getValue() != null)
             .map(entry -> {
@@ -49,13 +48,6 @@ public class SearchCriteriaUtils {
                     .value(operationAndValue[1])
                     .build();
             }).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-
-        SearchCriteria cursorSearchCriteria = createCursorSearchCriteria(cursor);
-        if (cursorSearchCriteria != null) {
-            criteria.add(cursorSearchCriteria);
-        }
-
-        return criteria;
     }
 
     public static <S, T> Join<S, T> getJoin(Root<S> root, String joinableField) {
@@ -89,18 +81,6 @@ public class SearchCriteriaUtils {
             case LESS -> criteriaBuilder.lessThan(root.get(criteria.getField()), (T) parse(criteria.getValue()));
             default -> null;
         };
-    }
-
-    private static SearchCriteria createCursorSearchCriteria(LocalDateTime cursor) {
-        if (cursor != null) {
-            return SearchCriteria.builder()
-                .field(CURSOR_FIELD)
-                .operation(LESS)
-                .value(cursor.toString())
-                .build();
-        }
-
-        return null;
     }
 
     @SuppressWarnings("unchecked")

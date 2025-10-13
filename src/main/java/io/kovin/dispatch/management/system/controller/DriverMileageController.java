@@ -42,6 +42,8 @@ public class DriverMileageController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<DriverMileageData>, ErrorResponse>> getDriversMileageByCriteria(
+        @RequestParam(name = "page", required = false) Integer page,
+        @RequestParam(name = "size", required = false) Integer size,
         @RequestParam(name = "companyId", required = false) String companyId,
         @RequestParam(name = "startDate", required = false) String startDate,
         @RequestParam(name = "endDate", required = false) String endDate
@@ -52,7 +54,9 @@ public class DriverMileageController {
         queryParams.put("startDate", startDate);
         queryParams.put("endDate", endDate);
         log.trace("The query parameters are the following: [{}].", queryParams);
-        List<DriverMileageData> usersData = driverMileageFacade.getDriversMileageByCriteria(queryParams);
+        int finalPage = page == null ? 0 : page;
+        int finalSize = size == null ? 0 : size;
+        List<DriverMileageData> usersData = driverMileageFacade.getDriversMileageByCriteria(queryParams, finalPage, finalSize);
         return ResponseEntity.ok(ApiResponse.fromData(usersData));
     }
 

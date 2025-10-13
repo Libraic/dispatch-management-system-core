@@ -37,9 +37,9 @@ public class QueryConstants {
     public static final String LESS = "lt";
 
     /**
-     * The auditable field, createdAt, which is inherited by every entity in the system, is used as the Cursor field.
+     * The auditable field, createdAt, which is inherited by every entity in the system, is used as the default sorting criteria.
      */
-    public static final String CURSOR_FIELD = "createdAt";
+    public static final String DEFAULT_SORTING_FIELD = "createdAt";
 
     /**
      * The UUID column, which is an identifier that can be used outside the database. Usually used on JOIN clauses.
@@ -50,4 +50,9 @@ public class QueryConstants {
      * Percent literal, which acts as a Wildcard in SQL.
      */
     public static final String WILDCARD = "%";
+
+    /**
+     * Default size value.
+     */
+    public static final int DEFAULT_SIZE = 10;
 }

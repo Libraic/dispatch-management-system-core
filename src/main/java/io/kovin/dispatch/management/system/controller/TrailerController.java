@@ -1,5 +1,8 @@
 package io.kovin.dispatch.management.system.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import io.kovin.dispatch.management.system.facade.TrailerFacade;
 import io.kovin.dispatch.management.system.model.request.CreateTrailerRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
@@ -16,12 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import static io.kovin.dispatch.management.system.utils.DispatchManagementSystemConstants.PAGE_BATCH_SIZE;
-
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("api/trailers")
@@ -42,8 +39,8 @@ public class TrailerController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<TrailerData>, ErrorResponse>> getTrailersByCriteria(
-        @RequestParam(name = "cursor", required = false) LocalDateTime cursor,
-        @RequestParam(name = "size", required = false, defaultValue = PAGE_BATCH_SIZE) int size,
+        @RequestParam(name = "page", required = false) Integer page,
+        @RequestParam(name = "size", required = false) Integer size,
         @RequestParam(name = "trailerNumber", required = false) String trailerNumber,
         @RequestParam(name = "companyId", required = false) String companyId
     ) {
@@ -52,7 +49,9 @@ public class TrailerController {
         queryParams.put("trailerNumber", trailerNumber);
         queryParams.put("company", companyId);
         log.trace("The query parameters are the following: [{}].", queryParams);
-        List<TrailerData> trailersData = trailerFacade.getTrailersByCriteria(queryParams, cursor, size);
+        int finalPage = page == null ? 0 : page;
+        int finalSize = size == null ? 0 : size;
+        List<TrailerData> trailersData = trailerFacade.getTrailersByCriteria(queryParams, finalPage, finalSize);
         return ResponseEntity.ok(ApiResponse.fromData(trailersData));
     }
 }

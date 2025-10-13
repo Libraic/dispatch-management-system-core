@@ -3,6 +3,7 @@ package io.kovin.dispatch.management.system.service;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.utils.SearchCriteriaUtils;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
@@ -12,7 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
-import static io.kovin.dispatch.management.system.utils.QueryConstants.CURSOR_FIELD;
+import static io.kovin.dispatch.management.system.utils.QueryConstants.DEFAULT_SIZE;
+import static io.kovin.dispatch.management.system.utils.QueryConstants.DEFAULT_SORTING_FIELD;
 
 @Service
 public class CriteriaService<T> {
@@ -25,7 +27,7 @@ public class CriteriaService<T> {
         criteriaBuilder = entityManager.getCriteriaBuilder();
     }
 
-    public List<T> getCollection(List<SearchCriteria> searchCriteria, Class<T> clazz, int size) {
+    public List<T> getCollection(List<SearchCriteria> searchCriteria, Class<T> clazz, int page, int size) {
         // Creates a typed query that will return results of type clazz
         CriteriaQuery<T> query = criteriaBuilder.createQuery(clazz);
 
@@ -44,9 +46,12 @@ public class CriteriaService<T> {
         }
         query.select(root)
             .where(criteriaBuilder.and(predicates.toArray(new Predicate[0])))
-            .orderBy(criteriaBuilder.desc(root.get(CURSOR_FIELD)));
-        return entityManager.createQuery(query)
-            .setMaxResults(size)
-            .getResultList();
+            .orderBy(criteriaBuilder.desc(root.get(DEFAULT_SORTING_FIELD)));
+
+        int finalSize = size == 0 ? DEFAULT_SIZE : size;
+        TypedQuery<T> typedQuery = entityManager.createQuery(query)
+            .setFirstResult(page * finalSize)
+            .setMaxResults(finalSize);
+        return typedQuery.getResultList();
     }
 }

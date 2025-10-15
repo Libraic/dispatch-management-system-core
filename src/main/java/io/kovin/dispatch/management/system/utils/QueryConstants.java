@@ -47,6 +47,11 @@ public class QueryConstants {
     public static final String UUID_FIELD = "uuid";
 
     /**
+     * The deletedAt field.
+     */
+    public static final String DELETED_AT = "deletedAt";
+
+    /**
      * Percent literal, which acts as a Wildcard in SQL.
      */
     public static final String WILDCARD = "%";

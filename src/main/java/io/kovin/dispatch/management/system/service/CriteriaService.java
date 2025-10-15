@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import static io.kovin.dispatch.management.system.utils.QueryConstants.DEFAULT_SIZE;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.DEFAULT_SORTING_FIELD;
+import static io.kovin.dispatch.management.system.utils.QueryConstants.DELETED_AT;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.UUID_FIELD;
 
 @Service
@@ -38,6 +39,7 @@ public class CriteriaService<T> {
         // Predicates are basically WHERE clauses
         List<Predicate> predicates = new ArrayList<>();
 
+        // Create Predicates from the Query Parameters
         for (SearchCriteria criteria : searchCriteria) {
             Join<?, ?> join = criteria.isJoinOperation() ? SearchCriteriaUtils.getJoin(root, criteria.getField()) : null;
             Predicate predicate = SearchCriteriaUtils.getPredicate(criteria, criteriaBuilder, root, join);
@@ -45,6 +47,10 @@ public class CriteriaService<T> {
                 predicates.add(predicate);
             }
         }
+
+        // Get common Predicates, that apply to all entities.
+        predicates.addAll(getCommonPredicates(root));
+
         query.select(root)
             .where(criteriaBuilder.and(predicates.toArray(new Predicate[0])))
             .orderBy(criteriaBuilder.desc(root.get(DEFAULT_SORTING_FIELD)));
@@ -64,5 +70,11 @@ public class CriteriaService<T> {
         Predicate joinPredicate = criteriaBuilder.equal(join.get(UUID_FIELD), joinableEntityId);
         query.select(cb.count(root)).where(criteriaBuilder.and(joinPredicate));
         return entityManager.createQuery(query).getSingleResult();
+    }
+
+    private List<Predicate> getCommonPredicates(Root<T> root) {
+        List<Predicate> commonPredicates = new ArrayList<>();
+        commonPredicates.add(criteriaBuilder.isNull(root.get(DELETED_AT)));
+        return commonPredicates;
     }
 }

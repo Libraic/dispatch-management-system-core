@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
+import io.kovin.dispatch.management.system.model.response.PaginationDetails;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
@@ -32,6 +33,13 @@ import org.springframework.http.HttpStatus;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SearchCriteriaUtils {
 
+    /**
+     * Converts the String literals, namely the left-hand operator, the operation and the right-hand operator into
+     * a DTO object.
+     *
+     * @param queryParams the map containing the String literals, where the K is the field, and V is the op:value.
+     * @return a list of DTOs.
+     */
     public static List<SearchCriteria> getSearchCriteriaListFromQueryParams(Map<String, String> queryParams) {
         return queryParams.entrySet()
             .stream()
@@ -54,6 +62,17 @@ public class SearchCriteriaUtils {
         return root.join(joinableField);
     }
 
+    /**
+     * Converts the conditions/filters of searching into processable Predicates by Criteria API.
+     * If there is a join object sent, it will be considered.
+     *
+     * @param criteria        the DTO containing the conditions and the fields involved.
+     * @param criteriaBuilder the Criteria Builder object.
+     * @param root            the Root of the query.
+     * @param join            the object depicting the JOIN clause.
+     * @return                the Predicate that reflects the condition/filter to be applied.
+     * @param <T>             the type of the entity.
+     */
     @SuppressWarnings("unchecked")
     public static <T extends Comparable<T>> Predicate getPredicate(
         SearchCriteria criteria,
@@ -72,15 +91,30 @@ public class SearchCriteriaUtils {
                 root.get(criteria.getField()),
                 criteria.getValue()
             );
-            case JOIN -> criteriaBuilder.equal(
-                join.get(UUID_FIELD),
-                criteria.getValue()
-            );
+            case JOIN -> {
+                if (join != null) {
+                    yield criteriaBuilder.equal(join.get(UUID_FIELD), criteria.getValue());
+                }
+                yield null;
+            }
             case GREATER_OR_EQUAL -> criteriaBuilder.greaterThanOrEqualTo(root.get(criteria.getField()), (T) parse(criteria.getValue()));
             case LESS_OR_EQUAL -> criteriaBuilder.lessThanOrEqualTo(root.get(criteria.getField()), (T) parse(criteria.getValue()));
             case LESS -> criteriaBuilder.lessThan(root.get(criteria.getField()), (T) parse(criteria.getValue()));
             default -> null;
         };
+    }
+
+    /**
+     * Return the number of pages it would take to display all the records.
+     *
+     * @param numberOfRecords the total number of records.
+     * @param pageSize        the number of records on a single page.
+     * @return                the number of pages required to contain all the records.
+     */
+    public static PaginationDetails getPaginationDetails(long numberOfRecords, Integer pageSize) {
+        int size = pageSize == null ? QueryConstants.DEFAULT_SIZE : pageSize;
+        long numberOfPages = (numberOfRecords % size != 0 ? 1 : 0) + (numberOfRecords / size);
+        return new PaginationDetails(numberOfRecords, numberOfPages);
     }
 
     @SuppressWarnings("unchecked")

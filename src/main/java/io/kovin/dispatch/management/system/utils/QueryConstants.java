@@ -55,4 +55,14 @@ public class QueryConstants {
      * Default size value.
      */
     public static final int DEFAULT_SIZE = 10;
+
+    /**
+     * The CompanyEntity field name used when performing joining.
+     */
+    public static final String COMPANY_FIELD = "company";
+
+    /**
+     * The name of the joinable ID.
+     */
+    public static final String JOINABLE_FIELD_ID = "joinableEntityId";
 }

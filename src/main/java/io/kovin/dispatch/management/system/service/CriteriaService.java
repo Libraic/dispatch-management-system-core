@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import static io.kovin.dispatch.management.system.utils.QueryConstants.DEFAULT_SIZE;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.DEFAULT_SORTING_FIELD;
+import static io.kovin.dispatch.management.system.utils.QueryConstants.UUID_FIELD;
 
 @Service
 public class CriteriaService<T> {
@@ -53,5 +54,15 @@ public class CriteriaService<T> {
             .setFirstResult(page * finalSize)
             .setMaxResults(finalSize);
         return typedQuery.getResultList();
+    }
+
+    public long count(Class<T> clazz, String joinableEntityId, String joinableEntityName) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = cb.createQuery(Long.class);
+        Root<T> root = query.from(clazz);
+        Join<?, ?> join = SearchCriteriaUtils.getJoin(root, joinableEntityName);
+        Predicate joinPredicate = criteriaBuilder.equal(join.get(UUID_FIELD), joinableEntityId);
+        query.select(cb.count(root)).where(criteriaBuilder.and(joinPredicate));
+        return entityManager.createQuery(query).getSingleResult();
     }
 }

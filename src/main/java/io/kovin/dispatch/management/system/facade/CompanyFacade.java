@@ -1,5 +1,7 @@
 package io.kovin.dispatch.management.system.facade;
 
+import java.util.List;
+import java.util.Map;
 import io.kovin.dispatch.management.system.mapper.CompanyMapper;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
@@ -12,16 +14,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-
 @Component
 @AllArgsConstructor
 public class CompanyFacade {
 
     private final CompanyService companyService;
     private final CompanyMapper companyMapper;
-    private final CriteriaService<CompanyEntity> criteriaService;
+    private final CriteriaService criteriaService;
 
     @Transactional
     public CompanyData saveCompany(CreateCompanyRequest createCompanyRequest) {

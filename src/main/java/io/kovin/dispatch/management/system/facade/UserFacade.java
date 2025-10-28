@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserFacade {
 
-    private final CriteriaService<UserEntity> criteriaService;
+    private final CriteriaService criteriaService;
 
     private final UserMapper userMapper;
 

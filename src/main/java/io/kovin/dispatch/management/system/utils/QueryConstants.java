@@ -67,7 +67,13 @@ public class QueryConstants {
     public static final String COMPANY_FIELD = "company";
 
     /**
-     * The name of the joinable ID.
+     * The name of the joinable ID request param.
      */
-    public static final String JOINABLE_FIELD_ID = "joinableEntityId";
+    public static final String JOINABLE_FIELD_ID_REQUEST_PARAM = "joinableEntityId";
+
+
+    /**
+     * The name of the pageable entity type request param.
+     */
+    public static final String PAGEABLE_ENTITY_REQUEST_PARAM = "entity";
 }

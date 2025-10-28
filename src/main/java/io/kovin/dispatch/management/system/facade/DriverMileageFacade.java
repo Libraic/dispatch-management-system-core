@@ -47,7 +47,7 @@ public class DriverMileageFacade {
     private final UserService userService;
     private final DriverService driverService;
     private final DriverMileageService driverMileageService;
-    private final CriteriaService<DriverMileageEntity> criteriaService;
+    private final CriteriaService criteriaService;
 
     private final DriverMileageMapper driverMileageMapper;
 

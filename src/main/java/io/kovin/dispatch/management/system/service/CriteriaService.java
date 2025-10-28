@@ -1,6 +1,9 @@
 package io.kovin.dispatch.management.system.service;
 
+import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
+import io.kovin.dispatch.management.system.model.request.enums.PageableEntity;
+import io.kovin.dispatch.management.system.model.response.PaginationDetails;
 import io.kovin.dispatch.management.system.utils.SearchCriteriaUtils;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -13,13 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_PAGEABLE_ENTITY;
+import static io.kovin.dispatch.management.system.utils.QueryConstants.COMPANY_FIELD;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.DEFAULT_SIZE;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.DEFAULT_SORTING_FIELD;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.DELETED_AT;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.UUID_FIELD;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @Service
-public class CriteriaService<T> {
+public class CriteriaService {
 
     private final EntityManager entityManager;
     private final CriteriaBuilder criteriaBuilder;
@@ -29,7 +35,7 @@ public class CriteriaService<T> {
         criteriaBuilder = entityManager.getCriteriaBuilder();
     }
 
-    public List<T> getCollection(List<SearchCriteria> searchCriteria, Class<T> clazz, int page, int size) {
+    public <T> List<T> getCollection(List<SearchCriteria> searchCriteria, Class<T> clazz, int page, int size) {
         // Creates a typed query that will return results of type clazz
         CriteriaQuery<T> query = criteriaBuilder.createQuery(clazz);
 
@@ -62,7 +68,17 @@ public class CriteriaService<T> {
         return typedQuery.getResultList();
     }
 
-    public long count(Class<T> clazz, String joinableEntityId, String joinableEntityName) {
+    public PaginationDetails getPaginationDetails(String pageableEntity, String joinableEntityId, Integer pageSize) {
+        Class<?> entityType = PageableEntity.getClass(pageableEntity);
+        if (entityType == null) {
+            throw DispatchManagementSystemException.of(INVALID_PAGEABLE_ENTITY.formatted(pageableEntity), BAD_REQUEST);
+        }
+
+        long numberOfRecords = count(entityType, joinableEntityId, COMPANY_FIELD);
+        return SearchCriteriaUtils.getPaginationDetails(numberOfRecords, pageSize);
+    }
+
+    public <T> long count(Class<T> clazz, String joinableEntityId, String joinableEntityName) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
         Root<T> root = query.from(clazz);
@@ -72,7 +88,7 @@ public class CriteriaService<T> {
         return entityManager.createQuery(query).getSingleResult();
     }
 
-    private List<Predicate> getCommonPredicates(Root<T> root) {
+    private <T> List<Predicate> getCommonPredicates(Root<T> root) {
         List<Predicate> commonPredicates = new ArrayList<>();
         commonPredicates.add(criteriaBuilder.isNull(root.get(DELETED_AT)));
         return commonPredicates;

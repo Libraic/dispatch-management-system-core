@@ -10,7 +10,6 @@ import io.kovin.dispatch.management.system.model.entity.TrailerEntity;
 import io.kovin.dispatch.management.system.model.entity.TruckEntity;
 import io.kovin.dispatch.management.system.model.request.CreateDriverRequest;
 import io.kovin.dispatch.management.system.model.response.DriverData;
-import io.kovin.dispatch.management.system.model.response.PaginationDetails;
 import io.kovin.dispatch.management.system.service.CompanyService;
 import io.kovin.dispatch.management.system.service.CriteriaService;
 import io.kovin.dispatch.management.system.service.DriverService;
@@ -21,7 +20,6 @@ import io.kovin.dispatch.management.system.validation.DriverValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.COMPANY_FIELD;
 
 @Component
 @RequiredArgsConstructor
@@ -34,7 +32,7 @@ public class DriverFacade {
     private final CompanyService companyService;
     private final TruckService truckService;
     private final TrailerService trailerService;
-    private final CriteriaService<DriverEntity> criteriaService;
+    private final CriteriaService criteriaService;
 
     public DriverData createDriver(CreateDriverRequest request) {
         driverValidationService.validateDriverCreation(request);
@@ -51,11 +49,6 @@ public class DriverFacade {
         List<DriverEntity> drivers = criteriaService.getCollection(searchCriteria, DriverEntity.class, page, size);
         log.info("Found [{}] drivers that match the search criteria.", drivers.size());
         return drivers.stream().map(driverMapper::fromDriverEntityToDriverData).toList();
-    }
-
-    public PaginationDetails getPaginationDetails(String companyId, Integer pageSize) {
-        long numberOfRecords = criteriaService.count(DriverEntity.class, companyId, COMPANY_FIELD);
-        return SearchCriteriaUtils.getPaginationDetails(numberOfRecords, pageSize);
     }
 
     private TruckEntity getTruck(String truckUuid) {

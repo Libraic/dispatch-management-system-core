@@ -25,7 +25,7 @@ public class TrailerFacade {
     private final TrailerValidationService trailerValidationService;
     private final TrailerService trailerService;
     private final CompanyService companyService;
-    private final CriteriaService<TrailerEntity> criteriaService;
+    private final CriteriaService criteriaService;
 
     private final TrailerMapper trailerMapper;
 

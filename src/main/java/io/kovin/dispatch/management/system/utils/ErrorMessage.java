@@ -11,6 +11,7 @@ public class ErrorMessage {
      */
     public static final String INVALID_DATE_FORMAT = "The date=[%s] should be passed in dd-MM-YYYY format.";
     public static final String INVALID_SEARCH_CRITERIA = "The field=[%s] has an invalid format=[%s].";
+    public static final String INVALID_PAGEABLE_ENTITY = "The entity=[%s] is not valid.";
 
     /**
      * Error messages related to Users.

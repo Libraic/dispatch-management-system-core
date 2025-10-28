@@ -7,7 +7,6 @@ import io.kovin.dispatch.management.system.facade.DriverFacade;
 import io.kovin.dispatch.management.system.model.request.CreateDriverRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.DriverData;
-import io.kovin.dispatch.management.system.model.response.PaginationDetails;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
 import io.kovin.dispatch.management.system.model.response.error.GroupsErrors;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.COMPANY_FIELD;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.JOINABLE_FIELD_ID;
 
 @RestController
 @RequiredArgsConstructor
@@ -62,15 +60,5 @@ public class DriverController {
         int finalSize = size == null ? 0 : size;
         List<DriverData> driversData = driverFacade.getDriversByCriteria(queryParams, finalPage, finalSize);
         return ResponseEntity.ok(ApiResponse.fromData(driversData));
-    }
-
-    @GetMapping("/pagination")
-    public ResponseEntity<PaginationDetails> getPaginationDetails(
-        @RequestParam(name = JOINABLE_FIELD_ID) String companyId,
-        @RequestParam(name = "pageSize", required = false) Integer pageSize
-    ) {
-        log.info("A request to get the Pagination Details about Drivers was received.");
-        PaginationDetails paginationDetails = driverFacade.getPaginationDetails(companyId, pageSize);
-        return ResponseEntity.ok(paginationDetails);
     }
 }

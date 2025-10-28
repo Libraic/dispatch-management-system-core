@@ -6,7 +6,6 @@ import java.util.Map;
 import io.kovin.dispatch.management.system.facade.TruckFacade;
 import io.kovin.dispatch.management.system.model.request.CreateTruckRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
-import io.kovin.dispatch.management.system.model.response.PaginationDetails;
 import io.kovin.dispatch.management.system.model.response.TruckData;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
 import io.kovin.dispatch.management.system.model.response.error.GroupsErrorResponse;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.JOINABLE_FIELD_ID;
 
 @RestController
 @RequiredArgsConstructor
@@ -55,15 +53,5 @@ public class TruckController {
         int finalSize = size == null ? 0 : size;
         List<TruckData> trucksData = truckFacade.getTrucksByCriteria(queryParams, finalPage, finalSize);
         return ResponseEntity.ok(ApiResponse.fromData(trucksData));
-    }
-
-    @GetMapping("/pagination")
-    public ResponseEntity<PaginationDetails> getPaginationDetails(
-        @RequestParam(name = JOINABLE_FIELD_ID) String companyId,
-        @RequestParam(name = "pageSize", required = false) Integer pageSize
-    ) {
-        log.info("A request to get the Pagination Details about Trucks was received.");
-        PaginationDetails paginationDetails = truckFacade.getPaginationDetails(companyId, pageSize);
-        return ResponseEntity.ok(paginationDetails);
     }
 }

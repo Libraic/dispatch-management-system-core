@@ -5,8 +5,10 @@ import java.util.Map;
 import io.kovin.dispatch.management.system.mapper.TruckMapper;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
+import io.kovin.dispatch.management.system.model.entity.DriverEntity;
 import io.kovin.dispatch.management.system.model.entity.TruckEntity;
 import io.kovin.dispatch.management.system.model.request.CreateTruckRequest;
+import io.kovin.dispatch.management.system.model.response.PaginationDetails;
 import io.kovin.dispatch.management.system.model.response.TruckData;
 import io.kovin.dispatch.management.system.service.CompanyService;
 import io.kovin.dispatch.management.system.service.CriteriaService;
@@ -16,6 +18,7 @@ import io.kovin.dispatch.management.system.validation.TruckValidationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import static io.kovin.dispatch.management.system.utils.QueryConstants.COMPANY_FIELD;
 
 @Component
 @RequiredArgsConstructor
@@ -45,5 +48,10 @@ public class TruckFacade {
         List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams);
         List<TruckEntity> trucks = criteriaService.getCollection(searchCriteria, TruckEntity.class, page, size);
         return trucks.stream().map(truckMapper::fromTruckEntityToTruckData).toList();
+    }
+
+    public PaginationDetails getPaginationDetails(String companyId, Integer pageSize) {
+        long numberOfRecords = criteriaService.count(TruckEntity.class, companyId, COMPANY_FIELD);
+        return SearchCriteriaUtils.getPaginationDetails(numberOfRecords, pageSize);
     }
 }

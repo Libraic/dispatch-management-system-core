@@ -29,6 +29,10 @@ public class TruckMapper {
         return TruckData.builder()
             .uuid(truckEntity.getUuid())
             .truckNumber(truckEntity.getTruckNumber())
+            .vinNumber(truckEntity.getVinNumber())
+            .truckMake(truckEntity.getTruckMake())
+            .model(truckEntity.getModel())
+            .fuelType(truckEntity.getFuelType())
             .createdAt(truckEntity.getCreatedAt())
             .build();
     }

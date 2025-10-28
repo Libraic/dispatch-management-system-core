@@ -30,6 +30,10 @@ public class TrailerMapper {
         return TrailerData.builder()
             .uuid(trailerEntity.getUuid())
             .trailerNumber(trailerEntity.getTrailerNumber())
+            .vinNumber(trailerEntity.getVinNumber())
+            .trailerYear(trailerEntity.getTrailerYear())
+            .trailerMake(trailerEntity.getTrailerMake())
+            .equipmentType(trailerEntity.getEquipmentType())
             .createdAt(trailerEntity.getCreatedAt())
             .build();
     }

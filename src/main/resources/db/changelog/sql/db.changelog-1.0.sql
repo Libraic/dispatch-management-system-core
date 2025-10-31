@@ -463,7 +463,7 @@ CREATE TABLE t_accounts (
     hashed_password VARCHAR NOT NULL,
     entity_type     VARCHAR NOT NULL,
     role            VARCHAR NOT NULL,
-    is_active       BOOLEAN DEFAULT TRUE,
+    is_active       BOOLEAN NOT NULL DEFAULT TRUE,
     entity_id       BIGINT  NOT NULL
 );
 

@@ -20,41 +20,14 @@ public enum ImpactedGroup {
     WORKLOADS("workloads"),
 
     /**
-     * Fields related to Company registration.
-     */
-    COMPANY_NAME("name"),
-    COMPANY_START_DATE("startDate"),
-
-    /**
      * Fields related to Driver registration.
      */
     PHONE_NUMBER("phoneNumber"),
-    TRUCK_NUMBER("truckNumber"),
-    TRAILER_NUMBER("trailerNumber"),
-    TRAILER_HEIGHT("trailerHeight"),
-    MAX_LEGAL_WEIGHT_CAPACITY("maxLegalWeightCapacity"),
-    TRAILER_TYPE("trailerType"),
-    TRAILER_LENGTH("trailerLength"),
     DOCUMENT_STATUS("documentsStatus"),
     POSITION("position"),
     STATE("state"),
-    CITY("city"),
-
-    /**
-     * Fields related to Mileage registration.
-     */
-    MILEAGE("mileage"),
-    MILEAGE_DATA("mileageData"),
-    COMPANY("company"),
-    DRIVER("driver"),
-    DISPATCHER("dispatcher"),
-
-    /**
-     * Groups related to Asset registration.
-     */
-    TRAILER("trailer"),
-    TRUCK("truck")
-
+    CITY("city")
     ;
+
     private final String groupName;
 }

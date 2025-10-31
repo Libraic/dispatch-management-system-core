@@ -446,3 +446,36 @@ COMMENT ON COLUMN t_drivers.trailer_id IS 'The identifier of the Trailer that is
 -- comment: Remove trailer_height column from t_drivers table.
 ALTER TABLE t_drivers
     DROP COLUMN trailer_height;
+
+-- changeset libra:025
+-- comment: Create t_accounts table and its related dependencies.
+CREATE SEQUENCE t_accounts_sequence
+    INCREMENT BY 1
+    START WITH 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE t_accounts (
+    id              BIGINT  PRIMARY KEY DEFAULT nextval('t_accounts_sequence'),
+    uuid            uuid    NOT NULL UNIQUE,
+    username        VARCHAR NOT NULL,
+    hashed_password VARCHAR NOT NULL,
+    entity_type     VARCHAR NOT NULL,
+    role            VARCHAR NOT NULL,
+    is_active       BOOLEAN DEFAULT TRUE,
+    entity_id       BIGINT  NOT NULL
+);
+
+ALTER SEQUENCE t_accounts_sequence OWNED BY t_accounts.id;
+
+COMMENT ON TABLE t_accounts IS 'The table used to store the account data of various actors of the system.';
+
+COMMENT ON COLUMN t_accounts.id              IS 'The primary key of the t_accounts table.';
+COMMENT ON COLUMN t_accounts.uuid            IS 'The UUID of the Account.';
+COMMENT ON COLUMN t_accounts.username        IS 'The associated username of the Account.';
+COMMENT ON COLUMN t_accounts.hashed_password IS 'The hashed version of the password of the Account.';
+COMMENT ON COLUMN t_accounts.entity_type     IS 'The type of the entity this Account pertains to.';
+COMMENT ON COLUMN t_accounts.role            IS 'The representing role of the user of this Account.';
+COMMENT ON COLUMN t_accounts.is_active       IS 'A boolean indicator specifying whether the account is active.';
+COMMENT ON COLUMN t_accounts.entity_id       IS 'The identifier of entity that is represented by this account.';

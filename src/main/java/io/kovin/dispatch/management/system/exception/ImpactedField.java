@@ -6,6 +6,18 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ImpactedField {
+    /**
+     * Global fields (present on multiple entities).
+     */
+    EMAIL("email"),
+    PASSWORD("password"),
+
+    /**
+     * Fields related to Company registration.
+     */
+    COMPANY_START_DATE("startDate"),
+    COMPANY_NAME("name"),
+
     COMPANY("company"),
     COMMISSION("commission"),
     SUPERVISOR("supervisor"),

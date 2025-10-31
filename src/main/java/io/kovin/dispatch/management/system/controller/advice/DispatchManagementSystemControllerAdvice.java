@@ -7,6 +7,7 @@ import io.kovin.dispatch.management.system.exception.DispatchManagementSystemGro
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
 import io.kovin.dispatch.management.system.model.response.error.GroupsErrorResponse;
+import io.kovin.dispatch.management.system.utils.ErrorMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +45,7 @@ public class DispatchManagementSystemControllerAdvice {
     public ResponseEntity<ApiResponse<?, ?>> handleNativeExceptions(RuntimeException ex) {
         log.error("An internal error has occurred: [{}].", ex.getLocalizedMessage());
         var errorResponse = ErrorResponse.builder()
-            .message(ex.getLocalizedMessage())
+            .message(ErrorMessage.INTERNAL_SERVER_ERROR)
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .build();
         return ResponseEntity

@@ -7,6 +7,8 @@ public record CreateCompanyRequest(
     String name,
     String mcNumber,
     String address,
+    String email,
+    String password,
     String serviceDate,
     String startDate
 ) {

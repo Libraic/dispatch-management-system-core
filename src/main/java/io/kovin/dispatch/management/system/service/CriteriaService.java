@@ -17,7 +17,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_PAGEABLE_ENTITY;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.COMPANY_FIELD;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.DEFAULT_SIZE;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.DEFAULT_SORTING_FIELD;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.DELETED_AT;
@@ -68,13 +67,18 @@ public class CriteriaService {
         return typedQuery.getResultList();
     }
 
-    public PaginationDetails getPaginationDetails(String pageableEntity, String joinableEntityId, Integer pageSize) {
+    public PaginationDetails getPaginationDetails(
+        String pageableEntity,
+        String joinableEntityId,
+        String joinableEntityName,
+        Integer pageSize
+    ) {
         Class<?> entityType = PageableEntity.getClass(pageableEntity);
         if (entityType == null) {
             throw DispatchManagementSystemException.of(INVALID_PAGEABLE_ENTITY.formatted(pageableEntity), BAD_REQUEST);
         }
 
-        long numberOfRecords = count(entityType, joinableEntityId, COMPANY_FIELD);
+        long numberOfRecords = count(entityType, joinableEntityId, joinableEntityName);
         return SearchCriteriaUtils.getPaginationDetails(numberOfRecords, pageSize);
     }
 
@@ -82,9 +86,13 @@ public class CriteriaService {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
         Root<T> root = query.from(clazz);
-        Join<?, ?> join = SearchCriteriaUtils.getJoin(root, joinableEntityName);
-        Predicate joinPredicate = criteriaBuilder.equal(join.get(UUID_FIELD), joinableEntityId);
-        query.select(cb.count(root)).where(criteriaBuilder.and(joinPredicate));
+        query.select(cb.count(root));
+        if (joinableEntityId != null && joinableEntityName != null) {
+            Join<?, ?> join = SearchCriteriaUtils.getJoin(root, joinableEntityName);
+            Predicate joinPredicate = criteriaBuilder.equal(join.get(UUID_FIELD), joinableEntityId);
+            query.where(criteriaBuilder.and(joinPredicate));
+        }
+
         return entityManager.createQuery(query).getSingleResult();
     }
 

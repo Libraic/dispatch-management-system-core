@@ -44,7 +44,27 @@ public class QueryConstants {
     /**
      * The UUID column, which is an identifier that can be used outside the database. Usually used on JOIN clauses.
      */
-    public static final String UUID_FIELD = "uuid";
+    public static final String UUID = "uuid";
+
+    /**
+     * The ID field.
+     */
+    public static final String ID = "id";
+
+    /**
+     * The Start Date field.
+     */
+    public static final String START_DATE = "startDate";
+
+    /**
+     * The End Date field.
+     */
+    public static final String END_DATE = "endDate";
+
+    /**
+     * The company field, which acts a join entity.
+     */
+    public static final String COMPANY = "company";
 
     /**
      * The deletedAt field.

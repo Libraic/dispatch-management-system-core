@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class DriverMileageUtils {
 
     public static Map<String, MileageData> createTimelineFromStartDate(LocalDate startDate) {
-        LocalDate curr = LocalDate.from(startDate);
+        LocalDate curr = startDate;
         Map<String, MileageData> timeline = new HashMap<>();
         for (int i = 0; i < 7; ++i) {
             timeline.put(curr.toString(), MileageData.builder().build());

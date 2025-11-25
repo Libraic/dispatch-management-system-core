@@ -10,7 +10,7 @@ import static io.kovin.dispatch.management.system.utils.QueryConstants.JOIN;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.LESS;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.LESS_OR_EQUAL;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.LIKE;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.UUID_FIELD;
+import static io.kovin.dispatch.management.system.utils.QueryConstants.UUID;
 import static io.kovin.dispatch.management.system.utils.QueryConstants.WILDCARD;
 
 import java.time.LocalDate;
@@ -93,7 +93,7 @@ public class SearchCriteriaUtils {
             );
             case JOIN -> {
                 if (join != null) {
-                    yield criteriaBuilder.equal(join.get(UUID_FIELD), criteria.getValue());
+                    yield criteriaBuilder.equal(join.get(UUID), criteria.getValue());
                 }
                 yield null;
             }

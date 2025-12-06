@@ -3,7 +3,6 @@ package io.kovin.dispatch.management.system.repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
 import io.kovin.dispatch.management.system.model.entity.DriverMileageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -24,5 +23,4 @@ public interface DriverMileageRepository extends JpaRepository<DriverMileageEnti
         LocalDate startDate,
         LocalDate endDate
     );
-
 }

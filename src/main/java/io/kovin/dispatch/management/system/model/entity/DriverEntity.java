@@ -27,7 +27,7 @@ import lombok.Setter;
 @Builder
 @Table(name = "t_drivers")
 @Entity
-public class DriverEntity extends Auditable {
+public class DriverEntity extends Auditable implements Kpiable {
     @Id
     @SequenceGenerator(name = "driver_sequence_generator", sequenceName = "t_drivers_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "driver_sequence_generator")
@@ -87,5 +87,15 @@ public class DriverEntity extends Auditable {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String getEntityType() {
+        return "driver";
+    }
+
+    @Override
+    public String getName() {
+        return fullName;
     }
 }

@@ -1,5 +1,6 @@
 package io.kovin.dispatch.management.system.controller.advice;
 
+import ch.qos.logback.core.util.StringUtil;
 import java.util.Map;
 import java.util.stream.Collectors;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
@@ -7,12 +8,12 @@ import io.kovin.dispatch.management.system.exception.DispatchManagementSystemGro
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
 import io.kovin.dispatch.management.system.model.response.error.GroupsErrorResponse;
-import io.kovin.dispatch.management.system.utils.ErrorMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.INTERNAL_SERVER_ERROR;
 
 @ControllerAdvice
 @Slf4j
@@ -41,11 +42,13 @@ public class DispatchManagementSystemControllerAdvice {
             .body(ApiResponse.fromError(errorResponse));
     }
 
-    @ExceptionHandler({IllegalArgumentException.class, NullPointerException.class})
+    @ExceptionHandler({ IllegalArgumentException.class, NullPointerException.class })
     public ResponseEntity<ApiResponse<?, ?>> handleNativeExceptions(RuntimeException ex) {
-        log.error("An internal error has occurred: [{}].", ex.getLocalizedMessage());
+        String exceptionMessage = ex.getLocalizedMessage();
+        String message = StringUtil.isNullOrEmpty(exceptionMessage) ? INTERNAL_SERVER_ERROR : exceptionMessage;
+        log.error("An internal error has occurred: [{}].", message);
         var errorResponse = ErrorResponse.builder()
-            .message(ErrorMessage.INTERNAL_SERVER_ERROR)
+            .message(message)
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .build();
         return ResponseEntity

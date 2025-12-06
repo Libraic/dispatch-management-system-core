@@ -28,7 +28,7 @@ import lombok.Setter;
 @Builder
 @Table(name = "t_users")
 @Entity
-public class UserEntity extends Auditable {
+public class UserEntity extends Auditable implements Kpiable {
 
     @Id
     @SequenceGenerator(name = "user_sequence_generator", sequenceName = "t_users_sequence", allocationSize = 1)
@@ -99,5 +99,15 @@ public class UserEntity extends Auditable {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String getEntityType() {
+        return "dispatcher";
+    }
+
+    @Override
+    public String getName() {
+        return fullName;
     }
 }

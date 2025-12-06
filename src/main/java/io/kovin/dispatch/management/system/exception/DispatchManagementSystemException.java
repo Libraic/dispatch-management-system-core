@@ -19,4 +19,8 @@ public class DispatchManagementSystemException extends RuntimeException {
     public static DispatchManagementSystemException of(String message, HttpStatus httpStatus) {
         throw new DispatchManagementSystemException(message, httpStatus);
     }
+
+    public static DispatchManagementSystemException ofInternal(String message) {
+        throw new DispatchManagementSystemException(message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

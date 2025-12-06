@@ -8,14 +8,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BigDecimalUtils {
 
-    public static boolean isLessOrEqualToZeroSafe(BigDecimal value) {
-        if (value == null) {
-            return false;
-        }
-
-        return value.compareTo(BigDecimal.ZERO) <= 0;
-    }
-
     public static Double getDoubleFromBigDecimal(BigDecimal input) {
         return input == null ? null : input.doubleValue();
     }

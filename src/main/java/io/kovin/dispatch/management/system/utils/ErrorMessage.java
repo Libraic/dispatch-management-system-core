@@ -79,4 +79,13 @@ public class ErrorMessage {
     public static final String TRUCK_YEAR_INVALID = "The truck year is not valid.";
     public static final String TRUCK_WEIGHT_INVALID = "The truck weight is not valid.";
     public static final String TRUCK_NOT_FOUND_BY_UUID = "The truck with UUID=[%s] was not found.";
+
+    /**
+     * Error messages related to KPIs.
+     */
+    public static final String INVALID_KPI_AGGREGATION_PERIOD = "%s is not a valid aggregation period.";
+    public static final String INVALID_KPI_TARGET_ENTITY = "The KPIs are not available for [%s] entity.";
+    public static final String MISSING_KPIS = "At least one KPI must be provided.";
+    public static final String INVALID_KPI_TYPE = "The [%s] KPI is not valid.";
+    public static final String INVALID_AGGREGATION_UNIT = "The provided aggregation unit is invalid.";
 }

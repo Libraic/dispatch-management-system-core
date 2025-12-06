@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import io.kovin.dispatch.management.system.model.internal.mileage.DispatcherDto;
+import io.kovin.dispatch.management.system.model.internal.mileage.DriverDto;
+import io.kovin.dispatch.management.system.model.internal.mileage.DriverMileageDto;
+import io.kovin.dispatch.management.system.model.internal.mileage.MileageDto;
 import io.kovin.dispatch.management.system.model.entity.Auditable;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.entity.DriverEntity;
@@ -16,6 +21,7 @@ import io.kovin.dispatch.management.system.model.global.Mileage;
 import io.kovin.dispatch.management.system.model.request.DriverMileage;
 import io.kovin.dispatch.management.system.model.response.DriverMileageData;
 import io.kovin.dispatch.management.system.utils.BigDecimalUtils;
+import io.kovin.dispatch.management.system.utils.NumberUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -110,6 +116,34 @@ public class DriverMileageMapper {
                     .destinationNote(mileage.destinationNote())
                     .build()
             ));
+    }
+
+    public List<DriverMileageDto> fromDriverMileageEntitiesToDriverMileageDtos(List<DriverMileageEntity> entities) {
+        return entities.stream()
+            .map(driverMileageEntity -> new DriverMileageDto(
+                fromDriverEntityToDriverDto(driverMileageEntity.getDriver()),
+                fromUserEntityToDispatcherDto(driverMileageEntity.getDispatcher()),
+                fromMileageDataToMileageDto(driverMileageEntity.getMileageData())
+            )).toList();
+    }
+
+    private DriverDto fromDriverEntityToDriverDto(DriverEntity driver) {
+        return new DriverDto(driver.getUuid(), driver.getFullName());
+    }
+
+    private DispatcherDto fromUserEntityToDispatcherDto(UserEntity dispatcher) {
+        return new DispatcherDto(dispatcher.getUuid(), dispatcher.getFullName());
+    }
+
+    private List<MileageDto> fromMileageDataToMileageDto(Map<String, MileageData> mileageDataMap) {
+        return mileageDataMap.entrySet()
+            .stream()
+            .map(mileageDataEntry -> new MileageDto(
+                LocalDate.parse(mileageDataEntry.getKey()),
+                NumberUtils.getOrZero(mileageDataEntry.getValue().getRevenue()),
+                NumberUtils.getOrZero(mileageDataEntry.getValue().getMiles())
+            )).sorted(Comparator.comparing(MileageDto::date))
+            .toList();
     }
 
     private List<Mileage> fromMileageDataListToMileageList(Map<String, MileageData> mileageDataMap) {

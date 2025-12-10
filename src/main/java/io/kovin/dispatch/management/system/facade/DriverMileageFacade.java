@@ -194,7 +194,12 @@ public class DriverMileageFacade {
 
     private boolean doesMileageContainData(List<Mileage> mileageList) {
         for (Mileage mileage : mileageList) {
-            if (mileage.destinationNote() != null || mileage.note() != null || mileage.revenue() != null || mileage.miles() != null) {
+            if (!StringUtil.isNullOrEmpty(mileage.destinationNote()) ||
+                !StringUtil.isNullOrEmpty(mileage.note()) ||
+                !StringUtil.isNullOrEmpty(mileage.broker()) ||
+                mileage.revenue() != null ||
+                mileage.miles() != null
+            ) {
                 return true;
             }
         }

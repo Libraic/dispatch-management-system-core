@@ -114,6 +114,7 @@ public class DriverMileageMapper {
                     .miles(BigDecimalUtils.getDoubleFromBigDecimal(mileage.miles()))
                     .revenue(BigDecimalUtils.getDoubleFromBigDecimal(mileage.revenue()))
                     .destinationNote(mileage.destinationNote())
+                    .broker(mileage.broker())
                     .build()
             ));
     }
@@ -149,13 +150,17 @@ public class DriverMileageMapper {
     private List<Mileage> fromMileageDataListToMileageList(Map<String, MileageData> mileageDataMap) {
         return mileageDataMap.entrySet()
             .stream()
-            .map(entry -> new Mileage(
-                entry.getKey(),
-                entry.getValue().getDestinationNote(),
-                BigDecimalUtils.getBigDecimalFromDouble(entry.getValue().getRevenue()),
-                BigDecimalUtils.getBigDecimalFromDouble(entry.getValue().getMiles()),
-                entry.getValue().getNote()
-            ))
+            .map(entry -> {
+                MileageData mileageData = entry.getValue();
+                return new Mileage(
+                    entry.getKey(),
+                    mileageData.getDestinationNote(),
+                    BigDecimalUtils.getBigDecimalFromDouble(mileageData.getRevenue()),
+                    BigDecimalUtils.getBigDecimalFromDouble(mileageData.getMiles()),
+                    mileageData.getNote(),
+                    mileageData.getBroker()
+                );
+            })
             .sorted(Comparator.comparing(Mileage::date))
             .toList();
     }

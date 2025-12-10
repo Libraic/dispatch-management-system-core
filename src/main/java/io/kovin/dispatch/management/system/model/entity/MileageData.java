@@ -17,4 +17,5 @@ public class MileageData {
     private String note;
     private Double revenue;
     private Double miles;
+    private String broker;
 }

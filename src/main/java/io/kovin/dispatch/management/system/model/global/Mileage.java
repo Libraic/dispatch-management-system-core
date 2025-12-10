@@ -7,6 +7,7 @@ public record Mileage(
     String destinationNote,
     BigDecimal revenue,
     BigDecimal miles,
-    String note
+    String note,
+    String broker
 ) {
 }

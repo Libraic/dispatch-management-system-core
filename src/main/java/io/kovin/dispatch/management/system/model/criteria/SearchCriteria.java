@@ -1,6 +1,6 @@
 package io.kovin.dispatch.management.system.model.criteria;
 
-import io.kovin.dispatch.management.system.utils.QueryConstants;
+import io.kovin.dispatch.management.system.utils.constants.QueryConstants;
 import lombok.Builder;
 import lombok.Value;
 

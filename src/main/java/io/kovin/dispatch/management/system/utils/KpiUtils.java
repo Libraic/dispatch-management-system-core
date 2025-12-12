@@ -3,7 +3,7 @@ package io.kovin.dispatch.management.system.utils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import io.kovin.dispatch.management.system.model.global.kpi.KpiDiscriminator;
+import io.kovin.dispatch.management.system.model.global.reports.financial.KpiDiscriminator;
 import io.kovin.dispatch.management.system.model.internal.Pair;
 import io.kovin.dispatch.management.system.model.internal.mileage.AggregationUnit;
 import lombok.AccessLevel;

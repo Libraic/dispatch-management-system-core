@@ -1,4 +1,4 @@
-package io.kovin.dispatch.management.system.utils;
+package io.kovin.dispatch.management.system.utils.constants;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

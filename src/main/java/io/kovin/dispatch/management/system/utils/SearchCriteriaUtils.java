@@ -1,17 +1,17 @@
 package io.kovin.dispatch.management.system.utils;
 
-import static io.kovin.dispatch.management.system.utils.DispatchManagementSystemConstants.BLANK_STRING;
+import static io.kovin.dispatch.management.system.utils.constants.DispatchManagementSystemConstants.BLANK_STRING;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_SEARCH_CRITERIA;
 import static io.kovin.dispatch.management.system.utils.LocalDateUtils.ISO_8601_FORMAT_REGEX;
 import static io.kovin.dispatch.management.system.utils.LocalDateUtils.ISO_8601_LOCAL_DATE_TIME_FORMAT_REGEX;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.EQUAL;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.GREATER_OR_EQUAL;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.JOIN;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.LESS;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.LESS_OR_EQUAL;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.LIKE;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.UUID;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.WILDCARD;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.EQUAL;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.GREATER_OR_EQUAL;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.JOIN;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.LESS;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.LESS_OR_EQUAL;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.LIKE;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.UUID;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.WILDCARD;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,6 +22,7 @@ import java.util.Optional;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.response.PaginationDetails;
+import io.kovin.dispatch.management.system.utils.constants.QueryConstants;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;

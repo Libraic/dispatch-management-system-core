@@ -14,10 +14,12 @@ import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.entity.DriverEntity;
 import io.kovin.dispatch.management.system.model.entity.DriverMileageEntity;
+import io.kovin.dispatch.management.system.model.entity.Kpiable;
 import io.kovin.dispatch.management.system.model.entity.MileageData;
 import io.kovin.dispatch.management.system.model.entity.UserEntity;
 import io.kovin.dispatch.management.system.model.global.Mileage;
 import io.kovin.dispatch.management.system.model.internal.Tuple;
+import io.kovin.dispatch.management.system.model.internal.mileage.DriverMileageDto;
 import io.kovin.dispatch.management.system.model.request.DriverMileage;
 import io.kovin.dispatch.management.system.model.request.UpsertDriverMileageRequest;
 import io.kovin.dispatch.management.system.model.response.DriverMileageData;
@@ -99,6 +101,15 @@ public class DriverMileageFacade {
         );
         log.info("Found [{}] drivers that match the search criteria.", driverMileageEntities.size());
         return driverMileageMapper.fromDriverMileageEntitiesToDriverMileageDataList(driverMileageEntities);
+    }
+
+    public List<DriverMileageDto> getDriverMileageDtos(Kpiable targetEntity, LocalDate startDate, LocalDate endDate) {
+        List<DriverMileageEntity> driverMileageEntities = criteriaService.getMileageForTargetEntity(
+            targetEntity,
+            startDate,
+            endDate
+        );
+        return driverMileageMapper.fromDriverMileageEntitiesToDriverMileageDtos(driverMileageEntities);
     }
 
     private Tuple<List<String>, List<String>, List<String>> getAffiliatedEntitiesUuids(List<DriverMileage> driverMileageList) {

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import io.kovin.dispatch.management.system.model.enums.KpiAggregationPeriod;
-import io.kovin.dispatch.management.system.model.global.kpi.KpiDiscriminator;
+import io.kovin.dispatch.management.system.model.global.reports.financial.KpiDiscriminator;
 import io.kovin.dispatch.management.system.model.internal.mileage.AggregationUnit;
 import io.kovin.dispatch.management.system.model.internal.mileage.MileageDto;
 import io.kovin.dispatch.management.system.utils.NumberUtils;

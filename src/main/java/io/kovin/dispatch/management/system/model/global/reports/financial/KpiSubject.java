@@ -1,4 +1,4 @@
-package io.kovin.dispatch.management.system.model.global.kpi;
+package io.kovin.dispatch.management.system.model.global.reports.financial;
 
 import io.kovin.dispatch.management.system.model.entity.Kpiable;
 

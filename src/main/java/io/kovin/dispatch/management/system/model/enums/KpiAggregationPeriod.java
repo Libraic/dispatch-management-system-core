@@ -7,6 +7,7 @@ import io.kovin.dispatch.management.system.exception.DispatchManagementSystemExc
 
 public enum KpiAggregationPeriod {
     DAY,
+    WEEK,
     MONTH,
     QUARTER,
     YEAR;

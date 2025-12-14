@@ -1,14 +1,14 @@
 package io.kovin.dispatch.management.system.service;
 
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_PAGEABLE_ENTITY;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.COMPANY;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.DEFAULT_SIZE;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.DEFAULT_SORTING_FIELD;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.DELETED_AT;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.END_DATE;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.ID;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.START_DATE;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.UUID;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.COMPANY;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.DEFAULT_SIZE;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.DEFAULT_SORTING_FIELD;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.DELETED_AT;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.END_DATE;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.ID;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.START_DATE;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.UUID;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;

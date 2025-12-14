@@ -8,6 +8,7 @@ import io.kovin.dispatch.management.system.model.enums.KpiAggregationPeriod;
 import io.kovin.dispatch.management.system.model.internal.mileage.AggregationUnit;
 import io.kovin.dispatch.management.system.model.internal.mileage.MonthAggregationUnit;
 import io.kovin.dispatch.management.system.model.internal.mileage.QuarterAggregationUnit;
+import io.kovin.dispatch.management.system.model.internal.mileage.WeekAggregationUnit;
 import io.kovin.dispatch.management.system.model.internal.mileage.YearAggregationUnit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,8 @@ public class AggregationUtils {
     public static AggregationUnit createAggregationUnit(KpiAggregationPeriod kpiAggregationPeriod, LocalDate date) {
         if (kpiAggregationPeriod == KpiAggregationPeriod.DAY) {
             return new DayAggregationUnit(date);
+        } else if (kpiAggregationPeriod == KpiAggregationPeriod.WEEK) {
+            return new WeekAggregationUnit(date);
         } else if (kpiAggregationPeriod == KpiAggregationPeriod.MONTH) {
             return new MonthAggregationUnit(date);
         } else if (kpiAggregationPeriod == KpiAggregationPeriod.QUARTER) {

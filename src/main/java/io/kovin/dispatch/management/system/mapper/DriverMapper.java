@@ -1,6 +1,6 @@
 package io.kovin.dispatch.management.system.mapper;
 
-import static io.kovin.dispatch.management.system.utils.DispatchManagementSystemConstants.BLANK_SPACE;
+import static io.kovin.dispatch.management.system.utils.constants.DispatchManagementSystemConstants.BLANK_SPACE;
 
 import java.util.Optional;
 import java.util.UUID;

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import ch.qos.logback.core.util.StringUtil;
 import io.kovin.dispatch.management.system.model.internal.mileage.DispatcherDto;
 import io.kovin.dispatch.management.system.model.internal.mileage.DriverDto;
 import io.kovin.dispatch.management.system.model.internal.mileage.DriverMileageDto;
@@ -133,7 +134,10 @@ public class DriverMileageMapper {
     }
 
     private DispatcherDto fromUserEntityToDispatcherDto(UserEntity dispatcher) {
-        return new DispatcherDto(dispatcher.getUuid(), dispatcher.getFullName());
+        String fullName = !StringUtil.isNullOrEmpty(dispatcher.getFullName())
+            ? dispatcher.getFullName()
+            : dispatcher.getFirstName() + " " + dispatcher.getLastName();
+        return new DispatcherDto(dispatcher.getUuid(), fullName);
     }
 
     private List<MileageDto> fromMileageDataToMileageDto(Map<String, MileageData> mileageDataMap) {
@@ -141,6 +145,7 @@ public class DriverMileageMapper {
             .stream()
             .map(mileageDataEntry -> new MileageDto(
                 LocalDate.parse(mileageDataEntry.getKey()),
+                mileageDataEntry.getValue().getBroker(),
                 NumberUtils.getOrZero(mileageDataEntry.getValue().getRevenue()),
                 NumberUtils.getOrZero(mileageDataEntry.getValue().getMiles())
             )).sorted(Comparator.comparing(MileageDto::date))

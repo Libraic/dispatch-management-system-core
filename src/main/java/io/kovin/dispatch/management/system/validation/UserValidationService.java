@@ -10,7 +10,7 @@ import static io.kovin.dispatch.management.system.exception.ImpactedGroup.LAST_N
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.PASSWORD;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.SUPERVISOR;
 import static io.kovin.dispatch.management.system.exception.ImpactedGroup.WORKLOADS;
-import static io.kovin.dispatch.management.system.utils.DispatchManagementSystemConstants.BLANK_STRING;
+import static io.kovin.dispatch.management.system.utils.constants.DispatchManagementSystemConstants.BLANK_STRING;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.BIRTH_DATE_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.BLANK_COMPANY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_COMPANY;

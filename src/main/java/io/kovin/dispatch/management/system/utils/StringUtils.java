@@ -1,6 +1,6 @@
 package io.kovin.dispatch.management.system.utils;
 
-import static io.kovin.dispatch.management.system.utils.DispatchManagementSystemConstants.BLANK_STRING;
+import static io.kovin.dispatch.management.system.utils.constants.DispatchManagementSystemConstants.BLANK_STRING;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

@@ -4,7 +4,7 @@ import static io.kovin.dispatch.management.system.exception.ImpactedField.COMPAN
 import static io.kovin.dispatch.management.system.exception.ImpactedField.COMPANY_START_DATE;
 import static io.kovin.dispatch.management.system.exception.ImpactedField.EMAIL;
 import static io.kovin.dispatch.management.system.exception.ImpactedField.PASSWORD;
-import static io.kovin.dispatch.management.system.utils.DispatchManagementSystemConstants.PASSWORD_MIN_LENGTH;
+import static io.kovin.dispatch.management.system.utils.constants.DispatchManagementSystemConstants.PASSWORD_MIN_LENGTH;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.EMAIL_IN_USE;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.EMAIL_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.MISSING_COMPANY_NAME;

@@ -1,4 +1,4 @@
-package io.kovin.dispatch.management.system.model.global.kpi;
+package io.kovin.dispatch.management.system.model.global.reports.financial;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -7,7 +7,7 @@ import io.kovin.dispatch.management.system.model.enums.KpiTargetEntity;
 import io.kovin.dispatch.management.system.model.enums.KpiName;
 
 /**
- * The KpiAggregationModel data transfer object.
+ * The FinancialAggregationModel data transfer object.
  *
  * @param companyUuid       the UUID of the company the targeted entity belongs to.
  * @param target            the entity the KPIs are calculation for.
@@ -16,7 +16,7 @@ import io.kovin.dispatch.management.system.model.enums.KpiName;
  * @param startDate         the start date of the timeframe the KPIs will be calculated for.
  * @param endDate           the end date of the timeframe the KPIs will be calculated for.
  */
-public record KpiAggregationModel(
+public record FinancialAggregationModel(
     String companyUuid,
     KpiTargetEntity target,
     KpiAggregationPeriod aggregationPeriod,

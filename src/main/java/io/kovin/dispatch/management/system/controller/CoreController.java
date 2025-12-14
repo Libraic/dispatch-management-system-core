@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.JOINABLE_FIELD_ID_REQUEST_PARAM;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.JOINABLE_FIELD_NAME_REQUEST_PARAM;
-import static io.kovin.dispatch.management.system.utils.QueryConstants.PAGEABLE_ENTITY_REQUEST_PARAM;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.JOINABLE_FIELD_ID_REQUEST_PARAM;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.JOINABLE_FIELD_NAME_REQUEST_PARAM;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.PAGEABLE_ENTITY_REQUEST_PARAM;
 
 @Slf4j
 @RequiredArgsConstructor

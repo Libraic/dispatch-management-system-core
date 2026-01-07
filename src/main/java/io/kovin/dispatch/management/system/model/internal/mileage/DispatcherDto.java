@@ -1,7 +1,10 @@
 package io.kovin.dispatch.management.system.model.internal.mileage;
 
+import lombok.Builder;
+
 import java.util.Objects;
 
+@Builder
 public record DispatcherDto(
     String uuid,
     String fullName

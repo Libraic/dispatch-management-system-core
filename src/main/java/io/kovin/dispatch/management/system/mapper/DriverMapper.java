@@ -5,6 +5,7 @@ import static io.kovin.dispatch.management.system.utils.constants.DispatchManage
 import java.util.Optional;
 import java.util.UUID;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
+import io.kovin.dispatch.management.system.model.entity.DispatcherEntity;
 import io.kovin.dispatch.management.system.model.entity.DriverEntity;
 import io.kovin.dispatch.management.system.model.entity.TrailerEntity;
 import io.kovin.dispatch.management.system.model.entity.TruckEntity;
@@ -22,9 +23,10 @@ public class DriverMapper {
     public DriverEntity fromCreateDriverRequestToDriverEntity(
         CreateDriverRequest request,
         CompanyEntity company,
+        DispatcherEntity dispatcher,
         TrailerEntity trailer,
         TruckEntity truck
-    ) {;
+    ) {
         return DriverEntity.builder()
             .uuid(UUID.randomUUID().toString())
             .firstName(request.firstName())
@@ -39,6 +41,7 @@ public class DriverMapper {
             .company(company)
             .trailer(trailer)
             .truck(truck)
+            .dispatcher(dispatcher)
             .build();
     }
 

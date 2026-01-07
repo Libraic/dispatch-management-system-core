@@ -72,27 +72,27 @@ public class CriteriaService {
 
     /**
      * Retrieves all {@link DriverMileageEntity} records that are associated with the given target entity
-     * and fall within the specified date range.
+     * and fall within the specified mileageDate range.
      * <p>
      * The method dynamically filters mileage entries based on:
      * <ul>
      *     <li>the target entity type (e.g., Driver, User), obtained from the {@link Kpiable} argument</li>
-     *     <li>the target entity identifier</li>
-     *     <li>a mileage start date greater than or equal to {@code startDate}</li>
-     *     <li>a mileage end date less than or equal to {@code endDate}</li>
+     *     <li>the target entity driverMileageUuid</li>
+     *     <li>a mileage start mileageDate greater than or equal to {@code startDate}</li>
+     *     <li>a mileage end mileageDate less than or equal to {@code endDate}</li>
      *     <li>any additional predicates derived from {@code getCommonPredicates(root)}</li>
      * </ul>
      * Results are ordered in descending order based on the default sorting field.
      *
      * @param targetEntity the KPI target entity whose mileage entries should be fetched;
-     *                     must provide an entity type and identifier
-     * @param startDate    the lower bound (inclusive) of the mileage start date filter
-     * @param endDate      the upper bound (inclusive) of the mileage end date filter
+     *                     must provide an entity type and driverMileageUuid
+     * @param startDate    the lower bound (inclusive) of the mileage start mileageDate filter
+     * @param endDate      the upper bound (inclusive) of the mileage end mileageDate filter
      * @return a list of {@link DriverMileageEntity} matching the provided filters;
      *         returns an empty list if no records match.
      *
      * @throws IllegalArgumentException if {@code targetEntity} is null,
-     *                                  or if it does not expose a valid entity type or identifier.
+     *                                  or if it does not expose a valid entity type or driverMileageUuid.
      */
     public List<DriverMileageEntity> getMileageForTargetEntity(
         Kpiable targetEntity,
@@ -157,7 +157,7 @@ public class CriteriaService {
             }
         }
 
-        // Get common Predicates, that apply to all entities.
+        // Get common predicates that apply to all entities.
         predicates.addAll(getCommonPredicates(root));
 
         query.select(root)
@@ -179,7 +179,7 @@ public class CriteriaService {
      * compute page count, offsets, and other pagination metadata.
      *
      * @param pageableEntity    the name of the entity to paginate; must correspond to a valid entity type
-     * @param joinableEntityId  the identifier of a related entity to filter by; may be {@code null} if no filtering is required
+     * @param joinableEntityId  the driverMileageUuid of a related entity to filter by; may be {@code null} if no filtering is required
      * @param joinableEntityName the name of the relationship field to join on when filtering; must be provided if {@code joinableEntityId} is non-null
      * @param pageSize          the number of items per page; may be {@code null} to use a default page size
      * @return a {@link PaginationDetails} object containing total records, page count, and related pagination metadata
@@ -209,7 +209,7 @@ public class CriteriaService {
      * is restricted to entities that are associated with the specified related entity through a join.
      *
      * @param clazz              the entity class to count; defines the type of entities
-     * @param joinableEntityId   the identifier of the related entity to filter by; if null, no join filter is applied
+     * @param joinableEntityId   the driverMileageUuid of the related entity to filter by; if null, no join filter is applied
      * @param joinableEntityName the name of the relationship field to join on; required if {@code joinableEntityId} is provided
      * @param <T>                the type of entity to count
      * @return the total number of entities of type {@code T} that match the optional join filter

@@ -13,8 +13,8 @@ import io.kovin.dispatch.management.system.model.enums.KpiName;
  * @param target            the entity the KPIs are calculation for.
  * @param aggregationPeriod the period the data will be aggregated for.
  * @param kpiNames          the name of the KPIs that will be calculated.
- * @param startDate         the start date of the timeframe the KPIs will be calculated for.
- * @param endDate           the end date of the timeframe the KPIs will be calculated for.
+ * @param startDate         the start mileageDate of the timeframe the KPIs will be calculated for.
+ * @param endDate           the end mileageDate of the timeframe the KPIs will be calculated for.
  */
 public record FinancialAggregationModel(
     String companyUuid,

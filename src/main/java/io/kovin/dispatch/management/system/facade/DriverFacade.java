@@ -5,6 +5,7 @@ import java.util.Map;
 import io.kovin.dispatch.management.system.mapper.DriverMapper;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
+import io.kovin.dispatch.management.system.model.entity.DispatcherEntity;
 import io.kovin.dispatch.management.system.model.entity.DriverEntity;
 import io.kovin.dispatch.management.system.model.entity.TrailerEntity;
 import io.kovin.dispatch.management.system.model.entity.TruckEntity;
@@ -12,6 +13,7 @@ import io.kovin.dispatch.management.system.model.request.CreateDriverRequest;
 import io.kovin.dispatch.management.system.model.response.DriverData;
 import io.kovin.dispatch.management.system.service.CompanyService;
 import io.kovin.dispatch.management.system.service.CriteriaService;
+import io.kovin.dispatch.management.system.service.DispatcherService;
 import io.kovin.dispatch.management.system.service.DriverService;
 import io.kovin.dispatch.management.system.service.TrailerService;
 import io.kovin.dispatch.management.system.service.TruckService;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class DriverFacade {
 
+    private final DispatcherService dispatcherService;
     private final DriverValidationService driverValidationService;
     private final DriverService driverService;
     private final DriverMapper driverMapper;
@@ -37,9 +40,10 @@ public class DriverFacade {
     public DriverData createDriver(CreateDriverRequest request) {
         driverValidationService.validateDriverCreation(request);
         CompanyEntity company = companyService.getByUuid(request.companyUuid());
+        DispatcherEntity dispatcher = getDispatcher(request.dispatcherUuid());
         TruckEntity truck = getTruck(request.truckUuid());
         TrailerEntity trailer = getTrailer(request.trailerUuid());
-        DriverEntity driverEntity = driverMapper.fromCreateDriverRequestToDriverEntity(request, company, trailer, truck);
+        DriverEntity driverEntity = driverMapper.fromCreateDriverRequestToDriverEntity(request, company, dispatcher, trailer, truck);
         DriverEntity savedDriverEntity = driverService.saveDriver(driverEntity);
         return driverMapper.fromDriverEntityToDriverData(savedDriverEntity);
     }
@@ -65,5 +69,13 @@ public class DriverFacade {
         }
 
         return trailerService.findTrailerByUuid(trailerUuid).orElse(null);
+    }
+
+    private DispatcherEntity getDispatcher(String dispatcherUuid) {
+        if (dispatcherUuid == null) {
+            return null;
+        }
+
+        return dispatcherService.getByUuid(dispatcherUuid);
     }
 }

@@ -1,9 +1,19 @@
 package io.kovin.dispatch.management.system.model.request;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public record UpsertDriverMileageRequest(
+    String driverMileageUuid,
     String companyUuid,
-    List<DriverMileage> driverMileageData
+    String dispatcherUuid,
+    String driverUuid,
+    LocalDate startDate,
+    LocalDate endDate,
+    LocalDate mileageDate,
+    BigDecimal revenue,
+    BigDecimal miles,
+    String broker
 ) {
+
 }

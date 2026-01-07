@@ -41,6 +41,12 @@ public enum ImpactedField {
     TRUCK_NUMBER("truckNumber"),
     TRUCK_YEAR("truckYear"),
     TRUCK_WEIGHT("weight"),
+
+    /**
+     * Fields related to Dispatcher registration.
+     */
+    NAME("name"),
+    PHONE_NUMBER("phoneNumber"),
     ;
 
     private final String mappedField;

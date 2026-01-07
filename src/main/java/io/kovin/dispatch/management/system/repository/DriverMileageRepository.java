@@ -11,13 +11,33 @@ import org.springframework.data.repository.query.Param;
 
 public interface DriverMileageRepository extends JpaRepository<DriverMileageEntity, Long> {
 
-    List<DriverMileageEntity> findByUuidIn(List<String> uuids);
-
     @Modifying
     @Query("DELETE FROM DriverMileageEntity dme WHERE dme.uuid IN :uuids")
     void deleteAllByUuidIn(@Param("uuids") List<String> uuids);
 
-    Optional<DriverMileageEntity> findByDispatcher_UuidAndDriver_UuidAndStartDateAndEndDate(
+    Optional<DriverMileageEntity> findByUuidAndDeletedAtIsNull(String uuid);
+
+    Optional<DriverMileageEntity> findByStartDateAndEndDateAndCompanyUuidAndDispatcherUuidAndDeletedAtIsNull(
+        LocalDate startDate,
+        LocalDate endDate,
+        String companyUuid,
+        String dispatcherUuid
+    );
+
+    List<DriverMileageEntity> findByCompanyUuidAndStartDateGreaterThanEqualAndEndDateLessThanEqualAndDeletedAtIsNullOrderByCreatedAtAsc(
+        String companyUuid,
+        LocalDate startDate,
+        LocalDate endDate
+    );
+
+    @Query("SELECT dme FROM DriverMileageEntity dme " +
+        "WHERE dme.dispatcher.uuid = :dispatcherUuid " +
+        "AND dme.driver.uuid = :driverUuid " +
+        "AND dme.startDate >= :startDate " +
+        "AND dme.endDate <= :endDate " +
+        "AND dme.deletedAt IS NULL"
+    )
+    Optional<DriverMileageEntity> findDriversMileageForTimeframe(
         String dispatcherUuid,
         String driverUuid,
         LocalDate startDate,

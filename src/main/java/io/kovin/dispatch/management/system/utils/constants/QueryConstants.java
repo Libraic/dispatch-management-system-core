@@ -17,7 +17,7 @@ public class QueryConstants {
     public static final String EQUAL = "eq";
 
     /**
-     * The equivalent of INNER JOIN in SQL. Must use a pivot column to perform the join (usually using the uuid column).
+     * The equivalent of INNER JOIN in SQL. Must use a pivot column to perform the join (usually using the driverMileageUuid column).
      */
     public static final String JOIN = "join";
 
@@ -42,7 +42,7 @@ public class QueryConstants {
     public static final String DEFAULT_SORTING_FIELD = "createdAt";
 
     /**
-     * The UUID column, which is an identifier that can be used outside the database. Usually used on JOIN clauses.
+     * The UUID column, which is a UUID that can be used outside the database. Usually used on JOIN clauses.
      */
     public static final String UUID = "uuid";
 

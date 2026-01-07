@@ -26,7 +26,12 @@ public enum ImpactedGroup {
     DOCUMENT_STATUS("documentsStatus"),
     POSITION("position"),
     STATE("state"),
-    CITY("city")
+    CITY("city"),
+
+    /**
+     * Fields related to Dispatcher registration.
+     */
+    NAME("name")
     ;
 
     private final String groupName;

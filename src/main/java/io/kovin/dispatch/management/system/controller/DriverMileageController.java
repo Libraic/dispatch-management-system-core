@@ -1,14 +1,13 @@
 package io.kovin.dispatch.management.system.controller;
 
-import java.util.HashMap;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import io.kovin.dispatch.management.system.facade.DriverMileageFacade;
 import io.kovin.dispatch.management.system.model.request.UpsertDriverMileageRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
-import io.kovin.dispatch.management.system.model.response.DriverMileageData;
+import io.kovin.dispatch.management.system.model.response.mileage.GetDriverMileageResponse;
+import io.kovin.dispatch.management.system.model.response.mileage.UpsertDriverMileageResponse;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
-import io.kovin.dispatch.management.system.model.response.error.GroupsErrors;
 import io.kovin.dispatch.management.system.service.DriverMileageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,32 +31,28 @@ public class DriverMileageController {
     private final DriverMileageFacade driverMileageFacade;
 
     @PutMapping
-    public ResponseEntity<ApiResponse<List<DriverMileageData>, List<GroupsErrors>>> upsertMileage(
+    public ResponseEntity<ApiResponse<UpsertDriverMileageResponse, ErrorResponse>> upsertMileage(
         @RequestBody UpsertDriverMileageRequest upsertDriverMileageRequest
     ) {
-        log.info("A request to upsert mileage was received.");
-        List<DriverMileageData> driverMileageDataList = driverMileageFacade.upsertMileage(upsertDriverMileageRequest);
-        return ResponseEntity.ok(ApiResponse.fromData(driverMileageDataList));
+        log.info("A request to upsert the drivers mileage was received.");
+        UpsertDriverMileageResponse response = driverMileageFacade.upsertMileage(upsertDriverMileageRequest);
+        return ResponseEntity.ok(ApiResponse.fromData(response));
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<DriverMileageData>, ErrorResponse>> getDriversMileageByCriteria(
-        @RequestParam(name = "page", required = false) Integer page,
-        @RequestParam(name = "size", required = false) Integer size,
-        @RequestParam(name = "companyId", required = false) String companyId,
-        @RequestParam(name = "startDate", required = false) String startDate,
-        @RequestParam(name = "endDate", required = false) String endDate
+    public ResponseEntity<ApiResponse<List<GetDriverMileageResponse>, ErrorResponse>> getCompanyDriversMileage(
+        @RequestParam(name = "companyId") String companyId,
+        @RequestParam(name = "startDate") LocalDate startDate,
+        @RequestParam(name = "endDate") LocalDate endDate
     ) {
-        log.info("A request to retrieve the drivers mileage by criteria was received.");
-        Map<String, String> queryParams = new HashMap<>();
-        queryParams.put("company", companyId);
-        queryParams.put("startDate", startDate);
-        queryParams.put("endDate", endDate);
-        log.trace("The query parameters are the following: [{}].", queryParams);
-        int finalPage = page == null ? 0 : page;
-        int finalSize = size == null ? 0 : size;
-        List<DriverMileageData> usersData = driverMileageFacade.getDriversMileageByCriteria(queryParams, finalPage, finalSize);
-        return ResponseEntity.ok(ApiResponse.fromData(usersData));
+        log.info(
+            "A request to retrieve the Drivers Mileage for the Company=[{}], between [{} - {},] was received.",
+            companyId,
+            startDate,
+            endDate
+        );
+        List<GetDriverMileageResponse> response = driverMileageFacade.getDriversMileageForTimeframe(companyId, startDate, endDate);
+        return ResponseEntity.ok(ApiResponse.fromData(response));
     }
 
     @DeleteMapping

@@ -40,7 +40,7 @@ public class DriverMileageEntity extends Auditable {
 
     @ManyToOne
     @JoinColumn(name = "dispatcher_id")
-    private UserEntity dispatcher;
+    private DispatcherEntity dispatcher;
 
     @ManyToOne
     @JoinColumn(name = "company_id")

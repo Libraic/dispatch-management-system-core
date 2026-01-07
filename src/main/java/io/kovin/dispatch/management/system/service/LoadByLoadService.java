@@ -43,15 +43,15 @@ public class LoadByLoadService {
 
     /**
      * Retrieves a list of {@link LoadByLoadModel} instances by processing a list of driver entities
-     * and aggregating load-by-load mileage data for the specified date range.
-     * Each {@link LoadByLoadModel} corresponds to a driver and contains relevant data within the date range.
+     * and aggregating load-by-load mileage data for the specified mileageDate range.
+     * Each {@link LoadByLoadModel} corresponds to a driver and contains relevant data within the mileageDate range.
      *
      * @param driverEntities a list of {@link DriverEntity} objects representing the target drivers
      *                       for which the load-by-load models are to be generated
-     * @param start          the start date of the range for filtering load-by-load data
-     * @param end            the end date of the range for filtering load-by-load data
+     * @param start          the start mileageDate of the range for filtering load-by-load data
+     * @param end            the end mileageDate of the range for filtering load-by-load data
      * @return a list of {@link LoadByLoadModel} instances containing load-by-load mileage details
-     *         for the given drivers within the specified date range
+     *         for the given drivers within the specified mileageDate range
      */
     public List<LoadByLoadModel> getLoadByLoadModels(List<DriverEntity> driverEntities, LocalDate start, LocalDate end) {
         List<LoadByLoadModel> loadByLoadModels = new ArrayList<>();
@@ -67,18 +67,18 @@ public class LoadByLoadService {
     }
 
     /**
-     * Groups load-by-load mileage data by driver and date within the specified date range for a given driver entity.
+     * Groups load-by-load mileage data by driver and mileageDate within the specified mileageDate range for a given driver entity.
      * This method retrieves mileage data, maps it to DTOs, and organizes it into a hierarchical structure where
-     * the outer map is keyed by driver information and the inner map is keyed by date.
+     * the outer map is keyed by driver information and the inner map is keyed by mileageDate.
      *
      * @param driver    the {@link DriverEntity} representing the target driver for which mileage data is retrieved
-     * @param startDate the start date of the range within which to fetch mileage data
-     * @param endDate   the end date of the range within which to fetch mileage data
+     * @param startDate the start mileageDate of the range within which to fetch mileage data
+     * @param endDate   the end mileageDate of the range within which to fetch mileage data
      * @return a map where:
      * - the key is a {@link DriverDto} representing a driver, and
      * - the value is another map where:
-     * - the key is a {@link LocalDate} representing a specific date, and
-     * - the value is a {@link LoadByLoadMileageDto} containing load-by-load mileage details for that date
+     * - the key is a {@link LocalDate} representing a specific mileageDate, and
+     * - the value is a {@link LoadByLoadMileageDto} containing load-by-load mileage details for that mileageDate
      */
     private Map<DriverDto, Map<LocalDate, LoadByLoadMileageDto>> createLoadByLoadMileageGroupedByDriver(
         DriverEntity driver,

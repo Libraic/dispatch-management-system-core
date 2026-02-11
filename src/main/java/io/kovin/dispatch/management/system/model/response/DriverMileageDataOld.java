@@ -8,7 +8,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class DriverMileageData {
+public class DriverMileageDataOld {
     String uuid;
     DriverData driver;
     UserData dispatcher;

@@ -45,14 +45,14 @@ public class DriverController {
         @RequestParam(name = "size", required = false) Integer size,
         @RequestParam(name = "firstName", required = false) String firstName,
         @RequestParam(name = "lastName", required = false) String lastName,
-        @RequestParam(name = "fullName", required = false) String fullName,
+        @RequestParam(name = "name", required = false) String fullName,
         @RequestParam(name = "companyId", required = false) String companyId
     ) {
         log.info("A request to fetch Drivers by criteria was received.");
         Map<String, String> queryParams = new HashMap<>();
         queryParams.put("firstName", firstName);
         queryParams.put("lastName", lastName);
-        queryParams.put("fullName", fullName);
+        queryParams.put("name", fullName);
         queryParams.put(COMPANY_FIELD, companyId);
         log.trace("The query parameters are the following: [{}].", queryParams);
 

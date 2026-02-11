@@ -2,14 +2,15 @@ package io.kovin.dispatch.management.system.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+
+import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.entity.DriverMileageEntity;
 import io.kovin.dispatch.management.system.repository.DriverMileageRepository;
+import io.kovin.dispatch.management.system.utils.ErrorMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,47 +22,32 @@ public class DriverMileageService {
     private final DriverMileageRepository driverMileageRepository;
 
     /**
-     * Persist a list of DriverMileageEntity objects in the database.
-     * @param mileageEntities the list of DriverMileageEntity objects.
-     * @return the updated DriverMileageEntity objects (the ID field is populated).
+     * Persists a DriverMileageEntity object into the database.
+     *
+     * @param driverMileageEntity the DriverMileageEntity object to be saved.
      */
-    public List<DriverMileageEntity> saveMileageEntities(List<DriverMileageEntity> mileageEntities) {
-        log.info("Persisting [{}] Mileage entities.", mileageEntities.size());
-        return driverMileageRepository.saveAll(mileageEntities);
+    public void saveDriverMileage(DriverMileageEntity driverMileageEntity) {
+        log.info("Persisting the Driver Mileage.");
+        driverMileageRepository.save(driverMileageEntity);
     }
 
-    /**
-     * Get a dictionary, where the key is the UUID of the Driver Mileage entity and the value is the entity itself.
-     * @param uuids a list of the UUIDs of the entities.
-     * @return a dictionary with the UUID-DriverMileageEntity pair.
-     */
-    public Map<String, DriverMileageEntity> getMileageMapByUuids(List<String> uuids) {
-        return driverMileageRepository.findByUuidIn(uuids)
-            .stream()
-            .collect(Collectors.toMap(DriverMileageEntity::getUuid, Function.identity()));
+    public void saveAllDriverMileageEntities(List<DriverMileageEntity> driverMileageEntities) {
+        log.info("Persisting [{}] Driver Mileage entities.", driverMileageEntities.size());
+        driverMileageRepository.saveAll(driverMileageEntities);
     }
 
-    /**
-     * Finds DriverMileageEntity that has the provided Dispatcher UUID, Driver UUID, start/end date.
-     * The combination of Dispatcher-Driver is guaranteed to be unique, so at most one combination is possible.
-     * @param dispatcherUuid the UUID of the Dispatcher.
-     * @param driverUuid     the UUID of the Driver.
-     * @param startDate      the start date of the Mileage.
-     * @param endDate        the end date of the Mileage.
-     * @return an optional containing the DriverMileageEntity.
-     */
-    public Optional<DriverMileageEntity> getByDispatcherAndDriverAndStartDateAndEndDate(
-        String dispatcherUuid,
-        String driverUuid,
+    public DriverMileageEntity getDriverMileageEntity(
         LocalDate startDate,
-        LocalDate endDate
+        LocalDate endDate,
+        String companyUuid,
+        String dispatcherUuid
     ) {
-        return driverMileageRepository.findByDispatcher_UuidAndDriver_UuidAndStartDateAndEndDate(
-            dispatcherUuid,
-            driverUuid,
+        return driverMileageRepository.findByStartDateAndEndDateAndCompanyUuidAndDispatcherUuidAndDeletedAtIsNull(
             startDate,
-            endDate
-        );
+            endDate,
+            companyUuid,
+            dispatcherUuid
+        ).orElse(null);
     }
 
     /**
@@ -72,5 +58,47 @@ public class DriverMileageService {
     public void deleteDriversMileageByUuids(List<String> uuids) {
         driverMileageRepository.deleteAllByUuidIn(uuids);
         log.trace("[{}] records were deleted.", uuids);
+    }
+
+    public DriverMileageEntity getByUuidAndCompanyUuid(String uuid) {
+        log.info("Retrieving the driver mileage with UUID=[{}].", uuid);
+        var driverMileageEntityOptional = driverMileageRepository.findByUuidAndDeletedAtIsNull(uuid);
+        if (driverMileageEntityOptional.isEmpty()) {
+            String errorMessage = String.format(ErrorMessage.DRIVER_MILEAGE_NOT_FOUND_BY_UUID, uuid);
+            log.error(errorMessage);
+            throw DispatchManagementSystemException.of(errorMessage, HttpStatus.NOT_FOUND);
+        }
+
+        return driverMileageEntityOptional.get();
+    }
+
+    /**
+     * Retrieves a list of DriverMileageEntity objects for a specified company within a given timeframe.
+     * Only mileage records that are not marked as deleted are included, and the results are ordered by creation date in ascending order.
+     *
+     * @param companyUuid the unique identifier of the company for which driver mileage is being retrieved.
+     * @param startDate the start date of the timeframe for which mileage records are requested.
+     * @param endDate the end date of the timeframe for which mileage records are requested.
+     * @return a list of DriverMileageEntity objects matching the specified company and timeframe.
+     */
+    public List<DriverMileageEntity> getDriversMileageByCompanyAndTimeframe(
+        String companyUuid,
+        LocalDate startDate,
+        LocalDate endDate
+    ) {
+        return driverMileageRepository.findByCompanyUuidAndStartDateGreaterThanEqualAndEndDateLessThanEqualAndDeletedAtIsNullOrderByCreatedAtAsc(
+            companyUuid,
+            startDate,
+            endDate
+        );
+    }
+
+    public Optional<DriverMileageEntity> getDriversMileageForTimeframe(
+        String dispatcherUuid,
+        String driverUuid,
+        LocalDate startDate,
+        LocalDate endDate
+    ) {
+        return driverMileageRepository.findDriversMileageForTimeframe(dispatcherUuid, driverUuid, startDate, endDate);
     }
 }

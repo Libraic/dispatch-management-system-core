@@ -1,5 +1,6 @@
 package io.kovin.dispatch.management.system.model.entity;
 
+import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,9 +14,7 @@ import lombok.Setter;
 @Builder
 public class MileageData {
 
-    private String destinationNote;
-    private String note;
-    private Double revenue;
-    private Double miles;
+    private BigDecimal revenue;
+    private BigDecimal miles;
     private String broker;
 }

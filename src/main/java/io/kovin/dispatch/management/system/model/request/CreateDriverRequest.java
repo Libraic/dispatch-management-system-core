@@ -14,6 +14,7 @@ public record CreateDriverRequest(
      String city,
      String companyUuid,
      String truckUuid,
-     String trailerUuid
+     String trailerUuid,
+     String dispatcherUuid
 ) {
 }

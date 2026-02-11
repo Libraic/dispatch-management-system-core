@@ -77,6 +77,10 @@ public class DriverEntity extends Auditable implements Kpiable {
     @JoinColumn(name = "trailer_id")
     private TrailerEntity trailer;
 
+    @ManyToOne
+    @JoinColumn(name = "dispatcher_id")
+    private DispatcherEntity dispatcher;
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

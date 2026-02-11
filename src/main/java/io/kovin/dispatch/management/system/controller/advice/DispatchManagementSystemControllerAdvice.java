@@ -1,6 +1,8 @@
 package io.kovin.dispatch.management.system.controller.advice;
 
 import ch.qos.logback.core.util.StringUtil;
+
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.stream.Collectors;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
@@ -33,6 +35,7 @@ public class DispatchManagementSystemControllerAdvice {
 
     @ExceptionHandler(DispatchManagementSystemException.class)
     public ResponseEntity<ApiResponse<?, ?>> handleDispatchManagementSystemException(DispatchManagementSystemException ex) {
+        logException(ex);
         var errorResponse = ErrorResponse.builder()
             .message(ex.getLocalizedMessage())
             .status(ex.getHttpStatus())
@@ -44,9 +47,9 @@ public class DispatchManagementSystemControllerAdvice {
 
     @ExceptionHandler({ IllegalArgumentException.class, NullPointerException.class })
     public ResponseEntity<ApiResponse<?, ?>> handleNativeExceptions(RuntimeException ex) {
+        logException(ex);
         String exceptionMessage = ex.getLocalizedMessage();
         String message = StringUtil.isNullOrEmpty(exceptionMessage) ? INTERNAL_SERVER_ERROR : exceptionMessage;
-        log.error("An internal error has occurred: [{}].", message);
         var errorResponse = ErrorResponse.builder()
             .message(message)
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -54,5 +57,21 @@ public class DispatchManagementSystemControllerAdvice {
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ApiResponse.fromError(errorResponse));
+    }
+
+    @ExceptionHandler({ SQLException.class })
+    public ResponseEntity<ApiResponse<?, ?>> handleSqlExceptions(Exception sqlException) {
+        logException(sqlException);
+        var errorResponse = ErrorResponse.builder()
+            .message(INTERNAL_SERVER_ERROR)
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .build();
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(ApiResponse.fromError(errorResponse));
+    }
+
+    private void logException(Exception ex) {
+        log.error("An internal error has occurred: ", ex);
     }
 }

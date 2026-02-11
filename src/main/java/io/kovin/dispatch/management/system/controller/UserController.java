@@ -48,14 +48,14 @@ public class UserController {
         @RequestParam(name = "firstName", required = false) String firstName,
         @RequestParam(name = "nickname", required = false) String nickname,
         @RequestParam(name = "lastName", required = false) String lastName,
-        @RequestParam(name = "fullName", required = false) String fullName
+        @RequestParam(name = "name", required = false) String fullName
     ) {
         log.info("A request to fetch Users by criteria was received.");
         Map<String, String> fields = new HashMap<>();
         fields.put("firstName", firstName);
         fields.put("nickname", nickname);
         fields.put("lastName", lastName);
-        fields.put("fullName", fullName);
+        fields.put("name", fullName);
         int finalPage = page == null ? 0 : page;
         int finalSize = size == null ? 0 : size;
         List<UserData> usersData = userFacade.getUsersByCriteria(fields, finalPage, finalSize);

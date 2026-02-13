@@ -134,6 +134,7 @@ public class DriverMileageFacade {
                     .uuid(driverUuid)
                     .build();
                 Optional<DriverMileageEntity> driverMileageEntityOptional = driverMileageService.getDriversMileageForTimeframe(
+                    companyUuid,
                     dispatcherUuid,
                     driverUuid,
                     startDate,
@@ -256,12 +257,14 @@ public class DriverMileageFacade {
         DispatcherEntity dispatcher,
         DriverEntity driver
     ) {
-        DriverMileageEntity nextWeekDriverMileage = driverMileageService.getDriverMileageEntity(
-            startDate,
-            endDate,
+        DriverMileageEntity nextWeekDriverMileage = driverMileageService.getDriversMileageForTimeframe(
             request.companyUuid(),
-            request.dispatcherUuid()
-        );
+            request.dispatcherUuid(),
+            request.driverUuid(),
+            startDate,
+            endDate
+        ).orElse(null);
+
         if (nextWeekDriverMileage != null) {
             updateMileageData(nextWeekDriverMileage.getMileageData(), request);
             DriverEntity finalDriver = driver == null ? nextWeekDriverMileage.getDriver() : driver;

@@ -17,27 +17,16 @@ public interface DriverMileageRepository extends JpaRepository<DriverMileageEnti
 
     Optional<DriverMileageEntity> findByUuidAndDeletedAtIsNull(String uuid);
 
-    Optional<DriverMileageEntity> findByStartDateAndEndDateAndCompanyUuidAndDispatcherUuidAndDeletedAtIsNull(
-        LocalDate startDate,
-        LocalDate endDate,
-        String companyUuid,
-        String dispatcherUuid
-    );
-
-    List<DriverMileageEntity> findByCompanyUuidAndStartDateGreaterThanEqualAndEndDateLessThanEqualAndDeletedAtIsNullOrderByCreatedAtAsc(
-        String companyUuid,
-        LocalDate startDate,
-        LocalDate endDate
-    );
-
     @Query("SELECT dme FROM DriverMileageEntity dme " +
         "WHERE dme.dispatcher.uuid = :dispatcherUuid " +
         "AND dme.driver.uuid = :driverUuid " +
+        "AND dme.company.uuid = :companyUuid " +
         "AND dme.startDate >= :startDate " +
         "AND dme.endDate <= :endDate " +
         "AND dme.deletedAt IS NULL"
     )
     Optional<DriverMileageEntity> findDriversMileageForTimeframe(
+        String companyUuid,
         String dispatcherUuid,
         String driverUuid,
         LocalDate startDate,

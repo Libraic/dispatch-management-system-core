@@ -50,12 +50,15 @@ public class DriverMileageValidationService {
             if (request.revenue() == null) {
                 throw DispatchManagementSystemException.of(ErrorMessage.REVENUE_IS_MANDATORY, HttpStatus.BAD_REQUEST);
             }
+
+            if (StringUtil.isNullOrEmpty(request.broker())) {
+                throw DispatchManagementSystemException.of(ErrorMessage.BROKER_IS_MANDATORY, HttpStatus.BAD_REQUEST);
+            }
         }
 
         if (BigDecimalUtils.isNegative(request.miles())) {
             throw DispatchManagementSystemException.of(ErrorMessage.NEGATIVE_MILES, HttpStatus.BAD_REQUEST);
         }
-
 
         if (BigDecimalUtils.isNegative(request.revenue())) {
             throw DispatchManagementSystemException.of(ErrorMessage.NEGATIVE_REVENUE, HttpStatus.BAD_REQUEST);

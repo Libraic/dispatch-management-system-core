@@ -53,6 +53,7 @@ public class ErrorMessage {
     /**
      * Error messages related to Drivers Mileage.
      */
+    public static final String BROKER_IS_MANDATORY = "Broker is required.";
     public static final String COMPANY_IS_MANDATORY = "The company is missing.";
     public static final String DISPATCHER_IS_MANDATORY = "The dispatcher is missing.";
     public static final String DRIVER_IS_MANDATORY = "The driver is missing.";

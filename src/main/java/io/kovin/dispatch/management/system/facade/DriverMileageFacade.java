@@ -292,7 +292,9 @@ public class DriverMileageFacade {
                 data.setRevenue(request.revenue());
             }
 
-            data.setBroker(request.broker());
+            if (!StringUtil.isNullOrEmpty(request.broker())) {
+                data.setBroker(request.broker());
+            }
         } else {
             MileageData newDatum = createMileageData(request);
             previousMileageData.put(request.mileageDate().toString(), newDatum);

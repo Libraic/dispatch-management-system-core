@@ -13,7 +13,12 @@ public record UpsertDriverMileageRequest(
     LocalDate mileageDate,
     BigDecimal revenue,
     BigDecimal miles,
-    String broker
+    String broker,
+    String representative,
+    String pickUpLocation,
+    LocalDate pickUpDate,
+    String deliveryLocation,
+    LocalDate deliveryDate
 ) {
 
 }

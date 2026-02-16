@@ -54,18 +54,22 @@ public class ErrorMessage {
      * Error messages related to Drivers Mileage.
      */
     public static final String BROKER_IS_MANDATORY = "Broker is required.";
-    public static final String COMPANY_IS_MANDATORY = "The company is missing.";
-    public static final String DISPATCHER_IS_MANDATORY = "The dispatcher is missing.";
-    public static final String DRIVER_IS_MANDATORY = "The driver is missing.";
+    public static final String COMPANY_IS_MANDATORY = "The company is required.";
+    public static final String DELIVERY_DATE_IS_MANDATORY = "The delivery date is required.";
+    public static final String DELIVERY_LOCATION_IS_MANDATORY = "The delivery location is required.";
+    public static final String DISPATCHER_IS_MANDATORY = "The dispatcher is required.";
+    public static final String DRIVER_IS_MANDATORY = "The driver is required.";
     public static final String DRIVER_MILEAGE_NOT_FOUND_BY_UUID = "The driver with UUID=[%s] was not found.";
-    public static final String MILEAGE_DATE_IS_MANDATORY = "The date of the mileage is missing.";
-    public static final String MILES_ARE_MANDATORY = "Miles are missing.";
+    public static final String MILEAGE_DATE_IS_MANDATORY = "The date of the mileage is required.";
+    public static final String MILES_ARE_MANDATORY = "Miles are required.";
     public static final String NEGATIVE_MILES = "The miles cannot be negative.";
     public static final String NEGATIVE_REVENUE = "The revenue cannot be negative.";
-    public static final String REVENUE_IS_MANDATORY = "The revenue is missing.";
-    public static final String START_DATE_IS_MANDATORY = "The start date of the mileage timeframe is missing.";
+    public static final String PICK_UP_DATE_IS_MANDATORY = "The pick-up date is required.";
+    public static final String PICK_UP_LOCATION_IS_MANDATORY = "The pick-up location is required.";
+    public static final String REVENUE_IS_MANDATORY = "The revenue is required.";
+    public static final String START_DATE_IS_MANDATORY = "The start date of the mileage timeframe is required.";
     public static final String START_DATE_BEFORE_END_DATE = "The start date cannot be after the end date.";
-    public static final String END_DATE_IS_MANDATORY = "The end date of the mileage timeframe is missing.";
+    public static final String END_DATE_IS_MANDATORY = "The end date of the mileage timeframe is required.";
 
     /**
      * Error messages related to Trailer.

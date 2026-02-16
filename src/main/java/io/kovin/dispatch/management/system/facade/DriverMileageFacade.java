@@ -148,6 +148,11 @@ public class DriverMileageFacade {
                         .miles(mileageData.getValue().getMiles())
                         .revenue(mileageData.getValue().getRevenue())
                         .broker(mileageData.getValue().getBroker())
+                        .representative(mileageData.getValue().getRepresentative())
+                        .deliveryLocation(mileageData.getValue().getDeliveryLocation())
+                        .pickUpLocation(mileageData.getValue().getPickUpLocation())
+                        .pickUpDate(mileageData.getValue().getPickUpDate())
+                        .deliveryDate(mileageData.getValue().getDeliveryDate())
                         .build()
                     ).toList()
                 ).orElse(List.of());
@@ -295,6 +300,26 @@ public class DriverMileageFacade {
             if (!StringUtil.isNullOrEmpty(request.broker())) {
                 data.setBroker(request.broker());
             }
+
+            if (!StringUtil.isNullOrEmpty(request.representative())) {
+                data.setRepresentative(request.representative());
+            }
+
+            if (!StringUtil.isNullOrEmpty(request.deliveryLocation())) {
+                data.setDeliveryLocation(request.deliveryLocation());
+            }
+
+            if (!StringUtil.isNullOrEmpty(request.pickUpLocation())) {
+                data.setPickUpLocation(request.pickUpLocation());
+            }
+
+            if (request.pickUpDate() != null) {
+                data.setPickUpDate(request.pickUpDate());
+            }
+
+            if (request.deliveryDate() != null) {
+                data.setDeliveryDate(request.deliveryDate());
+            }
         } else {
             MileageData newDatum = createMileageData(request);
             previousMileageData.put(request.mileageDate().toString(), newDatum);
@@ -313,6 +338,11 @@ public class DriverMileageFacade {
             .revenue(request.revenue())
             .miles(request.miles())
             .broker(request.broker())
+            .representative(request.representative())
+            .deliveryLocation(request.deliveryLocation())
+            .pickUpLocation(request.pickUpLocation())
+            .pickUpDate(request.pickUpDate())
+            .deliveryDate(request.deliveryDate())
             .build();
     }
 

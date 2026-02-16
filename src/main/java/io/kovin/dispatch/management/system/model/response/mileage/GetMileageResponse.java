@@ -9,6 +9,11 @@ public record GetMileageResponse(
     LocalDate date,
     BigDecimal revenue,
     BigDecimal miles,
-    String broker
+    String broker,
+    String representative,
+    LocalDate pickUpDate,
+    LocalDate deliveryDate,
+    String deliveryLocation,
+    String pickUpLocation
 ) {
 }

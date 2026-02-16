@@ -1,6 +1,9 @@
 package io.kovin.dispatch.management.system.facade;
 
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.START_DATE_BEFORE_END_DATE;
+
 import ch.qos.logback.core.util.StringUtil;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +39,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import static io.kovin.dispatch.management.system.utils.ErrorMessage.START_DATE_BEFORE_END_DATE;
 
 @Component
 @RequiredArgsConstructor
@@ -57,7 +59,7 @@ public class DriverMileageFacade {
      * Updates or inserts driver mileage data based on the provided request.
      * This involves validation, extracting the necessary entities like the company,
      * dispatcher, and driver, and computing mileage entities for the current and
-     * possibly next week. The mileage entities are then persisted.
+     * next/previous week. The mileage entities are then persisted.
      *
      * @param request the request object containing details for upserting the driver mileage.
      *                Includes fields such as companyUuid, dispatcherUuid, driverUuid,
@@ -66,15 +68,15 @@ public class DriverMileageFacade {
      */
     @Transactional
     public UpsertDriverMileageResponse upsertMileage(UpsertDriverMileageRequest request) {
-        if (request == null) {
-            return null;
-        }
-
         driverMileageValidationService.validateDriversMileageUpsertion(request);
 
         CompanyEntity company = companyService.getByUuid(request.companyUuid());
-        DispatcherEntity dispatcher = getDispatcher(request.dispatcherUuid());
-        DriverEntity driver = getDriver(request.driverUuid());
+        DispatcherEntity dispatcher = StringUtil.isNullOrEmpty(request.dispatcherUuid())
+            ? null
+            : dispatcherService.getByUuid(request.dispatcherUuid());
+        DriverEntity driver = StringUtil.isNullOrEmpty(request.driverUuid())
+            ? null
+            : driverService.getByUuid(request.driverUuid());
 
         List<DriverMileageEntity> driverMileageEntities = new ArrayList<>(2);
         DriverMileageEntity driverMileageEntity = getCurrentWeekDriverMileageEntity(
@@ -92,8 +94,10 @@ public class DriverMileageFacade {
         }
 
         driverMileageService.saveAllDriverMileageEntities(driverMileageEntities);
+
         return UpsertDriverMileageResponse.builder()
             .driverMileageUuid(driverMileageEntity.getUuid())
+            .mileage(driverMileageMapper.fromDriverMileageEntityToGetMileageResponse(driverMileageEntity))
             .build();
     }
 
@@ -102,18 +106,17 @@ public class DriverMileageFacade {
      * The data is grouped by dispatcher and includes detailed mileage information for each driver.
      *
      * @param companyUuid the unique identifier of the company for which to retrieve driver mileage data.
-     * @param startDate the start date of the timeframe for which mileage data is to be retrieved.
-     * @param endDate the end date of the timeframe for which mileage data is to be retrieved.
+     * @param startDate   the start date of the timeframe for which mileage data is to be retrieved.
+     * @param endDate     the end date of the timeframe for which mileage data is to be retrieved.
      * @return a list of {@link GetDriverMileageResponse}, where each response contains a dispatcher and
-     *         the corresponding list of driver mileage data grouped by dispatcher and ordered by creation date.
+     * the corresponding list of driver mileage data grouped by dispatcher and ordered by creation date.
      */
     public List<GetDriverMileageResponse> getDriversMileageForTimeframe(
         String companyUuid,
         LocalDate startDate,
         LocalDate endDate
     ) {
-        // TODO: Replace with "exists"
-        companyService.getByUuid(companyUuid);
+        companyService.validateTheCompanyIsRegistered(companyUuid);
         if (startDate.isAfter(endDate)) {
             throw DispatchManagementSystemException.of(START_DATE_BEFORE_END_DATE, HttpStatus.BAD_REQUEST);
         }
@@ -140,22 +143,9 @@ public class DriverMileageFacade {
                     startDate,
                     endDate
                 );
-                List<GetMileageResponse> getMileageResponses = driverMileageEntityOptional.map(driverMileageEntity -> driverMileageEntity.getMileageData()
-                    .entrySet()
-                    .stream()
-                    .map(mileageData -> GetMileageResponse.builder()
-                        .date(LocalDate.parse(mileageData.getKey()))
-                        .miles(mileageData.getValue().getMiles())
-                        .revenue(mileageData.getValue().getRevenue())
-                        .broker(mileageData.getValue().getBroker())
-                        .representative(mileageData.getValue().getRepresentative())
-                        .deliveryLocation(mileageData.getValue().getDeliveryLocation())
-                        .pickUpLocation(mileageData.getValue().getPickUpLocation())
-                        .pickUpDate(mileageData.getValue().getPickUpDate())
-                        .deliveryDate(mileageData.getValue().getDeliveryDate())
-                        .build()
-                    ).toList()
-                ).orElse(List.of());
+                List<GetMileageResponse> getMileageResponses = driverMileageMapper.fromDriverMileageEntityToGetMileageResponse(
+                    driverMileageEntityOptional.orElse(null)
+                );
                 GetDriverMileageDataResponse getDriverMileageDataResponse = GetDriverMileageDataResponse.builder()
                     .driverMileageUuid(driverMileageEntityOptional.map(DriverMileageEntity::getUuid).orElse(null))
                     .driver(getDriverResponse)
@@ -181,6 +171,7 @@ public class DriverMileageFacade {
             );
         }
 
+        // The Drivers who are not yet assigned to a Dispatcher
         if (!driversWithoutDispatchersMileageDataResponses.isEmpty()) {
             responses.add(GetDriverMileageResponse.builder()
                 .dispatcher(null)
@@ -208,17 +199,11 @@ public class DriverMileageFacade {
     ) {
         if (request.driverMileageUuid() != null) {
             var driverMileageEntity = driverMileageService.getByUuidAndCompanyUuid(request.driverMileageUuid());
-            DriverEntity currentDriver = driverMileageEntity.getDriver();
-            DriverEntity finalDriver = driver == null
-                ? driverMileageEntity.getDriver()
-                : !driver.getUuid().equals(currentDriver.getUuid()) ? driver : currentDriver;
             if (request.mileageDate() != null) {
-                updateMileageData(driverMileageEntity.getMileageData(), request);
+                updateMileageDatum(driverMileageEntity.getMileageData(), request);
             }
 
-            return driverMileageEntity.toBuilder()
-                .driver(finalDriver)
-                .build();
+            return driverMileageEntity;
         }
 
         return DriverMileageEntity.builder()
@@ -271,9 +256,8 @@ public class DriverMileageFacade {
         ).orElse(null);
 
         if (nextWeekDriverMileage != null) {
-            updateMileageData(nextWeekDriverMileage.getMileageData(), request);
-            DriverEntity finalDriver = driver == null ? nextWeekDriverMileage.getDriver() : driver;
-            return nextWeekDriverMileage.toBuilder().driver(finalDriver).build();
+            updateMileageDatum(nextWeekDriverMileage.getMileageData(), request);
+            return nextWeekDriverMileage;
         }
         return DriverMileageEntity.builder()
             .uuid(UUID.randomUUID().toString())
@@ -286,71 +270,80 @@ public class DriverMileageFacade {
             .build();
     }
 
-    private void updateMileageData(Map<String, MileageData> previousMileageData, UpsertDriverMileageRequest request) {
-        MileageData data = previousMileageData.get(request.mileageDate().toString());
-        if (data != null) {
-            if (!BigDecimalUtils.isEmpty(request.miles())) {
-                data.setMiles(request.miles());
+    private void updateMileageDatum(Map<String, MileageData> previousMileageData, UpsertDriverMileageRequest request) {
+        MileageData previousMileageDatum = previousMileageData.get(request.mileageDate().toString());
+        if (previousMileageDatum != null) {
+            // If the Pickup/Delivery dates were changed, we should remove the Mileages previously created
+            // for this time frame and create a new one.
+            if (hasPickUpDateOrDeliveryDateChanged(request, previousMileageDatum)) {
+                LocalDate iterator = request.pickUpDate();
+                while (!iterator.isAfter(previousMileageDatum.getDeliveryDate())) {
+                    previousMileageData.remove(iterator.toString());
+                    iterator = iterator.plusDays(1);
+                }
             }
 
-            if (!BigDecimalUtils.isEmpty(request.revenue())) {
-                data.setRevenue(request.revenue());
-            }
-
-            if (!StringUtil.isNullOrEmpty(request.broker())) {
-                data.setBroker(request.broker());
-            }
-
-            if (!StringUtil.isNullOrEmpty(request.representative())) {
-                data.setRepresentative(request.representative());
-            }
-
-            if (!StringUtil.isNullOrEmpty(request.deliveryLocation())) {
-                data.setDeliveryLocation(request.deliveryLocation());
-            }
-
-            if (!StringUtil.isNullOrEmpty(request.pickUpLocation())) {
-                data.setPickUpLocation(request.pickUpLocation());
-            }
-
-            if (request.pickUpDate() != null) {
-                data.setPickUpDate(request.pickUpDate());
-            }
-
-            if (request.deliveryDate() != null) {
-                data.setDeliveryDate(request.deliveryDate());
-            }
+            Map<String, MileageData> currentMileageData = createMileageDataMap(request);
+            previousMileageData.putAll(currentMileageData);
+            MileageData currentMileageDatum = currentMileageData.get(request.toString());
+            updateMileageDatum(request, previousMileageDatum, currentMileageDatum);
         } else {
-            MileageData newDatum = createMileageData(request);
-            previousMileageData.put(request.mileageDate().toString(), newDatum);
+            Map<String, MileageData> newMileageData = createMileageDataMap(request);
+            previousMileageData.putAll(newMileageData);
         }
     }
 
     private Map<String, MileageData> createMileageDataMap(UpsertDriverMileageRequest request) {
         Map<String, MileageData> mileageData = new HashMap<>();
-        MileageData data = createMileageData(request);
-        mileageData.put(request.mileageDate().toString(), data);
+        LocalDate pickUpDate = request.pickUpDate();
+        LocalDate deliveryDate = request.deliveryDate();
+
+        // Create the Mileage for the first day (the loading day), having the 'Covered' status
+        mileageData.put(pickUpDate.toString(), driverMileageMapper.createCoveredMileageDatum(request));
+
+        // Create the Mileage data for the next days prior to the last one, having the 'Transit' status
+        LocalDate nextDay = pickUpDate.plusDays(1);
+        while (nextDay.isBefore(deliveryDate)) {
+            mileageData.put(nextDay.toString(), driverMileageMapper.createTransitMileageDatum());
+            nextDay = nextDay.plusDays(1);
+        }
+
+        // Create the Mileage data for the last day, having the 'Empty' status
+        mileageData.put(
+            deliveryDate.toString(),
+            driverMileageMapper.createEmptyMileageDatum(deliveryDate, request.deliveryLocation())
+        );
+
         return mileageData;
     }
 
-    private MileageData createMileageData(UpsertDriverMileageRequest request) {
-        return MileageData.builder()
-            .revenue(request.revenue())
-            .miles(request.miles())
-            .broker(request.broker())
-            .representative(request.representative())
-            .deliveryLocation(request.deliveryLocation())
-            .pickUpLocation(request.pickUpLocation())
-            .pickUpDate(request.pickUpDate())
-            .deliveryDate(request.deliveryDate())
-            .build();
+    private boolean hasPickUpDateOrDeliveryDateChanged(UpsertDriverMileageRequest request, MileageData mileageData) {
+        LocalDate newPickUpDate = request.pickUpDate();
+        LocalDate newDeliveryDate = request.deliveryDate();
+        return (newPickUpDate != null && !newPickUpDate.equals(mileageData.getPickUpDate()))
+            || (newDeliveryDate != null && !newDeliveryDate.equals(mileageData.getDeliveryDate()));
     }
 
-    private DispatcherEntity getDispatcher(String dispatcherUuid) {
-        return StringUtil.isNullOrEmpty(dispatcherUuid) ? null : dispatcherService.getByUuid(dispatcherUuid);
-    }
+    private void updateMileageDatum(
+        UpsertDriverMileageRequest request,
+        MileageData previousMileageData,
+        MileageData currentMileageData
+    ) {
+        // By using a generic method that created the Mileage Data based on the request, some fields may be null
+        // (because they are basically not updated). Therefore, we should take the previous values and populate
+        // the object
+        BigDecimal miles = !BigDecimalUtils.isEmpty(request.miles()) ? request.miles() : previousMileageData.getMiles();
+        BigDecimal revenue = !BigDecimalUtils.isEmpty(request.revenue()) ? request.revenue() : previousMileageData.getRevenue();
+        String broker = !StringUtil.isNullOrEmpty(request.broker()) ? request.broker() : previousMileageData.getBroker();
+        String representative = !StringUtil.isNullOrEmpty(request.representative()) ? request.representative() : previousMileageData.getRepresentative();
+        String deliveryLocation = !StringUtil.isNullOrEmpty(request.deliveryLocation()) ? request.deliveryLocation() : previousMileageData.getDeliveryLocation();
+        String pickUpLocation = !StringUtil.isNullOrEmpty(request.pickUpLocation()) ? request.pickUpLocation() : previousMileageData.getPickUpLocation();
 
-    private DriverEntity getDriver(String driverUuid) {
-        return StringUtil.isNullOrEmpty(driverUuid) ? null : driverService.getByUuid(driverUuid);
+        currentMileageData.setMiles(miles);
+        currentMileageData.setRevenue(revenue);
+        currentMileageData.setBroker(broker);
+        currentMileageData.setRepresentative(representative);
+        currentMileageData.setDeliveryLocation(deliveryLocation);
+        currentMileageData.setPickUpLocation(pickUpLocation);
     }
 }

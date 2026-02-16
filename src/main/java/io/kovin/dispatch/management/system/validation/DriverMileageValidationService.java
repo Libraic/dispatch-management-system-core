@@ -59,17 +59,17 @@ public class DriverMileageValidationService {
                 throw DispatchManagementSystemException.of(ErrorMessage.PICK_UP_LOCATION_IS_MANDATORY, HttpStatus.BAD_REQUEST);
             }
 
-            if (request.pickUpDate() == null) {
-                throw DispatchManagementSystemException.of(ErrorMessage.PICK_UP_DATE_IS_MANDATORY, HttpStatus.BAD_REQUEST);
-            }
-
             if (StringUtil.isNullOrEmpty(request.deliveryLocation())) {
                 throw DispatchManagementSystemException.of(ErrorMessage.DELIVERY_DATE_IS_MANDATORY, HttpStatus.BAD_REQUEST);
             }
+        }
 
-            if (request.deliveryDate() == null) {
-                throw DispatchManagementSystemException.of(ErrorMessage.DELIVERY_DATE_IS_MANDATORY, HttpStatus.BAD_REQUEST);
-            }
+        if (request.pickUpDate() == null) {
+            throw DispatchManagementSystemException.of(ErrorMessage.PICK_UP_DATE_IS_MANDATORY, HttpStatus.BAD_REQUEST);
+        }
+
+        if (request.deliveryDate() == null) {
+            throw DispatchManagementSystemException.of(ErrorMessage.DELIVERY_DATE_IS_MANDATORY, HttpStatus.BAD_REQUEST);
         }
 
         if (BigDecimalUtils.isNegative(request.miles())) {

@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -21,30 +20,25 @@ public class DriverMileageService {
     private final DriverMileageRepository driverMileageRepository;
 
     /**
-     * Persists a DriverMileageEntity object into the database.
+     * Persists a list of DriverMileageEntity objects to the database.
      *
-     * @param driverMileageEntity the DriverMileageEntity object to be saved.
+     * @param driverMileageEntities a list of DriverMileageEntity objects to be saved.
+     *                              This list must not be null and should contain the entities
+     *                              that need to be persisted.
      */
-    public void saveDriverMileage(DriverMileageEntity driverMileageEntity) {
-        log.info("Persisting the Driver Mileage.");
-        driverMileageRepository.save(driverMileageEntity);
-    }
-
     public void saveAllDriverMileageEntities(List<DriverMileageEntity> driverMileageEntities) {
         log.info("Persisting [{}] Driver Mileage entities.", driverMileageEntities.size());
         driverMileageRepository.saveAll(driverMileageEntities);
     }
 
     /**
-     * Removes the DriverMileageEntity objects from the database by the provided UUIDs.
-     * @param uuids a list of UUIDs of the Mileage objects that should be removed.
+     * Retrieves a DriverMileageEntity by its UUID and ensures it has not been marked as deleted.
+     *
+     * @param uuid the UUID of the driver mileage entity to retrieve.
+     *             This parameter must not be null or empty.
+     * @return the DriverMileageEntity instance matching the provided UUID and not marked as deleted.
+     * @throws DispatchManagementSystemException if no entity is found with the given UUID.
      */
-    @Transactional
-    public void deleteDriversMileageByUuids(List<String> uuids) {
-        driverMileageRepository.deleteAllByUuidIn(uuids);
-        log.trace("[{}] records were deleted.", uuids);
-    }
-
     public DriverMileageEntity getByUuidAndCompanyUuid(String uuid) {
         log.info("Retrieving the driver mileage with UUID=[{}].", uuid);
         var driverMileageEntityOptional = driverMileageRepository.findByUuidAndDeletedAtIsNull(uuid);
@@ -57,6 +51,22 @@ public class DriverMileageService {
         return driverMileageEntityOptional.get();
     }
 
+    /**
+     * Retrieves the mileage information for a specific driver within a particular timeframe.
+     *
+     * @param companyUuid the unique identifier of the company to which the driver belongs.
+     *                    This parameter must not be null or empty.
+     * @param dispatcherUuid the unique identifier of the dispatcher associated with the driver.
+     *                       This parameter must not be null or empty.
+     * @param driverUuid the unique identifier of the driver whose mileage details are being retrieved.
+     *                   This parameter must not be null or empty.
+     * @param startDate the start date of the timeframe for which mileage information is requested.
+     *                  This parameter must not be null.
+     * @param endDate the end date of the timeframe for which mileage information is requested.
+     *                This parameter must not be null.
+     * @return an Optional containing the DriverMileageEntity if a matching record is found within the
+     *         specified parameters, or an empty Optional if no such record exists.
+     */
     public Optional<DriverMileageEntity> getDriversMileageForTimeframe(
         String companyUuid,
         String dispatcherUuid,

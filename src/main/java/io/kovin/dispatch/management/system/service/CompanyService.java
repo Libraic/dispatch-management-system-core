@@ -30,6 +30,14 @@ public class CompanyService {
         companyRepository.save(companyEntity);
     }
 
+    /**
+     * Retrieves a non-deleted {@link CompanyEntity} by its UUID.
+     * If no such company is found, an exception is thrown with an appropriate error message.
+     *
+     * @param uuid the unique identifier of the company to be retrieved; must not be null or empty
+     * @return the {@link CompanyEntity} associated with the given UUID
+     * @throws DispatchManagementSystemException if no company is found with the given UUID
+     */
     public CompanyEntity getByUuid(String uuid) {
         log.info("Retrieving the company with UUID=[{}].", uuid);
         Optional<CompanyEntity> companyEntityOptional = companyRepository.findByUuidAndDeletedAtIsNull(uuid);
@@ -40,6 +48,24 @@ public class CompanyService {
         }
 
         return companyEntityOptional.get();
+    }
+
+    /**
+     * Validates whether a company with the specified UUID is registered in the system.
+     * <br> If the company is not found, an exception is thrown with an appropriate error message.
+     *
+     * @param uuid the unique identifier of the company to be validated
+     *             (must not be null or empty)
+     * @throws DispatchManagementSystemException if the company with the given UUID is not found
+     */
+    public void validateTheCompanyIsRegistered(String uuid) {
+        log.info("Checking if the company with UUID=[{}] exists.", uuid);
+        boolean isCompanyRegistered = companyRepository.existsByUuid(uuid);
+        if (!isCompanyRegistered) {
+            String errorMessage = String.format(ErrorMessage.COMPANY_NOT_FOUND_BY_UUID, uuid);
+            log.error(errorMessage);
+            throw DispatchManagementSystemException.of(errorMessage, HttpStatus.NOT_FOUND);
+        }
     }
 
     public List<CompanyEntity> findByUuids(List<String> uuids) {

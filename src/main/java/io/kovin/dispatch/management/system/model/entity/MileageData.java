@@ -3,6 +3,7 @@ package io.kovin.dispatch.management.system.model.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import io.kovin.dispatch.management.system.model.entity.enums.LoadStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,4 +25,5 @@ public class MileageData {
     private String deliveryLocation;
     private LocalDate pickUpDate;
     private LocalDate deliveryDate;
+    private LoadStatus loadStatus;
 }

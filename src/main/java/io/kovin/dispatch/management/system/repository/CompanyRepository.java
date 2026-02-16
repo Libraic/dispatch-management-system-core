@@ -10,4 +10,6 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, Long> {
     Optional<CompanyEntity> findByUuidAndDeletedAtIsNull(String uuid);
 
     List<CompanyEntity> findByUuidIn(List<String> uuids);
+
+    boolean existsByUuid(String uuid);
 }

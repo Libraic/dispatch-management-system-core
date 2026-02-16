@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.mapper.UserMapper;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.entity.NoteEntity;
@@ -15,11 +14,9 @@ import io.kovin.dispatch.management.system.model.entity.UserEntity;
 import io.kovin.dispatch.management.system.model.request.CreateUserRequest;
 import io.kovin.dispatch.management.system.model.request.CreateWorkloadRequest;
 import io.kovin.dispatch.management.system.repository.UserRepository;
-import io.kovin.dispatch.management.system.utils.ErrorMessage;
 import io.kovin.dispatch.management.system.validation.UserValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,17 +52,5 @@ public class UserService {
         List<NoteEntity> noteEntities = noteService.saveNotes(request.notes(), createdUserEntity);
         log.info("The user has [{}] notes created.", noteEntities.size());
         return createdUserEntity;
-    }
-
-    public UserEntity getByUuid(String uuid) {
-        log.info("Retrieving the dispatcher with UUID=[{}].", uuid);
-        Optional<UserEntity> userEntityOptional = userRepository.findByUuidAndDeletedAtIsNull(uuid);
-        if (userEntityOptional.isEmpty()) {
-            String errorMessage = String.format(ErrorMessage.DISPATCHER_NOT_FOUND_BY_UUID, uuid);
-            log.error(errorMessage);
-            throw DispatchManagementSystemException.of(errorMessage, HttpStatus.NOT_FOUND);
-        }
-
-        return userEntityOptional.get();
     }
 }

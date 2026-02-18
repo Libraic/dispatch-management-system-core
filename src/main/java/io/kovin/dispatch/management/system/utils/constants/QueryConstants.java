@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 public class QueryConstants {
 
     /**
-     * The equivalent of LIKE clause in SQL.
+     * The equivalent of the LIKE clause in SQL.
      */
     public static final String LIKE = "like";
 
     /**
-     * The equivalent of = operator in SQL.
+     * The equivalent of the = operator in SQL.
      */
     public static final String EQUAL = "eq";
 
@@ -22,17 +22,17 @@ public class QueryConstants {
     public static final String JOIN = "join";
 
     /**
-     * The equivalent of >= operator in SQL.
+     * The equivalent of the > = operator in SQL.
      */
     public static final String GREATER_OR_EQUAL = "gte";
 
     /**
-     * The equivalent of <= operator in SQL.
+     * The equivalent of the < = operator in SQL.
      */
     public static final String LESS_OR_EQUAL = "lte";
 
     /**
-     * The equivalent of < operator in SQL.
+     * The equivalent of the < operator in SQL.
      */
     public static final String LESS = "lt";
 

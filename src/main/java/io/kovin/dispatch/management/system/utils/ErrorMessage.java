@@ -9,6 +9,8 @@ public class ErrorMessage {
     /**
      * Global error messages.
      */
+    public static final String CITIES_LOAD_ERROR = "Failed to load cities.";
+    public static final String INVALID_ZIP_CODE = "The provided zip code=[%s] is invalid.";
     public static final String EMAIL_IN_USE = "The provided email is already in use.";
     public static final String EMAIL_IS_MANDATORY = "The e-mail cannot be empty.";
     public static final String INTERNAL_SERVER_ERROR = "An internal server error occurred. Please try again later.";
@@ -25,7 +27,6 @@ public class ErrorMessage {
     public static final String BAD_POSITION = "The provided position=[%s] does not exist.";
     public static final String BIRTH_DATE_IS_MANDATORY = "The birth mileageDate is mandatory.";
     public static final String BLANK_COMPANY = "You must choose a company.";
-    public static final String DISPATCHER_NOT_FOUND_BY_UUID = "The dispatcher with UUID=[%s] was not found.";
     public static final String EMPLOYMENT_DATE_IS_MANDATORY = "The employment mileageDate of the user is mandatory.";
     public static final String FIRST_NAME_IS_MANDATORY = "The first name is required.";
     public static final String INVALID_COMPANY = "The company with name=[%s] does not exist.";

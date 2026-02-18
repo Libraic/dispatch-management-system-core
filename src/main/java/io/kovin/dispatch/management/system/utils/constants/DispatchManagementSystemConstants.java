@@ -9,4 +9,6 @@ public class DispatchManagementSystemConstants {
     public static final String BLANK_STRING = "";
     public static final String BLANK_SPACE = " ";
     public static final int PASSWORD_MIN_LENGTH = 8;
+    public static final String COMMA = ",";
+    public static final String COLON = ":";
 }

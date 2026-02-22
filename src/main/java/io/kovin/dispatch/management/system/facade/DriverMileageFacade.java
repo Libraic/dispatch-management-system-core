@@ -285,7 +285,7 @@ public class DriverMileageFacade {
 
             Map<String, MileageData> currentMileageData = createMileageDataMap(request);
             previousMileageData.putAll(currentMileageData);
-            MileageData currentMileageDatum = currentMileageData.get(request.toString());
+            MileageData currentMileageDatum = currentMileageData.get(request.mileageDate().toString());
             updateMileageDatum(request, previousMileageDatum, currentMileageDatum);
         } else {
             Map<String, MileageData> newMileageData = createMileageDataMap(request);

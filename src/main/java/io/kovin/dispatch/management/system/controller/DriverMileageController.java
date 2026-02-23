@@ -6,12 +6,15 @@ import io.kovin.dispatch.management.system.facade.DriverMileageFacade;
 import io.kovin.dispatch.management.system.model.request.UpsertDriverMileageRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.mileage.GetDriverMileageResponse;
+import io.kovin.dispatch.management.system.model.response.mileage.GetMileageResponse;
 import io.kovin.dispatch.management.system.model.response.mileage.UpsertDriverMileageResponse;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,5 +52,32 @@ public class DriverMileageController {
         );
         List<GetDriverMileageResponse> response = driverMileageFacade.getDriversMileageForTimeframe(companyId, startDate, endDate);
         return ResponseEntity.ok(ApiResponse.fromData(response));
+    }
+
+    @GetMapping("/{uuid}")
+    public ResponseEntity<ApiResponse<List<GetMileageResponse>, ErrorResponse>> getCompanyDriversMileage(
+        @PathVariable(name = "uuid") String mileageUuid
+    ) {
+        log.info(
+            "A request to retrieve the Mileage Data for the Drivers Mileage with the UUID=[{}], was received.",
+            mileageUuid
+        );
+        List<GetMileageResponse> response = driverMileageFacade.getMileageData(mileageUuid);
+        return ResponseEntity.ok(ApiResponse.fromData(response));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<ApiResponse<Void, ErrorResponse>> deleteDriversMileage(
+        @RequestParam(name = "mileage") String mileageUuid,
+        @RequestParam(name = "start") LocalDate startDate,
+        @RequestParam(name = "end") LocalDate endDate
+    ) {
+        log.info("A request to remove the Drivers Mileage with the UUID=[{}}, between [{} - {}] period, was received.",
+            mileageUuid,
+            startDate,
+            endDate
+        );
+        driverMileageFacade.deleteDriverMileage(mileageUuid, startDate, endDate);
+        return ResponseEntity.noContent().build();
     }
 }

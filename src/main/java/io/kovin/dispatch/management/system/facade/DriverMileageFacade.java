@@ -3,6 +3,7 @@ package io.kovin.dispatch.management.system.facade;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.START_DATE_BEFORE_END_DATE;
 
 import ch.qos.logback.core.util.StringUtil;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.mapper.DriverMileageMapper;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
@@ -33,6 +36,7 @@ import io.kovin.dispatch.management.system.service.DispatcherService;
 import io.kovin.dispatch.management.system.service.DriverService;
 import io.kovin.dispatch.management.system.service.DriverMileageService;
 import io.kovin.dispatch.management.system.utils.BigDecimalUtils;
+import io.kovin.dispatch.management.system.utils.CollectionUtils;
 import io.kovin.dispatch.management.system.validation.DriverMileageValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -182,6 +186,82 @@ public class DriverMileageFacade {
         return responses;
     }
 
+    /**
+     * Retrieves mileage data for a specific driver based on the provided UUID.
+     * If no driver mileage entity is found with the given UUID, an empty list is returned.
+     * Otherwise, the mileage data is mapped into a list of {@link GetMileageResponse} objects.
+     *
+     * @param driverMileageUuid the unique identifier of the driver mileage entity to retrieve.
+     * @return a list of {@link GetMileageResponse} objects containing the mileage data.
+     *         Returns an empty list if no data is found for the given UUID.
+     */
+    public List<GetMileageResponse> getMileageData(String driverMileageUuid) {
+        Optional<DriverMileageEntity> driverMileageEntityOptional = driverMileageService.findByUuid(driverMileageUuid);
+        if (driverMileageEntityOptional.isEmpty()) {
+            return List.of();
+        }
+
+        return driverMileageMapper.fromDriverMileageEntityToGetMileageResponse(driverMileageEntityOptional.get());
+    }
+
+    /**
+     * Deletes mileage data for a specific driver within the given time frame.
+     * This method identifies and updates driver mileage entities corresponding to the
+     * current, previous, and next weeks affected by the removal of mileage data.
+     * The updated entities are then persisted.
+     *
+     * @param driverMileageUuid the unique identifier of the driver mileage entity to be updated.
+     * @param startDate the start date of the time frame for which mileage data should be removed.
+     * @param endDate the end date of the time frame for which mileage data should be removed.
+     */
+    @Transactional
+    public void deleteDriverMileage(
+        String driverMileageUuid,
+        LocalDate startDate,
+        LocalDate endDate
+    ) {
+        Optional<DriverMileageEntity> driverMileageEntityOptional = driverMileageService.findByUuid(driverMileageUuid);
+        if (driverMileageEntityOptional.isEmpty()) {
+            return;
+        }
+
+        DriverMileageEntity currentWeekDriverMileage = driverMileageEntityOptional.get();
+        String companyUuid = currentWeekDriverMileage.getCompany().getUuid();
+        String dispatcherUuid = currentWeekDriverMileage.getDispatcher().getUuid();
+        String driverUuid = currentWeekDriverMileage.getDriver().getUuid();
+        LocalDate start = currentWeekDriverMileage.getStartDate();
+        LocalDate end = currentWeekDriverMileage.getEndDate();
+
+        List<DriverMileageEntity> driverMileageEntities = new ArrayList<>(3);
+
+        DriverMileageEntity currentRemoval = removeMileageDataBetweenDates(currentWeekDriverMileage, startDate, endDate);
+        CollectionUtils.addIfNotEmpty(driverMileageEntities, currentRemoval);
+
+        driverMileageService.getDriversMileageForTimeframe(
+            companyUuid,
+            dispatcherUuid,
+            driverUuid,
+            start.plusWeeks(1),
+            end.plusWeeks(1)
+        ).ifPresent(nextWeekDriverMileage -> {
+            DriverMileageEntity nextWeekRemoval = removeMileageDataBetweenDates(nextWeekDriverMileage, startDate, endDate);
+            CollectionUtils.addIfNotEmpty(driverMileageEntities, nextWeekRemoval);
+        });
+
+        driverMileageService.getDriversMileageForTimeframe(
+            companyUuid,
+            dispatcherUuid,
+            driverUuid,
+            start.minusWeeks(1),
+            end.minusWeeks(1)
+        ).ifPresent(previousWeekMileage -> {
+            DriverMileageEntity previousWeekRemoval = removeMileageDataBetweenDates(previousWeekMileage, startDate, endDate);
+            CollectionUtils.addIfNotEmpty(driverMileageEntities, previousWeekRemoval);
+        });
+
+        driverMileageService.saveAllDriverMileageEntities(driverMileageEntities);
+    }
+
     public List<DriverMileageDto> getDriverMileageDtos(Kpiable targetEntity, LocalDate startDate, LocalDate endDate) {
         List<DriverMileageEntity> driverMileageEntities = criteriaService.getMileageForTargetEntity(
             targetEntity,
@@ -191,6 +271,25 @@ public class DriverMileageFacade {
         return driverMileageMapper.fromDriverMileageEntitiesToDriverMileageDtos(driverMileageEntities);
     }
 
+    private DriverMileageEntity removeMileageDataBetweenDates(
+        DriverMileageEntity driverMileageEntity,
+        LocalDate startDate,
+        LocalDate endDate
+    ) {
+        Map<String, MileageData> newMileageData = driverMileageEntity.getMileageData()
+            .entrySet()
+            .stream()
+            .filter(x -> LocalDate.parse(x.getKey()).isBefore(startDate) || LocalDate.parse(x.getKey()).isAfter(endDate))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        if (newMileageData.isEmpty()) {
+            driverMileageService.deleteDriverMileage(driverMileageEntity);
+            return null;
+        }
+
+        driverMileageEntity.setMileageData(newMileageData);
+        return driverMileageEntity;
+    }
+
     private DriverMileageEntity getCurrentWeekDriverMileageEntity(
         UpsertDriverMileageRequest request,
         CompanyEntity company,
@@ -198,7 +297,7 @@ public class DriverMileageFacade {
         DriverEntity driver
     ) {
         if (request.driverMileageUuid() != null) {
-            var driverMileageEntity = driverMileageService.getByUuidAndCompanyUuid(request.driverMileageUuid());
+            var driverMileageEntity = driverMileageService.getByUuid(request.driverMileageUuid());
             if (request.mileageDate() != null) {
                 updateMileageDatum(driverMileageEntity.getMileageData(), request);
             }

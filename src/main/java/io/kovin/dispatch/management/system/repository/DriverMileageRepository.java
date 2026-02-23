@@ -25,4 +25,6 @@ public interface DriverMileageRepository extends JpaRepository<DriverMileageEnti
         LocalDate startDate,
         LocalDate endDate
     );
+
+    void deleteByUuid(String uuid);
 }

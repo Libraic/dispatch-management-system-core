@@ -27,8 +27,10 @@ public class DriverMileageService {
      *                              that need to be persisted.
      */
     public void saveAllDriverMileageEntities(List<DriverMileageEntity> driverMileageEntities) {
-        log.info("Persisting [{}] Driver Mileage entities.", driverMileageEntities.size());
-        driverMileageRepository.saveAll(driverMileageEntities);
+        if (!driverMileageEntities.isEmpty()) {
+            log.info("Persisting [{}] Driver Mileage entities.", driverMileageEntities.size());
+            driverMileageRepository.saveAll(driverMileageEntities);
+        }
     }
 
     /**
@@ -39,9 +41,8 @@ public class DriverMileageService {
      * @return the DriverMileageEntity instance matching the provided UUID and not marked as deleted.
      * @throws DispatchManagementSystemException if no entity is found with the given UUID.
      */
-    public DriverMileageEntity getByUuidAndCompanyUuid(String uuid) {
-        log.info("Retrieving the driver mileage with UUID=[{}].", uuid);
-        var driverMileageEntityOptional = driverMileageRepository.findByUuidAndDeletedAtIsNull(uuid);
+    public DriverMileageEntity getByUuid(String uuid) {
+        var driverMileageEntityOptional = findByUuid(uuid);
         if (driverMileageEntityOptional.isEmpty()) {
             String errorMessage = String.format(ErrorMessage.DRIVER_MILEAGE_NOT_FOUND_BY_UUID, uuid);
             log.error(errorMessage);
@@ -49,6 +50,11 @@ public class DriverMileageService {
         }
 
         return driverMileageEntityOptional.get();
+    }
+
+    public Optional<DriverMileageEntity> findByUuid(String driverMileageUuid) {
+        log.info("Retrieving the driver mileage with UUID=[{}].", driverMileageUuid);
+        return driverMileageRepository.findByUuidAndDeletedAtIsNull(driverMileageUuid);
     }
 
     /**
@@ -81,5 +87,11 @@ public class DriverMileageService {
             startDate,
             endDate
         );
+    }
+
+    public void deleteDriverMileage(DriverMileageEntity driverMileageEntity) {
+        String uuid = driverMileageEntity.getUuid();
+        log.info("Deleting the driver mileage with UUID=[{}].", uuid);
+        driverMileageRepository.deleteByUuid(uuid);
     }
 }

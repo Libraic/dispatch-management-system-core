@@ -103,9 +103,13 @@ public class CityService {
     }
 
     private boolean doesPrefixMatchTheCityData(CityData cityData, String prefix) {
-        return prefix == null
-            || cityData.zipCode().startsWith(prefix)
-            || cityData.city().toLowerCase().startsWith(prefix)
-            || cityData.state().toLowerCase().startsWith(prefix);
+        if (prefix == null) {
+            return true;
+        }
+
+        String lowerCasePrefix = prefix.toLowerCase();
+        String zipCode = cityData.zipCode();
+        String city = String.format("%s %s", cityData.city(), cityData.state()).toLowerCase();
+        return zipCode.startsWith(lowerCasePrefix) || city.contains(lowerCasePrefix);
     }
 }

@@ -50,6 +50,7 @@ public class DriverMileageMapper {
                 .pickUpDate(mileageData.getValue().getPickUpDate())
                 .deliveryDate(mileageData.getValue().getDeliveryDate())
                 .loadStatus(mileageData.getValue().getLoadStatus().getStatus())
+                .representativeContactNumber(mileageData.getValue().getRepresentativeContactNumber())
                 .build()
             ).toList();
     }
@@ -65,6 +66,7 @@ public class DriverMileageMapper {
             .pickUpDate(request.pickUpDate())
             .deliveryDate(request.deliveryDate())
             .loadStatus(LoadStatus.COVERED)
+            .representativeContactNumber(request.representativeContactNumber())
             .build();
     }
 

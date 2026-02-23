@@ -338,6 +338,7 @@ public class DriverMileageFacade {
         String representative = !StringUtil.isNullOrEmpty(request.representative()) ? request.representative() : previousMileageData.getRepresentative();
         String deliveryLocation = !StringUtil.isNullOrEmpty(request.deliveryLocation()) ? request.deliveryLocation() : previousMileageData.getDeliveryLocation();
         String pickUpLocation = !StringUtil.isNullOrEmpty(request.pickUpLocation()) ? request.pickUpLocation() : previousMileageData.getPickUpLocation();
+        String representativeContactNumber = !StringUtil.isNullOrEmpty(request.representativeContactNumber()) ? request.representativeContactNumber() : previousMileageData.getRepresentativeContactNumber();
 
         currentMileageData.setMiles(miles);
         currentMileageData.setRevenue(revenue);
@@ -345,5 +346,6 @@ public class DriverMileageFacade {
         currentMileageData.setRepresentative(representative);
         currentMileageData.setDeliveryLocation(deliveryLocation);
         currentMileageData.setPickUpLocation(pickUpLocation);
+        currentMileageData.setRepresentativeContactNumber(representativeContactNumber);
     }
 }

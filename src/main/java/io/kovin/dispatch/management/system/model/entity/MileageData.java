@@ -26,4 +26,5 @@ public class MileageData {
     private LocalDate pickUpDate;
     private LocalDate deliveryDate;
     private LoadStatus loadStatus;
+    private String representativeContactNumber;
 }

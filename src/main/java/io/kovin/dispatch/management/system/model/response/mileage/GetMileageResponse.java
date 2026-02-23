@@ -15,6 +15,7 @@ public record GetMileageResponse(
     LocalDate deliveryDate,
     String deliveryLocation,
     String pickUpLocation,
-    String loadStatus
+    String loadStatus,
+    String representativeContactNumber
 ) {
 }

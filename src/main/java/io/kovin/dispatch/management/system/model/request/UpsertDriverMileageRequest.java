@@ -18,7 +18,8 @@ public record UpsertDriverMileageRequest(
     String pickUpLocation,
     LocalDate pickUpDate,
     String deliveryLocation,
-    LocalDate deliveryDate
+    LocalDate deliveryDate,
+    String representativeContactNumber
 ) {
 
 }

@@ -16,6 +16,11 @@ public interface DispatcherRepository extends JpaRepository<DispatcherEntity, Lo
         SELECT d
         FROM DispatcherEntity d
         WHERE d.company.uuid = :companyUuid
+          AND EXISTS (
+              SELECT dr.id
+              FROM DriverEntity dr
+              WHERE dr.dispatcher = d
+          )
         ORDER BY d.createdAt ASC
     """)
     List<DispatcherEntity> getDispatchersWithDrivers(String companyUuid);

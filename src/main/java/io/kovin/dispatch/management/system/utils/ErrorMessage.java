@@ -60,7 +60,7 @@ public class ErrorMessage {
     public static final String DELIVERY_LOCATION_IS_MANDATORY = "The delivery location is required.";
     public static final String DISPATCHER_IS_MANDATORY = "The dispatcher is required.";
     public static final String DRIVER_IS_MANDATORY = "The driver is required.";
-    public static final String DRIVER_MILEAGE_NOT_FOUND_BY_UUID = "The driver with UUID=[%s] was not found.";
+    public static final String DRIVER_MILEAGE_NOT_FOUND_BY_UUID = "The Driver Mileage with UUID=[%s] was not found.";
     public static final String MILEAGE_DATE_IS_MANDATORY = "The date of the mileage is required.";
     public static final String MILES_ARE_MANDATORY = "Miles are required.";
     public static final String NEGATIVE_MILES = "The miles cannot be negative.";

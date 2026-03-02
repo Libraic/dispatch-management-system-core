@@ -6,7 +6,6 @@ import java.time.YearMonth;
 import java.util.List;
 import io.kovin.dispatch.management.system.model.entity.DriverEntity;
 import io.kovin.dispatch.management.system.model.entity.Kpiable;
-import io.kovin.dispatch.management.system.model.entity.UserEntity;
 import io.kovin.dispatch.management.system.model.global.reports.loadbyload.LoadByLoadAggregationModel;
 import io.kovin.dispatch.management.system.model.global.reports.loadbyload.LoadByLoadModel;
 import io.kovin.dispatch.management.system.model.global.reports.financial.FinancialAggregationModel;
@@ -65,10 +64,6 @@ public class ReportService {
 
     @SuppressWarnings("unchecked")
     private <T> Class<T> getTargetEntityClass(KpiTargetEntity kpiTargetEntity) {
-        if (kpiTargetEntity == KpiTargetEntity.DRIVER) {
-            return (Class<T>) DriverEntity.class;
-        }
-
-        return (Class<T>) UserEntity.class;
+        return (Class<T>) DriverEntity.class;
     }
 }

@@ -5,8 +5,6 @@ import java.util.Map;
 import io.kovin.dispatch.management.system.mapper.CompanyMapper;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
-import io.kovin.dispatch.management.system.model.entity.enums.EntityType;
-import io.kovin.dispatch.management.system.model.entity.enums.SystemRole;
 import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
 import io.kovin.dispatch.management.system.model.response.CompanyData;
 import io.kovin.dispatch.management.system.service.CompanyService;
@@ -25,8 +23,6 @@ public class CompanyFacade {
     private final CriteriaService criteriaService;
     private final CompanyValidationService companyValidationService;
 
-    private final AccountFacade accountFacade;
-
     private final CompanyMapper companyMapper;
 
     @Transactional
@@ -38,13 +34,6 @@ public class CompanyFacade {
         companyValidationService.validateCompanyCreation(createCompanyRequest);
         CompanyEntity companyEntity = companyMapper.fromCreateCompanyRequestToCompanyEntity(createCompanyRequest);
         companyService.saveCompany(companyEntity);
-        accountFacade.createAccount(
-            createCompanyRequest.email(),
-            createCompanyRequest.password(),
-            SystemRole.COMPANY,
-            EntityType.COMPANY,
-            companyEntity.getId()
-        );
         return companyMapper.fromCompanyEntityToCompanyData(companyEntity);
     }
 

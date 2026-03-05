@@ -69,15 +69,13 @@ public class DriverMileageController {
     @DeleteMapping
     public ResponseEntity<ApiResponse<Void, ErrorResponse>> deleteDriversMileage(
         @RequestParam(name = "mileage") String mileageUuid,
-        @RequestParam(name = "start") LocalDate startDate,
-        @RequestParam(name = "end") LocalDate endDate
+        @RequestParam(name = "idAcrossTimeframe") String idAcrossTimeframe
     ) {
-        log.info("A request to remove the Drivers Mileage with the UUID=[{}}, between [{} - {}] period, was received.",
+        log.info("A request to remove the Drivers Mileage with the UUID=[{}} with idAcrossTimeframe=[{}], was received.",
             mileageUuid,
-            startDate,
-            endDate
+            idAcrossTimeframe
         );
-        driverMileageFacade.deleteDriverMileage(mileageUuid, startDate, endDate);
+        driverMileageFacade.deleteDriverMileage(mileageUuid, idAcrossTimeframe);
         return ResponseEntity.noContent().build();
     }
 }

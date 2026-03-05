@@ -2,6 +2,7 @@ package io.kovin.dispatch.management.system.model.response.mileage;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.Builder;
 
 @Builder
@@ -11,11 +12,9 @@ public record GetMileageResponse(
     BigDecimal miles,
     String broker,
     String representative,
-    LocalDate pickUpDate,
-    LocalDate deliveryDate,
-    String deliveryLocation,
-    String pickUpLocation,
     String loadStatus,
-    String representativeContactNumber
+    String representativeContactNumber,
+    String idAcrossTimeframe,
+    List<GetLocationResponse> locations
 ) {
 }

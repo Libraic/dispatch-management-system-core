@@ -3,26 +3,30 @@ package io.kovin.dispatch.management.system.facade;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.START_DATE_BEFORE_END_DATE;
 
 import ch.qos.logback.core.util.StringUtil;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
-import io.kovin.dispatch.management.system.mapper.DriverMileageMapper;
+import io.kovin.dispatch.management.system.mapper.DriverMileageObjectsCreator;
 import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
 import io.kovin.dispatch.management.system.model.entity.DispatcherEntity;
 import io.kovin.dispatch.management.system.model.entity.DriverEntity;
 import io.kovin.dispatch.management.system.model.entity.DriverMileageEntity;
 import io.kovin.dispatch.management.system.model.entity.Kpiable;
+import io.kovin.dispatch.management.system.model.entity.LocationData;
 import io.kovin.dispatch.management.system.model.entity.MileageData;
+import io.kovin.dispatch.management.system.model.entity.enums.LoadStatus;
+import io.kovin.dispatch.management.system.model.entity.enums.LocationType;
+import io.kovin.dispatch.management.system.model.internal.Pair;
 import io.kovin.dispatch.management.system.model.internal.mileage.DriverMileageDto;
+import io.kovin.dispatch.management.system.model.request.CreateMileageLocationRequest;
 import io.kovin.dispatch.management.system.model.request.UpsertDriverMileageRequest;
 import io.kovin.dispatch.management.system.model.response.GetDispatcherResponse;
 import io.kovin.dispatch.management.system.model.response.GetDriverResponse;
@@ -35,8 +39,8 @@ import io.kovin.dispatch.management.system.service.CriteriaService;
 import io.kovin.dispatch.management.system.service.DispatcherService;
 import io.kovin.dispatch.management.system.service.DriverService;
 import io.kovin.dispatch.management.system.service.DriverMileageService;
-import io.kovin.dispatch.management.system.utils.BigDecimalUtils;
 import io.kovin.dispatch.management.system.utils.CollectionUtils;
+import io.kovin.dispatch.management.system.utils.LocalDateUtils;
 import io.kovin.dispatch.management.system.validation.DriverMileageValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +61,7 @@ public class DriverMileageFacade {
     private final CriteriaService criteriaService;
     private final DispatcherService dispatcherService;
 
-    private final DriverMileageMapper driverMileageMapper;
+    private final DriverMileageObjectsCreator driverMileageObjectsCreator;
 
     /**
      * Updates or inserts driver mileage data based on the provided request.
@@ -101,7 +105,7 @@ public class DriverMileageFacade {
 
         return UpsertDriverMileageResponse.builder()
             .driverMileageUuid(driverMileageEntity.getUuid())
-            .mileage(driverMileageMapper.fromDriverMileageEntityToGetMileageResponse(driverMileageEntity))
+            .mileage(driverMileageObjectsCreator.fromDriverMileageEntityToGetMileageResponse(driverMileageEntity))
             .build();
     }
 
@@ -135,26 +139,17 @@ public class DriverMileageFacade {
                 .build();
             List<GetDriverMileageDataResponse> getDriverMileageDataResponses = new ArrayList<>();
             for (DriverEntity driver : dispatcher.getDrivers()) {
-                String driverUuid = driver.getUuid();
-                GetDriverResponse getDriverResponse = GetDriverResponse.builder()
-                    .fullName(driver.getFullName())
-                    .uuid(driverUuid)
-                    .build();
                 Optional<DriverMileageEntity> driverMileageEntityOptional = driverMileageService.getDriversMileageForTimeframe(
                     companyUuid,
                     dispatcherUuid,
-                    driverUuid,
+                    driver.getUuid(),
                     startDate,
                     endDate
                 );
-                List<GetMileageResponse> getMileageResponses = driverMileageMapper.fromDriverMileageEntityToGetMileageResponse(
-                    driverMileageEntityOptional.orElse(null)
+                var getDriverMileageDataResponse = driverMileageObjectsCreator.createGetDriverMileageDataResponse(
+                    driverMileageEntityOptional.orElse(null),
+                    driver
                 );
-                GetDriverMileageDataResponse getDriverMileageDataResponse = GetDriverMileageDataResponse.builder()
-                    .driverMileageUuid(driverMileageEntityOptional.map(DriverMileageEntity::getUuid).orElse(null))
-                    .driver(getDriverResponse)
-                    .mileage(getMileageResponses)
-                    .build();
                 getDriverMileageDataResponses.add(getDriverMileageDataResponse);
             }
             GetDriverMileageResponse getDriverMileageResponse = GetDriverMileageResponse.builder()
@@ -165,15 +160,9 @@ public class DriverMileageFacade {
         }
 
         List<DriverEntity> driversWithoutDispatchers = driverService.getDriversWithoutDispatchersByCompanyUuid(companyUuid);
-
-        List<GetDriverMileageDataResponse> driversWithoutDispatchersMileageDataResponses = new ArrayList<>();
-        for (DriverEntity driver : driversWithoutDispatchers) {
-            driversWithoutDispatchersMileageDataResponses.add(GetDriverMileageDataResponse.builder()
-                .driver(GetDriverResponse.builder().uuid(driver.getUuid()).fullName(driver.getFullName()).build())
-                .mileage(List.of())
-                .build()
-            );
-        }
+        List<GetDriverMileageDataResponse> driversWithoutDispatchersMileageDataResponses = driverMileageObjectsCreator.createGetDriverMileageDataResponses(
+            driversWithoutDispatchers
+        );
 
         // The Drivers who are not yet assigned to a Dispatcher
         if (!driversWithoutDispatchersMileageDataResponses.isEmpty()) {
@@ -193,7 +182,7 @@ public class DriverMileageFacade {
      *
      * @param driverMileageUuid the unique identifier of the driver mileage entity to retrieve.
      * @return a list of {@link GetMileageResponse} objects containing the mileage data.
-     *         Returns an empty list if no data is found for the given UUID.
+     * Returns an empty list if no data is found for the given UUID.
      */
     public List<GetMileageResponse> getMileageData(String driverMileageUuid) {
         Optional<DriverMileageEntity> driverMileageEntityOptional = driverMileageService.findByUuid(driverMileageUuid);
@@ -201,7 +190,7 @@ public class DriverMileageFacade {
             return List.of();
         }
 
-        return driverMileageMapper.fromDriverMileageEntityToGetMileageResponse(driverMileageEntityOptional.get());
+        return driverMileageObjectsCreator.fromDriverMileageEntityToGetMileageResponse(driverMileageEntityOptional.get());
     }
 
     /**
@@ -211,15 +200,9 @@ public class DriverMileageFacade {
      * The updated entities are then persisted.
      *
      * @param driverMileageUuid the unique identifier of the driver mileage entity to be updated.
-     * @param startDate the start date of the time frame for which mileage data should be removed.
-     * @param endDate the end date of the time frame for which mileage data should be removed.
      */
     @Transactional
-    public void deleteDriverMileage(
-        String driverMileageUuid,
-        LocalDate startDate,
-        LocalDate endDate
-    ) {
+    public void deleteDriverMileage(String driverMileageUuid, String idAcrossTimeframe) {
         Optional<DriverMileageEntity> driverMileageEntityOptional = driverMileageService.findByUuid(driverMileageUuid);
         if (driverMileageEntityOptional.isEmpty()) {
             return;
@@ -229,34 +212,51 @@ public class DriverMileageFacade {
         String companyUuid = currentWeekDriverMileage.getCompany().getUuid();
         String dispatcherUuid = currentWeekDriverMileage.getDispatcher().getUuid();
         String driverUuid = currentWeekDriverMileage.getDriver().getUuid();
-        LocalDate start = currentWeekDriverMileage.getStartDate();
-        LocalDate end = currentWeekDriverMileage.getEndDate();
+        LocalDate weekStart = currentWeekDriverMileage.getStartDate();
+        LocalDate weekEnd = currentWeekDriverMileage.getEndDate();
 
         List<DriverMileageEntity> driverMileageEntities = new ArrayList<>(3);
+        Pair<LocalDate, LocalDate> startAndEndDatesOfTimeframe = driverMileageService.getStartAndLastDateOfTimeframe(
+            driverMileageUuid,
+            idAcrossTimeframe
+        );
+        if (startAndEndDatesOfTimeframe == null) {
+            return;
+        }
 
-        DriverMileageEntity currentRemoval = removeMileageDataBetweenDates(currentWeekDriverMileage, startDate, endDate);
+        LocalDate timeframeStart = startAndEndDatesOfTimeframe.left();
+        LocalDate timeframeEnd = startAndEndDatesOfTimeframe.right();
+        DriverMileageEntity currentRemoval = removeMileageDataBetweenDates(currentWeekDriverMileage, timeframeStart, timeframeEnd);
         CollectionUtils.addIfNotEmpty(driverMileageEntities, currentRemoval);
 
         driverMileageService.getDriversMileageForTimeframe(
             companyUuid,
             dispatcherUuid,
             driverUuid,
-            start.plusWeeks(1),
-            end.plusWeeks(1)
+            LocalDateUtils.addWeek(weekStart),
+            LocalDateUtils.addWeek(weekEnd)
         ).ifPresent(nextWeekDriverMileage -> {
-            DriverMileageEntity nextWeekRemoval = removeMileageDataBetweenDates(nextWeekDriverMileage, startDate, endDate);
-            CollectionUtils.addIfNotEmpty(driverMileageEntities, nextWeekRemoval);
+            DriverMileageEntity afterMileageDataRemoval = removeMileageDataBetweenDates(
+                nextWeekDriverMileage,
+                timeframeStart,
+                timeframeEnd
+            );
+            CollectionUtils.addIfNotEmpty(driverMileageEntities, afterMileageDataRemoval);
         });
 
         driverMileageService.getDriversMileageForTimeframe(
             companyUuid,
             dispatcherUuid,
             driverUuid,
-            start.minusWeeks(1),
-            end.minusWeeks(1)
+            LocalDateUtils.subtractWeek(weekStart),
+            LocalDateUtils.subtractWeek(weekEnd)
         ).ifPresent(previousWeekMileage -> {
-            DriverMileageEntity previousWeekRemoval = removeMileageDataBetweenDates(previousWeekMileage, startDate, endDate);
-            CollectionUtils.addIfNotEmpty(driverMileageEntities, previousWeekRemoval);
+            DriverMileageEntity afterMileageDataRemoval = removeMileageDataBetweenDates(
+                previousWeekMileage,
+                timeframeStart,
+                timeframeEnd
+            );
+            CollectionUtils.addIfNotEmpty(driverMileageEntities, afterMileageDataRemoval);
         });
 
         driverMileageService.saveAllDriverMileageEntities(driverMileageEntities);
@@ -268,7 +268,7 @@ public class DriverMileageFacade {
             startDate,
             endDate
         );
-        return driverMileageMapper.fromDriverMileageEntitiesToDriverMileageDtos(driverMileageEntities);
+        return driverMileageObjectsCreator.fromDriverMileageEntitiesToDriverMileageDtos(driverMileageEntities);
     }
 
     private DriverMileageEntity removeMileageDataBetweenDates(
@@ -276,11 +276,31 @@ public class DriverMileageFacade {
         LocalDate startDate,
         LocalDate endDate
     ) {
-        Map<String, MileageData> newMileageData = driverMileageEntity.getMileageData()
-            .entrySet()
-            .stream()
-            .filter(x -> LocalDate.parse(x.getKey()).isBefore(startDate) || LocalDate.parse(x.getKey()).isAfter(endDate))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        Map<String, MileageData> newMileageData = new HashMap<>();
+        for (Map.Entry<String, MileageData> entry : driverMileageEntity.getMileageData().entrySet()) {
+            LocalDate date = LocalDate.parse(entry.getKey());
+            MileageData mileageData = entry.getValue();
+            boolean isOutsideRange = date.isBefore(startDate) || date.isAfter(endDate);
+            if (isOutsideRange) {
+                newMileageData.put(date.toString(), mileageData);
+            } else if (mileageData.getPreviousLoadStatus() == LoadStatus.EMPTY) {
+                String previousIdAcrossTimeframe = driverMileageService.getIdAcrossTimeframe(driverMileageEntity, date.minusDays(1));
+                if (previousIdAcrossTimeframe == null) {
+                    continue;
+                }
+
+                mileageData.setPreviousLoadStatus(null);
+                mileageData.setCurrentLoadStatus(LoadStatus.EMPTY);
+                mileageData.setIdAcrossTimeframe(previousIdAcrossTimeframe);
+                mileageData.setRevenue(BigDecimal.ZERO);
+                mileageData.setMiles(BigDecimal.ZERO);
+                mileageData.setBroker(null);
+                mileageData.setRepresentative(null);
+                mileageData.setRepresentativeContactNumber(null);
+                newMileageData.put(date.toString(), mileageData);
+            }
+        }
+
         if (newMileageData.isEmpty()) {
             driverMileageService.deleteDriverMileage(driverMileageEntity);
             return null;
@@ -298,10 +318,10 @@ public class DriverMileageFacade {
     ) {
         if (request.driverMileageUuid() != null) {
             var driverMileageEntity = driverMileageService.getByUuid(request.driverMileageUuid());
-            if (request.mileageDate() != null) {
-                updateMileageDatum(driverMileageEntity.getMileageData(), request);
+            if (request.locations() != null && !request.locations().isEmpty()) {
+                Map<String, MileageData> mergedMileageData = mergeMileageData(request, driverMileageEntity);
+                driverMileageEntity.setMileageData(mergedMileageData);
             }
-
             return driverMileageEntity;
         }
 
@@ -322,8 +342,8 @@ public class DriverMileageFacade {
         DispatcherEntity dispatcher,
         DriverEntity driver
     ) {
-        LocalDate startDate = request.startDate().minusWeeks(1);
-        LocalDate endDate = request.endDate().minusWeeks(1);
+        LocalDate startDate = LocalDateUtils.subtractWeek(request.startDate());
+        LocalDate endDate = LocalDateUtils.subtractWeek(request.endDate());
         return getDriverMileageEntity(startDate, endDate, request, company, dispatcher, driver);
     }
 
@@ -333,8 +353,8 @@ public class DriverMileageFacade {
         DispatcherEntity dispatcher,
         DriverEntity driver
     ) {
-        LocalDate startDate = request.startDate().plusWeeks(1);
-        LocalDate endDate = request.endDate().plusWeeks(1);
+        LocalDate startDate = LocalDateUtils.addWeek(request.startDate());
+        LocalDate endDate = LocalDateUtils.addWeek(request.endDate());
         return getDriverMileageEntity(startDate, endDate, request, company, dispatcher, driver);
     }
 
@@ -346,7 +366,7 @@ public class DriverMileageFacade {
         DispatcherEntity dispatcher,
         DriverEntity driver
     ) {
-        DriverMileageEntity nextWeekDriverMileage = driverMileageService.getDriversMileageForTimeframe(
+        DriverMileageEntity driverMileageEntity = driverMileageService.getDriversMileageForTimeframe(
             request.companyUuid(),
             request.dispatcherUuid(),
             request.driverUuid(),
@@ -354,10 +374,12 @@ public class DriverMileageFacade {
             endDate
         ).orElse(null);
 
-        if (nextWeekDriverMileage != null) {
-            updateMileageDatum(nextWeekDriverMileage.getMileageData(), request);
-            return nextWeekDriverMileage;
+        if (driverMileageEntity != null && request.locations() != null && !request.locations().isEmpty()) {
+            Map<String, MileageData> mergedMileageData = mergeMileageData(request, driverMileageEntity);
+            driverMileageEntity.setMileageData(mergedMileageData);
+            return driverMileageEntity;
         }
+
         return DriverMileageEntity.builder()
             .uuid(UUID.randomUUID().toString())
             .driver(driver)
@@ -369,82 +391,157 @@ public class DriverMileageFacade {
             .build();
     }
 
-    private void updateMileageDatum(Map<String, MileageData> previousMileageData, UpsertDriverMileageRequest request) {
-        MileageData previousMileageDatum = previousMileageData.get(request.mileageDate().toString());
-        if (previousMileageDatum != null) {
-            // If the Pickup/Delivery dates were changed, we should remove the Mileages previously created
-            // for this time frame and create a new one.
-            if (hasPickUpDateOrDeliveryDateChanged(request, previousMileageDatum)) {
-                LocalDate iterator = request.pickUpDate();
-                while (!iterator.isAfter(previousMileageDatum.getDeliveryDate())) {
-                    previousMileageData.remove(iterator.toString());
-                    iterator = iterator.plusDays(1);
-                }
-            }
-
-            Map<String, MileageData> currentMileageData = createMileageDataMap(request);
-            previousMileageData.putAll(currentMileageData);
-            MileageData currentMileageDatum = currentMileageData.get(request.mileageDate().toString());
-            updateMileageDatum(request, previousMileageDatum, currentMileageDatum);
-        } else {
-            Map<String, MileageData> newMileageData = createMileageDataMap(request);
-            previousMileageData.putAll(newMileageData);
-        }
-    }
-
     private Map<String, MileageData> createMileageDataMap(UpsertDriverMileageRequest request) {
         Map<String, MileageData> mileageData = new HashMap<>();
-        LocalDate pickUpDate = request.pickUpDate();
-        LocalDate deliveryDate = request.deliveryDate();
+        List<CreateMileageLocationRequest> locations = request.locations()
+            .stream()
+            .sorted(Comparator.comparing(CreateMileageLocationRequest::order))
+            .toList();
+        String idAcrossTimeframe = UUID.randomUUID().toString();
 
-        // Create the Mileage for the first day (the loading day), having the 'Covered' status
-        mileageData.put(pickUpDate.toString(), driverMileageMapper.createCoveredMileageDatum(request));
-
-        // Create the Mileage data for the next days prior to the last one, having the 'Transit' status
-        LocalDate nextDay = pickUpDate.plusDays(1);
-        while (nextDay.isBefore(deliveryDate)) {
-            mileageData.put(nextDay.toString(), driverMileageMapper.createTransitMileageDatum());
-            nextDay = nextDay.plusDays(1);
-        }
-
-        // Create the Mileage data for the last day, having the 'Empty' status
-        mileageData.put(
-            deliveryDate.toString(),
-            driverMileageMapper.createEmptyMileageDatum(deliveryDate, request.deliveryLocation())
+        addCoveredMileageData(mileageData, request, locations, idAcrossTimeframe);
+        addEmptyMileageData(mileageData, locations, idAcrossTimeframe);
+        addTransitMileageData(
+            mileageData,
+            locations,
+            request.locations().getFirst().date(),
+            request.locations().getLast().date(),
+            idAcrossTimeframe
         );
 
         return mileageData;
     }
 
-    private boolean hasPickUpDateOrDeliveryDateChanged(UpsertDriverMileageRequest request, MileageData mileageData) {
-        LocalDate newPickUpDate = request.pickUpDate();
-        LocalDate newDeliveryDate = request.deliveryDate();
-        return (newPickUpDate != null && !newPickUpDate.equals(mileageData.getPickUpDate()))
-            || (newDeliveryDate != null && !newDeliveryDate.equals(mileageData.getDeliveryDate()));
+    /**
+     * Merges mileage data from the provided request with the existing mileage data
+     * in the given Driver Mileage entity. If there is a data conflict for a specific date
+     * and the previous mileage data has a load status of EMPTY, the new data will
+     * inherit this load status as its previous load status. Any new dates in the request
+     * data will be added, and existing dates not present in the request will be retained.
+     *
+     * @param request the request object containing the new mileage data to merge. Includes
+     *                details such as mileageDate, revenue, miles, broker, and locations.
+     * @param driverMileageEntity the entity containing the existing mileage data to merge with.
+     *                            The data is contained in the mileageData map field.
+     * @return a map containing the merged mileage data. The keys are dates in string format,
+     *         and the values are MileageData objects representing the mileage details for each date.
+     */
+    private Map<String, MileageData> mergeMileageData(
+        UpsertDriverMileageRequest request,
+        DriverMileageEntity driverMileageEntity
+    ) {
+        Map<String, MileageData> previousMileageData = driverMileageEntity.getMileageData();
+        Map<String, MileageData> newMileageData = createMileageDataMap(request);
+        Map<String, MileageData> mergedMileageData = new HashMap<>();
+        for (Map.Entry<String, MileageData> entry : newMileageData.entrySet()) {
+            String date = entry.getKey();
+            MileageData newMileageDatum = entry.getValue();
+            MileageData previousMileageDatum = previousMileageData.get(date);
+            if (previousMileageDatum != null && previousMileageDatum.getCurrentLoadStatus() == LoadStatus.EMPTY) {
+                newMileageDatum.setPreviousLoadStatus(LoadStatus.EMPTY);
+            }
+
+            mergedMileageData.put(date, newMileageDatum);
+        }
+
+        previousMileageData.forEach(mergedMileageData::putIfAbsent);
+        return mergedMileageData;
     }
 
-    private void updateMileageDatum(
+    private void addCoveredMileageData(
+        Map<String, MileageData> mileageDataMap,
         UpsertDriverMileageRequest request,
-        MileageData previousMileageData,
-        MileageData currentMileageData
+        List<CreateMileageLocationRequest> locations,
+        String idAcrossTimeframe
     ) {
-        // By using a generic method that created the Mileage Data based on the request, some fields may be null
-        // (because they are basically not updated). Therefore, we should take the previous values and populate
-        // the object
-        BigDecimal miles = !BigDecimalUtils.isEmpty(request.miles()) ? request.miles() : previousMileageData.getMiles();
-        BigDecimal revenue = !BigDecimalUtils.isEmpty(request.revenue()) ? request.revenue() : previousMileageData.getRevenue();
-        String broker = !StringUtil.isNullOrEmpty(request.broker()) ? request.broker() : previousMileageData.getBroker();
-        String representative = !StringUtil.isNullOrEmpty(request.representative()) ? request.representative() : previousMileageData.getRepresentative();
-        String deliveryLocation = !StringUtil.isNullOrEmpty(request.deliveryLocation()) ? request.deliveryLocation() : previousMileageData.getDeliveryLocation();
-        String pickUpLocation = !StringUtil.isNullOrEmpty(request.pickUpLocation()) ? request.pickUpLocation() : previousMileageData.getPickUpLocation();
-        String representativeContactNumber = !StringUtil.isNullOrEmpty(request.representativeContactNumber()) ? request.representativeContactNumber() : previousMileageData.getRepresentativeContactNumber();
+        // Mileage Data for the Loading Day
+        LocalDate startDate = locations.getFirst().date();
+        MileageData coveredMileageDatum = driverMileageObjectsCreator.createCoveredMileageDatum(request, idAcrossTimeframe);
+        List<LocationData> loadingDayLocations = new ArrayList<>();
+        int order = 0;
+        for (CreateMileageLocationRequest createMileageLocationRequest : locations) {
+            if (createMileageLocationRequest.date().equals(startDate)) {
+                LocationData secondLocationData = driverMileageObjectsCreator.fromCreateMileageLocationRequestToLocationData(
+                    createMileageLocationRequest,
+                    order++
+                );
+                loadingDayLocations.add(secondLocationData);
+            }
+        }
 
-        currentMileageData.setMiles(miles);
-        currentMileageData.setRevenue(revenue);
-        currentMileageData.setBroker(broker);
-        currentMileageData.setRepresentative(representative);
-        currentMileageData.setDeliveryLocation(deliveryLocation);
-        currentMileageData.setPickUpLocation(pickUpLocation);
-        currentMileageData.setRepresentativeContactNumber(representativeContactNumber);
+        coveredMileageDatum.setLocations(loadingDayLocations);
+        mileageDataMap.put(startDate.toString(), coveredMileageDatum);
+    }
+
+    private void addEmptyMileageData(
+        Map<String, MileageData> mileageDataMap,
+        List<CreateMileageLocationRequest> locations,
+        String idAcrossTimeframe
+    ) {
+        // Mileage Data for the last Delivery Day
+        LocalDate endDate = locations.getLast().date();
+        MileageData emptyMileageDatum = driverMileageObjectsCreator.createEmptyMileageDatum(idAcrossTimeframe);
+        List<LocationData> lastDayLocations = new ArrayList<>();
+        int order = 0;
+        for (CreateMileageLocationRequest createMileageLocationRequest : locations) {
+            if (createMileageLocationRequest.date().equals(endDate)) {
+                LocationData secondLocationData = driverMileageObjectsCreator.fromCreateMileageLocationRequestToLocationData(
+                    createMileageLocationRequest,
+                    order++
+                );
+                lastDayLocations.add(secondLocationData);
+            }
+        }
+
+        // The last location from the load will be the starting point for the next load (in the majority of cases), so
+        // we default that for a better UX. In case it is not, the user will change it. Even if we did not populate with
+        // anything, the user would still need to introduce the location. Therefore, by defaulting to a value, we have
+        // a change to minimize the interaction.
+        lastDayLocations.getLast().setLocationType(LocationType.STARTING_POINT);
+
+        // We add an implicit Pickup point (which will be defaulted to have the location of the Starting Point).
+        // We add a Delivery location as well.
+        // These are added because any load will require a Pickup/Delivery point, so we want to expect this and
+        // minimize the interaction with the system.
+        lastDayLocations.add(LocationData.builder()
+            .locationType(LocationType.PICK_UP)
+            .date(lastDayLocations.getLast().getDate())
+            .location(lastDayLocations.getLast().getLocation())
+            .order(order)
+            .build()
+        );
+        lastDayLocations.add(LocationData.builder()
+            .locationType(LocationType.DELIVERY)
+            .date(LocalDateUtils.addDay(lastDayLocations.getLast().getDate()))
+            .order(order + 1)
+            .build()
+        );
+
+        emptyMileageDatum.setLocations(lastDayLocations);
+        mileageDataMap.put(endDate.toString(), emptyMileageDatum);
+    }
+
+    private void addTransitMileageData(
+        Map<String, MileageData> mileageDataMap,
+        List<CreateMileageLocationRequest> locations,
+        LocalDate startDate,
+        LocalDate endDate,
+        String idAcrossTimeframe
+    ) {
+        // Create the Mileage data for the next days prior to the last one, having the 'Transit' status
+        Map<LocalDate, List<CreateMileageLocationRequest>> transitMileageData = locations.stream()
+            .collect(Collectors.groupingBy(CreateMileageLocationRequest::date, Collectors.toList()));
+        LocalDate current = LocalDateUtils.addDay(startDate);
+        int order = 0;
+        while (current.isBefore(endDate)) {
+            MileageData transitMileageDatum = driverMileageObjectsCreator.createTransitMileageDatum(idAcrossTimeframe);
+            List<LocationData> transitLocations = new ArrayList<>();
+            for (CreateMileageLocationRequest location : transitMileageData.getOrDefault(current, new ArrayList<>())) {
+                transitLocations.add(driverMileageObjectsCreator.fromCreateMileageLocationRequestToLocationData(location, order++));
+            }
+            transitMileageDatum.setLocations(transitLocations);
+            mileageDataMap.put(current.toString(), transitMileageDatum);
+            current = LocalDateUtils.addDay(current);
+        }
     }
 }

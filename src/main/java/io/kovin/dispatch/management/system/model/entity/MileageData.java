@@ -1,8 +1,7 @@
 package io.kovin.dispatch.management.system.model.entity;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-
+import java.util.List;
 import io.kovin.dispatch.management.system.model.entity.enums.LoadStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,10 +20,9 @@ public class MileageData {
     private BigDecimal miles;
     private String broker;
     private String representative;
-    private String pickUpLocation;
-    private String deliveryLocation;
-    private LocalDate pickUpDate;
-    private LocalDate deliveryDate;
-    private LoadStatus loadStatus;
+    private LoadStatus previousLoadStatus;
+    private LoadStatus currentLoadStatus;
     private String representativeContactNumber;
+    private String idAcrossTimeframe;
+    private List<LocationData> locations;
 }

@@ -2,6 +2,7 @@ package io.kovin.dispatch.management.system.model.request;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 public record UpsertDriverMileageRequest(
     String driverMileageUuid,
@@ -15,11 +16,8 @@ public record UpsertDriverMileageRequest(
     BigDecimal miles,
     String broker,
     String representative,
-    String pickUpLocation,
-    LocalDate pickUpDate,
-    String deliveryLocation,
-    LocalDate deliveryDate,
-    String representativeContactNumber
+    String representativeContactNumber,
+    List<CreateMileageLocationRequest> locations
 ) {
 
 }

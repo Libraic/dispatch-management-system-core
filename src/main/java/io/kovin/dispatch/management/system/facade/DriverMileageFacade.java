@@ -29,7 +29,6 @@ import io.kovin.dispatch.management.system.model.internal.mileage.DriverMileageD
 import io.kovin.dispatch.management.system.model.request.CreateMileageLocationRequest;
 import io.kovin.dispatch.management.system.model.request.UpsertDriverMileageRequest;
 import io.kovin.dispatch.management.system.model.response.GetDispatcherResponse;
-import io.kovin.dispatch.management.system.model.response.GetDriverResponse;
 import io.kovin.dispatch.management.system.model.response.mileage.GetDriverMileageDataResponse;
 import io.kovin.dispatch.management.system.model.response.mileage.GetDriverMileageResponse;
 import io.kovin.dispatch.management.system.model.response.mileage.GetMileageResponse;

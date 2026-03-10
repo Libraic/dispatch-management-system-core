@@ -4,13 +4,13 @@ import static io.kovin.dispatch.management.system.utils.constants.DispatchManage
 
 import java.util.Optional;
 import java.util.UUID;
-import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
-import io.kovin.dispatch.management.system.model.entity.DispatcherEntity;
-import io.kovin.dispatch.management.system.model.entity.DriverEntity;
-import io.kovin.dispatch.management.system.model.entity.TrailerEntity;
-import io.kovin.dispatch.management.system.model.entity.TruckEntity;
-import io.kovin.dispatch.management.system.model.entity.enums.DocumentStatus;
-import io.kovin.dispatch.management.system.model.entity.enums.DriverPosition;
+import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
+import io.kovin.dispatch.management.system.model.persistence.DispatcherEntity;
+import io.kovin.dispatch.management.system.model.persistence.DriverEntity;
+import io.kovin.dispatch.management.system.model.persistence.TrailerEntity;
+import io.kovin.dispatch.management.system.model.persistence.TruckEntity;
+import io.kovin.dispatch.management.system.model.persistence.enums.DocumentStatus;
+import io.kovin.dispatch.management.system.model.persistence.enums.DriverPosition;
 import io.kovin.dispatch.management.system.model.request.CreateDriverRequest;
 import io.kovin.dispatch.management.system.model.response.DriverData;
 import lombok.RequiredArgsConstructor;

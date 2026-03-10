@@ -2,7 +2,7 @@ package io.kovin.dispatch.management.system.validation;
 
 import ch.qos.logback.core.util.StringUtil;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemGroupException;
-import io.kovin.dispatch.management.system.model.entity.TrailerEntity;
+import io.kovin.dispatch.management.system.model.persistence.TrailerEntity;
 import io.kovin.dispatch.management.system.model.request.CreateTrailerRequest;
 import io.kovin.dispatch.management.system.model.response.error.GroupsErrors;
 import io.kovin.dispatch.management.system.service.TrailerService;

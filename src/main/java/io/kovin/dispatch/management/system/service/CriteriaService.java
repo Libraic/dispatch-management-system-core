@@ -1,20 +1,14 @@
 package io.kovin.dispatch.management.system.service;
 
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_PAGEABLE_ENTITY;
-import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.COMPANY;
 import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.DEFAULT_SIZE;
 import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.DEFAULT_SORTING_FIELD;
 import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.DELETED_AT;
-import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.END_DATE;
-import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.ID;
-import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.START_DATE;
 import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.UUID;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
-import io.kovin.dispatch.management.system.model.entity.LoadEntity;
-import io.kovin.dispatch.management.system.model.entity.Kpiable;
 import io.kovin.dispatch.management.system.model.request.enums.PageableEntity;
 import io.kovin.dispatch.management.system.model.response.PaginationDetails;
 import io.kovin.dispatch.management.system.utils.SearchCriteriaUtils;
@@ -25,8 +19,6 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import jakarta.persistence.metamodel.ManagedType;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -40,64 +32,6 @@ public class CriteriaService {
     public CriteriaService(EntityManager entityManager) {
         this.entityManager = entityManager;
         criteriaBuilder = entityManager.getCriteriaBuilder();
-    }
-
-    /**
-     * Given the class the target entity belongs to, retrieve all the records from the database that belong to
-     * the Company that has the provided UUID.
-     *
-     * @param targetEntityClass the class of the target entity.
-     * @param companyUuid       the UUID of the Company.
-     * @return                  a list of the target entities that match the search criteria.
-     * @param <T>               the type of the target entity, represented by a generic.
-     */
-    public <T> List<T> getTargetEntitiesForKpis(Class<T> targetEntityClass, String companyUuid) {
-        CriteriaQuery<T> query = criteriaBuilder.createQuery(targetEntityClass);
-        Root<T> root = query.from(targetEntityClass);
-        query.select(root).orderBy(criteriaBuilder.desc(root.get(DEFAULT_SORTING_FIELD)));
-        List<Predicate> predicates = new ArrayList<>(getCommonPredicates(root));
-
-        if (shouldJoinCompany(targetEntityClass)) {
-            Join<?, ?> companyJoin = SearchCriteriaUtils.getJoin(root, COMPANY);
-            Predicate joinPredicate = criteriaBuilder.equal(companyJoin.get(UUID), companyUuid);
-            predicates.add(joinPredicate);
-        }
-
-        query.select(root)
-            .where(criteriaBuilder.and(predicates.toArray(new Predicate[0])))
-            .orderBy(criteriaBuilder.desc(root.get(DEFAULT_SORTING_FIELD)));
-        TypedQuery<T> typedQuery = entityManager.createQuery(query);
-        return typedQuery.getResultList();
-    }
-
-    /**
-     * Retrieves a list of load entities associated with the specified target entity within the given date range.
-     *
-     * @param targetEntity the target entity for which to fetch load entities, implementing the {@link Kpiable} interface.
-     *                     The entity must provide its unique identifier and entity type.
-     * @param startDate    the start of the date range; only load entities with a start date greater than or equal
-     *                     to this value will be included.
-     * @param endDate      the end of the date range; only load entities with an end date less than or equal
-     *                     to this value will be included.
-     * @return a list of {@code LoadEntity} objects that match the criteria based on the target entity and the specified date range.
-     */
-    public List<LoadEntity> getLoadForTargetEntity(
-        Kpiable targetEntity,
-        LocalDate startDate,
-        LocalDate endDate
-    ) {
-        CriteriaQuery<LoadEntity> query = criteriaBuilder.createQuery(LoadEntity.class);
-        Root<LoadEntity> root = query.from(LoadEntity.class);
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(criteriaBuilder.equal(root.get(targetEntity.getEntityType()).get(ID), targetEntity.getId()));
-        predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(START_DATE), startDate));
-        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(END_DATE), endDate));
-        predicates.addAll(getCommonPredicates(root));
-        query.select(root)
-            .where(criteriaBuilder.and(predicates.toArray(new Predicate[0])))
-            .orderBy(criteriaBuilder.desc(root.get(DEFAULT_SORTING_FIELD)));
-        TypedQuery<LoadEntity> typedQuery = entityManager.createQuery(query);
-        return typedQuery.getResultList();
     }
 
     /**
@@ -221,10 +155,5 @@ public class CriteriaService {
         List<Predicate> commonPredicates = new ArrayList<>();
         commonPredicates.add(criteriaBuilder.isNull(root.get(DELETED_AT)));
         return commonPredicates;
-    }
-
-    private <T> boolean shouldJoinCompany(Class<T> targetEntityClass) {
-        ManagedType<?> managedType = entityManager.getMetamodel().managedType(targetEntityClass);
-        return managedType.getAttributes().stream().anyMatch(a -> a.getName().equals(COMPANY));
     }
 }

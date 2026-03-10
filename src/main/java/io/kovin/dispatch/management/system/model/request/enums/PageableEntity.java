@@ -1,9 +1,9 @@
 package io.kovin.dispatch.management.system.model.request.enums;
 
-import io.kovin.dispatch.management.system.model.entity.DispatcherEntity;
-import io.kovin.dispatch.management.system.model.entity.DriverEntity;
-import io.kovin.dispatch.management.system.model.entity.TrailerEntity;
-import io.kovin.dispatch.management.system.model.entity.TruckEntity;
+import io.kovin.dispatch.management.system.model.persistence.DispatcherEntity;
+import io.kovin.dispatch.management.system.model.persistence.DriverEntity;
+import io.kovin.dispatch.management.system.model.persistence.TrailerEntity;
+import io.kovin.dispatch.management.system.model.persistence.TruckEntity;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

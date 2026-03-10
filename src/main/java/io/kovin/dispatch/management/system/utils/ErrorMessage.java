@@ -11,7 +11,6 @@ public class ErrorMessage {
      */
     public static final String CITIES_LOAD_ERROR = "Failed to load cities.";
     public static final String INVALID_ZIP_CODE = "The provided zip code=[%s] is invalid.";
-    public static final String EMAIL_IN_USE = "The provided email is already in use.";
     public static final String EMAIL_IS_MANDATORY = "The e-mail cannot be empty.";
     public static final String FIRST_NAME_IS_MANDATORY = "The first name is required.";
     public static final String INTERNAL_SERVER_ERROR = "An internal server error occurred. Please try again later.";
@@ -77,14 +76,6 @@ public class ErrorMessage {
     public static final String TRUCK_NUMBER_IS_MANDATORY = "The truck number cannot be empty.";
     public static final String TRUCK_YEAR_INVALID = "The truck year is not valid.";
     public static final String TRUCK_WEIGHT_INVALID = "The truck weight is not valid.";
-
-    /**
-     * Error messages related to KPIs.
-     */
-    public static final String INVALID_KPI_AGGREGATION_PERIOD = "%s is not a valid aggregation period.";
-    public static final String INVALID_KPI_TARGET_ENTITY = "The KPIs are not available for [%s] entity.";
-    public static final String INVALID_KPI_TYPE = "The [%s] KPI is not valid.";
-    public static final String MISSING_KPIS = "At least one KPI must be provided.";
 
     /**
      * Error messages related to Dispatchers.

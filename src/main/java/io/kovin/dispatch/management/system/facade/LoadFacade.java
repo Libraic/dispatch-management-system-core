@@ -15,17 +15,15 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.mapper.LoadObjectsCreator;
-import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
-import io.kovin.dispatch.management.system.model.entity.DispatcherEntity;
-import io.kovin.dispatch.management.system.model.entity.DriverEntity;
-import io.kovin.dispatch.management.system.model.entity.LoadEntity;
-import io.kovin.dispatch.management.system.model.entity.Kpiable;
-import io.kovin.dispatch.management.system.model.entity.LocationData;
-import io.kovin.dispatch.management.system.model.entity.LoadData;
-import io.kovin.dispatch.management.system.model.entity.enums.LoadStatus;
-import io.kovin.dispatch.management.system.model.entity.enums.LocationType;
+import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
+import io.kovin.dispatch.management.system.model.persistence.DispatcherEntity;
+import io.kovin.dispatch.management.system.model.persistence.DriverEntity;
+import io.kovin.dispatch.management.system.model.persistence.LoadEntity;
+import io.kovin.dispatch.management.system.model.persistence.jsonb.LocationData;
+import io.kovin.dispatch.management.system.model.persistence.jsonb.LoadData;
+import io.kovin.dispatch.management.system.model.persistence.enums.LoadStatus;
+import io.kovin.dispatch.management.system.model.persistence.enums.LocationType;
 import io.kovin.dispatch.management.system.model.internal.Pair;
-import io.kovin.dispatch.management.system.model.internal.load.DriverLoadsDto;
 import io.kovin.dispatch.management.system.model.request.CreateLoadLocationRequest;
 import io.kovin.dispatch.management.system.model.request.UpsertLoadRequest;
 import io.kovin.dispatch.management.system.model.response.GetDispatcherResponse;
@@ -266,15 +264,6 @@ public class LoadFacade {
         });
 
         loadService.saveLoadEntities(loadEntities);
-    }
-
-    public List<DriverLoadsDto> getLoadDtos(Kpiable targetEntity, LocalDate startDate, LocalDate endDate) {
-        List<LoadEntity> loadEntities = criteriaService.getLoadForTargetEntity(
-            targetEntity,
-            startDate,
-            endDate
-        );
-        return loadObjectsCreator.fromLoadEntitiesToLoadDtos(loadEntities);
     }
 
     private LoadEntity removeLoadDataBetweenDates(

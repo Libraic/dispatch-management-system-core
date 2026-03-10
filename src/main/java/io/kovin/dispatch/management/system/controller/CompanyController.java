@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import io.kovin.dispatch.management.system.facade.CompanyFacade;
 import io.kovin.dispatch.management.system.mapper.CompanyMapper;
-import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
+import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
 import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.CompanyData;

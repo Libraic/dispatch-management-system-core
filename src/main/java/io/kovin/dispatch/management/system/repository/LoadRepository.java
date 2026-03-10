@@ -2,7 +2,7 @@ package io.kovin.dispatch.management.system.repository;
 
 import java.time.LocalDate;
 import java.util.Optional;
-import io.kovin.dispatch.management.system.model.entity.LoadEntity;
+import io.kovin.dispatch.management.system.model.persistence.LoadEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

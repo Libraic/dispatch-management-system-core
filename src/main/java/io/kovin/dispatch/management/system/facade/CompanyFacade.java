@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import io.kovin.dispatch.management.system.mapper.CompanyMapper;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
-import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
+import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
 import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
 import io.kovin.dispatch.management.system.model.response.CompanyData;
 import io.kovin.dispatch.management.system.service.CompanyService;

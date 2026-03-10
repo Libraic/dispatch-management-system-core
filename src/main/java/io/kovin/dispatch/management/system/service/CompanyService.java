@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
-import io.kovin.dispatch.management.system.model.entity.CompanyEntity;
+import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
 import io.kovin.dispatch.management.system.repository.CompanyRepository;
 import io.kovin.dispatch.management.system.utils.ErrorMessage;
 import lombok.RequiredArgsConstructor;

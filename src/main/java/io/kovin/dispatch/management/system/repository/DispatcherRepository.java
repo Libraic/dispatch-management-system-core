@@ -2,7 +2,7 @@ package io.kovin.dispatch.management.system.repository;
 
 import java.util.List;
 import java.util.Optional;
-import io.kovin.dispatch.management.system.model.entity.DispatcherEntity;
+import io.kovin.dispatch.management.system.model.persistence.DispatcherEntity;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

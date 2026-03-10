@@ -3,21 +3,13 @@ package io.kovin.dispatch.management.system.mapper;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-
-import io.kovin.dispatch.management.system.model.entity.DispatcherEntity;
-import io.kovin.dispatch.management.system.model.entity.LocationData;
-import io.kovin.dispatch.management.system.model.entity.enums.LoadStatus;
-import io.kovin.dispatch.management.system.model.entity.enums.LocationType;
-import io.kovin.dispatch.management.system.model.internal.load.DispatcherDto;
-import io.kovin.dispatch.management.system.model.internal.load.DriverDto;
-import io.kovin.dispatch.management.system.model.internal.load.DriverLoadsDto;
-import io.kovin.dispatch.management.system.model.internal.load.LoadDto;
-import io.kovin.dispatch.management.system.model.entity.DriverEntity;
-import io.kovin.dispatch.management.system.model.entity.LoadData;
-import io.kovin.dispatch.management.system.model.entity.LoadEntity;
+import io.kovin.dispatch.management.system.model.persistence.jsonb.LocationData;
+import io.kovin.dispatch.management.system.model.persistence.enums.LoadStatus;
+import io.kovin.dispatch.management.system.model.persistence.enums.LocationType;
+import io.kovin.dispatch.management.system.model.persistence.DriverEntity;
+import io.kovin.dispatch.management.system.model.persistence.jsonb.LoadData;
+import io.kovin.dispatch.management.system.model.persistence.LoadEntity;
 import io.kovin.dispatch.management.system.model.request.CreateLoadLocationRequest;
 import io.kovin.dispatch.management.system.model.request.UpsertLoadRequest;
 import io.kovin.dispatch.management.system.model.response.GetDriverResponse;
@@ -30,15 +22,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class LoadObjectsCreator {
-
-    public List<DriverLoadsDto> fromLoadEntitiesToLoadDtos(List<LoadEntity> entities) {
-        return entities.stream()
-            .map(loadEntity -> new DriverLoadsDto(
-                fromDriverEntityToDriverDto(loadEntity.getDriver()),
-                fromUserEntityToDispatcherDto(loadEntity.getDispatcher()),
-                fromLoadDataToLoadDto(loadEntity.getLoadData())
-            )).toList();
-    }
 
     public List<GetLoadResponse> fromLoadEntityToGetLoadResponse(LoadEntity loadEntity) {
         if (loadEntity == null || loadEntity.getLoadData() == null) {
@@ -134,25 +117,5 @@ public class LoadObjectsCreator {
             );
         }
         return driversWithoutDispatchersLoadsResponses;
-    }
-
-    private DriverDto fromDriverEntityToDriverDto(DriverEntity driver) {
-        return new DriverDto(driver.getUuid(), driver.getFullName());
-    }
-
-    private DispatcherDto fromUserEntityToDispatcherDto(DispatcherEntity dispatcher) {
-        return new DispatcherDto(dispatcher.getUuid(), dispatcher.getName());
-    }
-
-    private List<LoadDto> fromLoadDataToLoadDto(Map<String, LoadData> loadDataMap) {
-        return loadDataMap.entrySet()
-            .stream()
-            .map(loadDataEntry -> new LoadDto(
-                LocalDate.parse(loadDataEntry.getKey()),
-                loadDataEntry.getValue().getBroker(),
-                loadDataEntry.getValue().getRevenue().doubleValue(),
-                loadDataEntry.getValue().getMiles().doubleValue()
-            )).sorted(Comparator.comparing(LoadDto::date))
-            .toList();
     }
 }

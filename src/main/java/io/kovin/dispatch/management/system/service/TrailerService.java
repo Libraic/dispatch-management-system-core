@@ -2,7 +2,7 @@ package io.kovin.dispatch.management.system.service;
 
 import java.util.Optional;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
-import io.kovin.dispatch.management.system.model.entity.TrailerEntity;
+import io.kovin.dispatch.management.system.model.persistence.TrailerEntity;
 import io.kovin.dispatch.management.system.repository.TrailerRepository;
 import io.kovin.dispatch.management.system.utils.ErrorMessage;
 import lombok.RequiredArgsConstructor;

@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
-import io.kovin.dispatch.management.system.model.entity.LoadEntity;
-import io.kovin.dispatch.management.system.model.entity.LoadData;
+import io.kovin.dispatch.management.system.model.persistence.LoadEntity;
+import io.kovin.dispatch.management.system.model.persistence.jsonb.LoadData;
 import io.kovin.dispatch.management.system.model.internal.Pair;
 import io.kovin.dispatch.management.system.repository.LoadRepository;
 import io.kovin.dispatch.management.system.utils.ErrorMessage;

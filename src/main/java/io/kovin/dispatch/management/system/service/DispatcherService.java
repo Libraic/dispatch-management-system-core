@@ -5,7 +5,7 @@ import static io.kovin.dispatch.management.system.utils.ErrorMessage.DISPATCHER_
 import java.util.List;
 import java.util.Optional;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
-import io.kovin.dispatch.management.system.model.entity.DispatcherEntity;
+import io.kovin.dispatch.management.system.model.persistence.DispatcherEntity;
 import io.kovin.dispatch.management.system.repository.DispatcherRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

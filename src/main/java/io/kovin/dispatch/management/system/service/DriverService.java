@@ -3,7 +3,7 @@ package io.kovin.dispatch.management.system.service;
 import java.util.List;
 import java.util.Optional;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
-import io.kovin.dispatch.management.system.model.entity.DriverEntity;
+import io.kovin.dispatch.management.system.model.persistence.DriverEntity;
 import io.kovin.dispatch.management.system.repository.DriverRepository;
 import io.kovin.dispatch.management.system.utils.ErrorMessage;
 import lombok.RequiredArgsConstructor;

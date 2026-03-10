@@ -27,12 +27,12 @@ import org.hibernate.annotations.Type;
 @Setter
 @SuperBuilder(toBuilder = true)
 @Entity
-@Table(name = "t_drivers_mileage")
-public class DriverMileageEntity extends Auditable {
+@Table(name = "t_loads")
+public class LoadEntity extends Auditable {
 
     @Id
-    @SequenceGenerator(name = "drivers_mileage_sequence_generator", sequenceName = "t_drivers_mileage_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "drivers_mileage_sequence_generator")
+    @SequenceGenerator(name = "loads_sequence_generator", sequenceName = "t_loads_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "loads_sequence_generator")
     private Long id;
 
     @Column
@@ -61,12 +61,12 @@ public class DriverMileageEntity extends Auditable {
 
     @Type(JsonBinaryType.class)
     @Column(columnDefinition = "jsonb")
-    private Map<String, MileageData> mileageData;
+    private Map<String, LoadData> loadData;
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        DriverMileageEntity that = (DriverMileageEntity) o;
+        LoadEntity that = (LoadEntity) o;
         return Objects.equals(id, that.id);
     }
 

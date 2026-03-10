@@ -1,4 +1,4 @@
-package io.kovin.dispatch.management.system.model.response.mileage;
+package io.kovin.dispatch.management.system.model.response.load;
 
 import java.time.LocalDate;
 

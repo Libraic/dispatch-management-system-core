@@ -15,7 +15,7 @@ public class ErrorMessage {
     public static final String EMAIL_IS_MANDATORY = "The e-mail cannot be empty.";
     public static final String FIRST_NAME_IS_MANDATORY = "The first name is required.";
     public static final String INTERNAL_SERVER_ERROR = "An internal server error occurred. Please try again later.";
-    public static final String INVALID_DATE_FORMAT = "The mileageDate=[%s] should be passed in dd-MM-YYYY format.";
+    public static final String INVALID_DATE_FORMAT = "The loadDate=[%s] should be passed in dd-MM-YYYY format.";
     public static final String INVALID_PAGEABLE_ENTITY = "The entity=[%s] is not valid.";
     public static final String INVALID_SEARCH_CRITERIA = "The field=[%s] has an invalid format=[%s].";
     public static final String LAST_NAME_IS_MANDATORY = "The last name is required.";
@@ -27,7 +27,7 @@ public class ErrorMessage {
      */
     public static final String COMPANY_NOT_FOUND_BY_UUID = "The company with UUID=[%s] was not found.";
     public static final String MISSING_COMPANY_NAME = "The name of the company is missing.";
-    public static final String MISSING_COMPANY_START_DATE = "The mileageDate depicting the collaboration with the company is missing.";
+    public static final String MISSING_COMPANY_START_DATE = "The loadDate depicting the collaboration with the company is missing.";
 
     /**
      * Error messages related to Drivers.
@@ -40,26 +40,22 @@ public class ErrorMessage {
     public static final String STATE_IS_MANDATORY = "The state the driver is making deliveries in is mandatory.";
 
     /**
-     * Error messages related to Drivers Mileage.
+     * Error messages related to Loads.
      */
     public static final String BROKER_IS_MANDATORY = "Broker is required.";
     public static final String COMPANY_IS_MANDATORY = "The company is required.";
-    public static final String DELIVERY_DATE_IS_MANDATORY = "The delivery date is required.";
-    public static final String DELIVERY_LOCATION_IS_MANDATORY = "The delivery location is required.";
     public static final String DISPATCHER_IS_MANDATORY = "The dispatcher is required.";
     public static final String DRIVER_IS_MANDATORY = "The driver is required.";
-    public static final String DRIVER_MILEAGE_NOT_FOUND_BY_UUID = "The Driver Mileage with UUID=[%s] was not found.";
+    public static final String LOAD_NOT_FOUND_BY_UUID = "The Load with UUID=[%s] was not found.";
     public static final String LOCATION_LABEL_IS_MANDATORY = "The location label is required.";
-    public static final String MILEAGE_DATE_IS_MANDATORY = "The date of the mileage is required.";
+    public static final String LOAD_DATE_IS_MANDATORY = "The date of the load is required.";
     public static final String MILES_ARE_MANDATORY = "Miles are required.";
     public static final String NEGATIVE_MILES = "The miles cannot be negative.";
     public static final String NEGATIVE_REVENUE = "The revenue cannot be negative.";
-    public static final String PICK_UP_DATE_IS_MANDATORY = "The pick-up date is required.";
-    public static final String PICK_UP_LOCATION_IS_MANDATORY = "The pick-up location is required.";
     public static final String REVENUE_IS_MANDATORY = "The revenue is required.";
-    public static final String START_DATE_IS_MANDATORY = "The start date of the mileage timeframe is required.";
+    public static final String START_DATE_IS_MANDATORY = "The start date of the load timeframe is required.";
     public static final String START_DATE_BEFORE_END_DATE = "The start date cannot be after the end date.";
-    public static final String END_DATE_IS_MANDATORY = "The end date of the mileage timeframe is required.";
+    public static final String END_DATE_IS_MANDATORY = "The end date of the load timeframe is required.";
 
     /**
      * Error messages related to Trailer.

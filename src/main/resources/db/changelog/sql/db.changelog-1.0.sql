@@ -126,20 +126,20 @@ COMMENT ON COLUMN t_drivers.city                      IS 'The city the driver is
 COMMENT ON COLUMN t_drivers.created_at                IS 'The date the driver was created.';
 COMMENT ON COLUMN t_drivers.last_updated_at           IS 'The date the driver was last updated.';
 COMMENT ON COLUMN t_drivers.deleted_at                IS 'The date the driver was deleted.';
-COMMENT ON COLUMN t_drivers.company_id                IS 'The foreign key that stores the driverMileageUuid of the company the driver works for.';
+COMMENT ON COLUMN t_drivers.company_id                IS 'The foreign key that stores the loadUuid of the company the driver works for.';
 COMMENT ON COLUMN t_drivers.dispatcher_id             IS 'The ID of the Dispatcher the Driver was assigned to.';
 
 -- changeset libra:005
--- comment: Create the t_drivers_mileage table and its related dependencies
-CREATE SEQUENCE t_drivers_mileage_sequence
+-- comment: Create the t_loads table and its related dependencies
+CREATE SEQUENCE t_loads_sequence
     INCREMENT BY 1
     START WITH 1
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
 
-CREATE TABLE t_drivers_mileage (
-    id              BIGINT PRIMARY KEY DEFAULT nextval('t_drivers_mileage_sequence'),
+CREATE TABLE t_loads (
+    id              BIGINT PRIMARY KEY DEFAULT nextval('t_loads_sequence'),
     uuid            uuid      NOT NULL UNIQUE,
     start_date      DATE      NOT NULL,
     end_date        DATE      NOT NULL,
@@ -149,28 +149,28 @@ CREATE TABLE t_drivers_mileage (
     company_id      BIGINT,
     dispatcher_id   BIGINT,
     driver_id       BIGINT,
-    mileage_data    JSONB,
+    load_data    JSONB,
 
-    CONSTRAINT fk_mileage_company      FOREIGN KEY (company_id)    REFERENCES t_companies(id),
-    CONSTRAINT fk_mileage_dispatcher   FOREIGN KEY (dispatcher_id) REFERENCES t_dispatchers(id),
-    CONSTRAINT fk_mileage_driver       FOREIGN KEY (driver_id)     REFERENCES t_drivers(id)
+    CONSTRAINT fk_load_company      FOREIGN KEY (company_id)    REFERENCES t_companies(id),
+    CONSTRAINT fk_load_dispatcher   FOREIGN KEY (dispatcher_id) REFERENCES t_dispatchers(id),
+    CONSTRAINT fk_load_driver       FOREIGN KEY (driver_id)     REFERENCES t_drivers(id)
 );
 
-ALTER SEQUENCE t_drivers_mileage_sequence OWNED BY t_drivers_mileage.id;
+ALTER SEQUENCE t_loads_sequence OWNED BY t_loads.id;
 
-COMMENT ON TABLE t_drivers_mileage IS 'The table used to store the mileage data of Drivers from a certain Company.';
+COMMENT ON TABLE t_loads IS 'The table used to store the loads data of Drivers from a certain Company.';
 
-COMMENT ON COLUMN t_drivers_mileage.id              IS 'The primary key of the t_drivers_mileage table.';
-COMMENT ON COLUMN t_drivers_mileage.uuid            IS 'The UUID of the Driver Mileage.';
-COMMENT ON COLUMN t_drivers_mileage.start_date      IS 'The start date of a particular mileage.';
-COMMENT ON COLUMN t_drivers_mileage.end_date        IS 'The end date of a particular mileage.';
-COMMENT ON COLUMN t_drivers_mileage.created_at      IS 'The date the Driver Mileage was created.';
-COMMENT ON COLUMN t_drivers_mileage.last_updated_at IS 'The date the Driver Mileage was last updated.';
-COMMENT ON COLUMN t_drivers_mileage.deleted_at      IS 'The date the Driver Mileage was deleted.';
-COMMENT ON COLUMN t_drivers_mileage.company_id      IS 'The ID of the Company the Driver works for.';
-COMMENT ON COLUMN t_drivers_mileage.driver_id       IS 'The ID of the Driver.';
+COMMENT ON COLUMN t_loads.id              IS 'The primary key of the t_loads table.';
+COMMENT ON COLUMN t_loads.uuid            IS 'The UUID of the Load.';
+COMMENT ON COLUMN t_loads.start_date      IS 'The start date of a particular loads.';
+COMMENT ON COLUMN t_loads.end_date        IS 'The end date of a particular loads.';
+COMMENT ON COLUMN t_loads.created_at      IS 'The date the Load was created.';
+COMMENT ON COLUMN t_loads.last_updated_at IS 'The date the Load was last updated.';
+COMMENT ON COLUMN t_loads.deleted_at      IS 'The date the Load was deleted.';
+COMMENT ON COLUMN t_loads.company_id      IS 'The ID of the Company the Driver works for.';
+COMMENT ON COLUMN t_loads.driver_id       IS 'The ID of the Driver.';
 COMMENT ON COLUMN t_drivers.dispatcher_id           IS 'The ID of the Dispatcher.';
-COMMENT ON COLUMN t_drivers_mileage.mileage_data    IS 'The data that describes the Driver Mileage.';
+COMMENT ON COLUMN t_loads.load_data    IS 'The data that describes the Load.';
 
 -- changeset libra:006
 -- comment: Create the t_trailers table and its related dependencies

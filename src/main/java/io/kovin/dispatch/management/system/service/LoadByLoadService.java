@@ -16,19 +16,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import io.kovin.dispatch.management.system.facade.DriverMileageFacade;
+import io.kovin.dispatch.management.system.facade.LoadFacade;
 import io.kovin.dispatch.management.system.model.entity.DriverEntity;
 import io.kovin.dispatch.management.system.model.global.reports.financial.KpiSubject;
 import io.kovin.dispatch.management.system.model.global.reports.loadbyload.LoadByLoadData;
 import io.kovin.dispatch.management.system.model.global.reports.loadbyload.LoadByLoadItem;
 import io.kovin.dispatch.management.system.model.global.reports.loadbyload.LoadByLoadModel;
 import io.kovin.dispatch.management.system.model.internal.Accumulator;
-import io.kovin.dispatch.management.system.model.internal.mileage.AggregationUnit;
-import io.kovin.dispatch.management.system.model.internal.mileage.DriverDto;
-import io.kovin.dispatch.management.system.model.internal.mileage.DriverMileageDto;
-import io.kovin.dispatch.management.system.model.internal.mileage.LoadByLoadMileageDto;
-import io.kovin.dispatch.management.system.model.internal.mileage.MileageDto;
-import io.kovin.dispatch.management.system.model.internal.mileage.WeekAggregationUnit;
+import io.kovin.dispatch.management.system.model.internal.load.AggregationUnit;
+import io.kovin.dispatch.management.system.model.internal.load.DriverDto;
+import io.kovin.dispatch.management.system.model.internal.load.DriverLoadsDto;
+import io.kovin.dispatch.management.system.model.internal.load.LoadByLoadMileageDto;
+import io.kovin.dispatch.management.system.model.internal.load.LoadDto;
+import io.kovin.dispatch.management.system.model.internal.load.WeekAggregationUnit;
 import io.kovin.dispatch.management.system.utils.AggregationUtils;
 import io.kovin.dispatch.management.system.utils.BigDecimalUtils;
 import io.kovin.dispatch.management.system.utils.NumberUtils;
@@ -39,19 +39,19 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LoadByLoadService {
 
-    private final DriverMileageFacade driverMileageFacade;
+    private final LoadFacade loadFacade;
 
     /**
      * Retrieves a list of {@link LoadByLoadModel} instances by processing a list of driver entities
-     * and aggregating load-by-load mileage data for the specified mileageDate range.
-     * Each {@link LoadByLoadModel} corresponds to a driver and contains relevant data within the mileageDate range.
+     * and aggregating load-by-load loads data for the specified loadDate range.
+     * Each {@link LoadByLoadModel} corresponds to a driver and contains relevant data within the loadDate range.
      *
      * @param driverEntities a list of {@link DriverEntity} objects representing the target drivers
      *                       for which the load-by-load models are to be generated
-     * @param start          the start mileageDate of the range for filtering load-by-load data
-     * @param end            the end mileageDate of the range for filtering load-by-load data
-     * @return a list of {@link LoadByLoadModel} instances containing load-by-load mileage details
-     *         for the given drivers within the specified mileageDate range
+     * @param start          the start loadDate of the range for filtering load-by-load data
+     * @param end            the end loadDate of the range for filtering load-by-load data
+     * @return a list of {@link LoadByLoadModel} instances containing load-by-load loads details
+     *         for the given drivers within the specified loadDate range
      */
     public List<LoadByLoadModel> getLoadByLoadModels(List<DriverEntity> driverEntities, LocalDate start, LocalDate end) {
         List<LoadByLoadModel> loadByLoadModels = new ArrayList<>();
@@ -67,42 +67,42 @@ public class LoadByLoadService {
     }
 
     /**
-     * Groups load-by-load mileage data by driver and mileageDate within the specified mileageDate range for a given driver entity.
-     * This method retrieves mileage data, maps it to DTOs, and organizes it into a hierarchical structure where
-     * the outer map is keyed by driver information and the inner map is keyed by mileageDate.
+     * Groups load-by-load loads data by driver and loadDate within the specified loadDate range for a given driver entity.
+     * This method retrieves loads data, maps it to DTOs, and organizes it into a hierarchical structure where
+     * the outer map is keyed by driver information and the inner map is keyed by loadDate.
      *
-     * @param driver    the {@link DriverEntity} representing the target driver for which mileage data is retrieved
-     * @param startDate the start mileageDate of the range within which to fetch mileage data
-     * @param endDate   the end mileageDate of the range within which to fetch mileage data
+     * @param driver    the {@link DriverEntity} representing the target driver for which loads data is retrieved
+     * @param startDate the start loadDate of the range within which to fetch loads data
+     * @param endDate   the end loadDate of the range within which to fetch loads data
      * @return a map where:
      * - the key is a {@link DriverDto} representing a driver, and
      * - the value is another map where:
-     * - the key is a {@link LocalDate} representing a specific mileageDate, and
-     * - the value is a {@link LoadByLoadMileageDto} containing load-by-load mileage details for that mileageDate
+     * - the key is a {@link LocalDate} representing a specific loadDate, and
+     * - the value is a {@link LoadByLoadMileageDto} containing load-by-load loads details for that loadDate
      */
     private Map<DriverDto, Map<LocalDate, LoadByLoadMileageDto>> createLoadByLoadMileageGroupedByDriver(
         DriverEntity driver,
         LocalDate startDate,
         LocalDate endDate
     ) {
-        List<DriverMileageDto> driverMileageDtos = driverMileageFacade.getDriverMileageDtos(driver, startDate, endDate);
-        if (driverMileageDtos.isEmpty()) {
+        List<DriverLoadsDto> driverLoadsDtos = loadFacade.getLoadDtos(driver, startDate, endDate);
+        if (driverLoadsDtos.isEmpty()) {
             DriverDto driverDto = new DriverDto(driver.getUuid(), driver.getFullName());
             return Map.of(driverDto, Map.of());
         }
 
         Map<DriverDto, Map<LocalDate, LoadByLoadMileageDto>> groups = new HashMap<>();
-        for (DriverMileageDto driverMileageDto : driverMileageDtos) {
-            DriverDto driverDto = driverMileageDto.driver();
-            Map<LocalDate, LoadByLoadMileageDto> mileage = groups.getOrDefault(driverMileageDto.driver(), new HashMap<>());
-            for (MileageDto mileageDto : driverMileageDto.mileage()) {
+        for (DriverLoadsDto driverLoadsDto : driverLoadsDtos) {
+            DriverDto driverDto = driverLoadsDto.driver();
+            Map<LocalDate, LoadByLoadMileageDto> mileage = groups.getOrDefault(driverLoadsDto.driver(), new HashMap<>());
+            for (LoadDto loadDto : driverLoadsDto.loads()) {
                 LoadByLoadMileageDto loadByLoadMileageDto = new LoadByLoadMileageDto(
-                    mileageDto.broker(),
-                    driverMileageDto.dispatcher().fullName(),
-                    mileageDto.revenue(),
-                    mileageDto.miles()
+                    loadDto.broker(),
+                    driverLoadsDto.dispatcher().fullName(),
+                    loadDto.revenue(),
+                    loadDto.miles()
                 );
-                mileage.putIfAbsent(mileageDto.date(), loadByLoadMileageDto);
+                mileage.putIfAbsent(loadDto.date(), loadByLoadMileageDto);
             }
             groups.putIfAbsent(driverDto, mileage);
         }

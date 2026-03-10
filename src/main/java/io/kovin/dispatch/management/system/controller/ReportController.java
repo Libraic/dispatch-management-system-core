@@ -33,8 +33,8 @@ public class ReportController {
      *
      * @param companyUuid       the UUID of the Company the target entity pertains to.
      * @param target            the target entity the KPIs are calculated for.
-     * @param startDate         the start mileageDate of the time interval the KPIs are calculated for.
-     * @param endDate           the end mileageDate of the time interval the KPIs are calculated for.
+     * @param startDate         the start loadDate of the time interval the KPIs are calculated for.
+     * @param endDate           the end loadDate of the time interval the KPIs are calculated for.
      * @param aggregationPeriod the timeframe the KPIs will be aggregated for.
      * @param kpiNames          a list of the KPIs that should be calculated.
      * @return                  a list of Financial data.

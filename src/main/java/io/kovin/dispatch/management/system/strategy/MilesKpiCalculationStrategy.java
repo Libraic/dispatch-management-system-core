@@ -9,15 +9,15 @@ import java.util.List;
 import java.util.Map;
 import io.kovin.dispatch.management.system.model.enums.KpiAggregationPeriod;
 import io.kovin.dispatch.management.system.model.global.reports.financial.KpiDiscriminator;
-import io.kovin.dispatch.management.system.model.internal.mileage.AggregationUnit;
-import io.kovin.dispatch.management.system.model.internal.mileage.MileageDto;
+import io.kovin.dispatch.management.system.model.internal.load.AggregationUnit;
+import io.kovin.dispatch.management.system.model.internal.load.LoadDto;
 
 public class MilesKpiCalculationStrategy implements KpiCalculationStrategy {
 
     @Override
     public List<KpiDiscriminator> getKpiDiscriminators(
         KpiAggregationPeriod kpiAggregationPeriod,
-        Map<LocalDate, List<MileageDto>> mileage,
+        Map<LocalDate, List<LoadDto>> mileage,
         LocalDate startDate,
         LocalDate endDate
     ) {
@@ -26,10 +26,10 @@ public class MilesKpiCalculationStrategy implements KpiCalculationStrategy {
         AggregationUnit referenceAggregationUnit = createAggregationUnit(kpiAggregationPeriod, current);
         double temp = 0.0;
         while (!current.isAfter(endDate)) {
-            List<MileageDto> mileageDtos = mileage.get(current);
-            for (int i = 0; i < mileageDtos.size(); ++i) {
-                MileageDto mileageDto = mileageDtos.get(i);
-                AggregationUnit currentAggregationUnit = createAggregationUnit(kpiAggregationPeriod, mileageDto.date());
+            List<LoadDto> loadDtos = mileage.get(current);
+            for (int i = 0; i < loadDtos.size(); ++i) {
+                LoadDto loadDto = loadDtos.get(i);
+                AggregationUnit currentAggregationUnit = createAggregationUnit(kpiAggregationPeriod, loadDto.date());
                 if (currentAggregationUnit.differentFrom(referenceAggregationUnit)) {
                     KpiDiscriminator kpiDiscriminator = createKpiDiscriminator(referenceAggregationUnit, temp, false);
                     kpiDiscriminators.add(kpiDiscriminator);
@@ -37,7 +37,7 @@ public class MilesKpiCalculationStrategy implements KpiCalculationStrategy {
                     temp = 0.0;
                 }
 
-                temp += mileageDto.miles();
+                temp += loadDto.miles();
                 if (i == mileage.size() - 1) {
                     kpiDiscriminators.add(createKpiDiscriminator(referenceAggregationUnit, temp, false));
                 }

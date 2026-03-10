@@ -44,7 +44,7 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
-    @GetMapping("/{driverMileageUuid}")
+    @GetMapping("/{loadUuid}")
     public ResponseEntity<ApiResponse<CompanyData, ErrorResponse>> getByUuid(@PathVariable String uuid) {
         log.info("A request to retrieve the company with UUID=[{}] was received.", uuid);
         CompanyEntity companyEntity = companyService.getByUuid(uuid);
@@ -57,12 +57,12 @@ public class CompanyController {
     public ResponseEntity<ApiResponse<List<CompanyData>, ErrorResponse>> getCompaniesByCriteria(
         @RequestParam(name = "page", required = false) Integer page,
         @RequestParam(name = "size", required = false) Integer size,
-        @RequestParam(name = "driverMileageUuid", required = false) String uuid,
+        @RequestParam(name = "loadUuid", required = false) String uuid,
         @RequestParam(name = "name", required = false) String name
     ) {
         log.info("A request to retrieve the companies by criteria was received.");
         Map<String, String> queryParams = new HashMap<>();
-        queryParams.put("driverMileageUuid", uuid);
+        queryParams.put("loadUuid", uuid);
         queryParams.put("name", name);
         int finalPage = page == null ? 0 : page;
         int finalSize = size == null ? 0 : size;
@@ -70,7 +70,7 @@ public class CompanyController {
         return ResponseEntity.ok(ApiResponse.fromData(companiesData));
     }
 
-    @DeleteMapping("/{driverMileageUuid}")
+    @DeleteMapping("/{loadUuid}")
     public ResponseEntity<ApiResponse<CompanyData, ErrorResponse>> deleteCompany(@PathVariable String uuid) {
         log.info("A request to delete the company with UUID=[{}] was received.", uuid);
         companyService.deleteCompany(uuid);

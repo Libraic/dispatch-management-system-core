@@ -14,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MileageData {
+public class LoadData {
 
     private BigDecimal revenue;
     private BigDecimal miles;

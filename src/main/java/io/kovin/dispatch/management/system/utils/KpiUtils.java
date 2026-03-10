@@ -5,7 +5,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import io.kovin.dispatch.management.system.model.global.reports.financial.KpiDiscriminator;
 import io.kovin.dispatch.management.system.model.internal.Pair;
-import io.kovin.dispatch.management.system.model.internal.mileage.AggregationUnit;
+import io.kovin.dispatch.management.system.model.internal.load.AggregationUnit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

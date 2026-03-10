@@ -17,7 +17,7 @@ public class QueryConstants {
     public static final String EQUAL = "eq";
 
     /**
-     * The equivalent of INNER JOIN in SQL. Must use a pivot column to perform the join (usually using the driverMileageUuid column).
+     * The equivalent of INNER JOIN in SQL. Must use a pivot column to perform the join (usually using the loadUuid column).
      */
     public static final String JOIN = "join";
 

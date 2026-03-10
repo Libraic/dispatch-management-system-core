@@ -24,9 +24,9 @@ public class DriverService {
     }
 
     /**
-     * Retrieves a driver entity by its unique driverMileageUuid (UUID) if it exists and is not marked as deleted.
+     * Retrieves a driver entity by its unique loadUuid (UUID) if it exists and is not marked as deleted.
      *
-     * @param uuid the unique driverMileageUuid of the driver to retrieve
+     * @param uuid the unique loadUuid of the driver to retrieve
      * @return the driver entity corresponding to the provided UUID
      * @throws DispatchManagementSystemException if the driver is not found or marked as deleted
      */

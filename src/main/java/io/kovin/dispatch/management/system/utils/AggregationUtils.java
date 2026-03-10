@@ -3,13 +3,13 @@ package io.kovin.dispatch.management.system.utils;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_KPI_AGGREGATION_PERIOD;
 
 import java.time.LocalDate;
-import io.kovin.dispatch.management.system.model.internal.mileage.DayAggregationUnit;
+import io.kovin.dispatch.management.system.model.internal.load.DayAggregationUnit;
 import io.kovin.dispatch.management.system.model.enums.KpiAggregationPeriod;
-import io.kovin.dispatch.management.system.model.internal.mileage.AggregationUnit;
-import io.kovin.dispatch.management.system.model.internal.mileage.MonthAggregationUnit;
-import io.kovin.dispatch.management.system.model.internal.mileage.QuarterAggregationUnit;
-import io.kovin.dispatch.management.system.model.internal.mileage.WeekAggregationUnit;
-import io.kovin.dispatch.management.system.model.internal.mileage.YearAggregationUnit;
+import io.kovin.dispatch.management.system.model.internal.load.AggregationUnit;
+import io.kovin.dispatch.management.system.model.internal.load.MonthAggregationUnit;
+import io.kovin.dispatch.management.system.model.internal.load.QuarterAggregationUnit;
+import io.kovin.dispatch.management.system.model.internal.load.WeekAggregationUnit;
+import io.kovin.dispatch.management.system.model.internal.load.YearAggregationUnit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

@@ -1,4 +1,4 @@
-package io.kovin.dispatch.management.system.model.internal.mileage;
+package io.kovin.dispatch.management.system.model.internal.load;
 
 import java.time.LocalDate;
 import io.kovin.dispatch.management.system.model.internal.Pair;

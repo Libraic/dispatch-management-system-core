@@ -30,7 +30,7 @@ public class ReportService {
      *
      * @param aggregationModel the financial aggregation model containing the necessary details for
      *                         retrieving and calculating financial data, such as the company UUID,
-     *                         target entity type, KPI names, and mileageDate range.
+     *                         target entity type, KPI names, and loadDate range.
      * @return a list of FinancialModel objects containing calculated financial data for the selected target entities.
      */
     public List<FinancialModel> getFinancialData(FinancialAggregationModel aggregationModel) {

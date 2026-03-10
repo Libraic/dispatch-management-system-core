@@ -2,7 +2,7 @@ package io.kovin.dispatch.management.system.validation;
 
 import ch.qos.logback.core.util.StringUtil;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
-import io.kovin.dispatch.management.system.model.request.UpsertDriverMileageRequest;
+import io.kovin.dispatch.management.system.model.request.UpsertLoadRequest;
 import io.kovin.dispatch.management.system.utils.BigDecimalUtils;
 import io.kovin.dispatch.management.system.utils.ErrorMessage;
 import lombok.RequiredArgsConstructor;
@@ -13,16 +13,16 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class DriverMileageValidationService {
+public class LoadValidationService {
 
-    public void validateDriversMileageUpsertion(UpsertDriverMileageRequest request) {
-        log.info("Validating the request to create the mileage.");
+    public void validateLoadUpsertion(UpsertLoadRequest request) {
+        log.info("Validating the request to create the load.");
         if (StringUtil.isNullOrEmpty(request.companyUuid())) {
             throw DispatchManagementSystemException.of(ErrorMessage.COMPANY_IS_MANDATORY, HttpStatus.BAD_REQUEST);
         }
 
-        // These validations are only for the creation of mileage.
-        if (StringUtil.isNullOrEmpty(request.driverMileageUuid())) {
+        // These validations are only for the creation of the load.
+        if (StringUtil.isNullOrEmpty(request.loadUuid())) {
             if (StringUtil.isNullOrEmpty(request.dispatcherUuid())) {
                 throw DispatchManagementSystemException.of(ErrorMessage.DISPATCHER_IS_MANDATORY, HttpStatus.BAD_REQUEST);
             }
@@ -39,8 +39,8 @@ public class DriverMileageValidationService {
                 throw DispatchManagementSystemException.of(ErrorMessage.END_DATE_IS_MANDATORY, HttpStatus.BAD_REQUEST);
             }
 
-            if (request.mileageDate() == null) {
-                throw DispatchManagementSystemException.of(ErrorMessage.MILEAGE_DATE_IS_MANDATORY, HttpStatus.BAD_REQUEST);
+            if (request.loadDate() == null) {
+                throw DispatchManagementSystemException.of(ErrorMessage.LOAD_DATE_IS_MANDATORY, HttpStatus.BAD_REQUEST);
             }
 
             if (request.miles() == null) {

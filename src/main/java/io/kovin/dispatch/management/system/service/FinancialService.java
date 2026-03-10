@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import io.kovin.dispatch.management.system.facade.DriverMileageFacade;
+import io.kovin.dispatch.management.system.facade.LoadFacade;
 import io.kovin.dispatch.management.system.model.entity.Kpiable;
 import io.kovin.dispatch.management.system.model.enums.KpiName;
 import io.kovin.dispatch.management.system.model.global.reports.financial.FinancialAggregationModel;
@@ -14,8 +14,8 @@ import io.kovin.dispatch.management.system.model.global.reports.financial.Financ
 import io.kovin.dispatch.management.system.model.global.reports.financial.Kpi;
 import io.kovin.dispatch.management.system.model.global.reports.financial.KpiDiscriminator;
 import io.kovin.dispatch.management.system.model.global.reports.financial.KpiSubject;
-import io.kovin.dispatch.management.system.model.internal.mileage.DriverMileageDto;
-import io.kovin.dispatch.management.system.model.internal.mileage.MileageDto;
+import io.kovin.dispatch.management.system.model.internal.load.DriverLoadsDto;
+import io.kovin.dispatch.management.system.model.internal.load.LoadDto;
 import io.kovin.dispatch.management.system.strategy.KpiCalculationStrategy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FinancialService {
 
-    private final DriverMileageFacade driverMileageFacade;
+    private final LoadFacade loadFacade;
 
     private final Map<KpiName, KpiCalculationStrategy> kpiCalculationStrategies;
 
@@ -41,11 +41,11 @@ public class FinancialService {
         LocalDate start = aggregationModel.startDate();
         LocalDate end = aggregationModel.endDate();
         for (Kpiable kpiable : kpiables) {
-            List<DriverMileageDto> driverMileageDtos = driverMileageFacade.getDriverMileageDtos(kpiable, start, end);
-            Map<LocalDate, List<MileageDto>> mergedMileageGroupedByDate = groupMileageByDateAndCompleteTimelineIfNeeded(
+            List<DriverLoadsDto> driverLoadsDtos = loadFacade.getLoadDtos(kpiable, start, end);
+            Map<LocalDate, List<LoadDto>> mergedMileageGroupedByDate = groupMileageByDateAndCompleteTimelineIfNeeded(
                 start,
                 end,
-                driverMileageDtos
+                driverLoadsDtos
             );
             FinancialModel financialModel = createFinancialModel(
                 aggregationModel,
@@ -62,7 +62,7 @@ public class FinancialService {
 
     private FinancialModel createFinancialModel(
         FinancialAggregationModel aggregationModel,
-        Map<LocalDate, List<MileageDto>> mergedMileageGroupedByDate,
+        Map<LocalDate, List<LoadDto>> mergedMileageGroupedByDate,
         LocalDate startDate,
         LocalDate endDate,
         Kpiable targetEntity
@@ -83,18 +83,18 @@ public class FinancialService {
         return new FinancialModel(subject, kpis);
     }
 
-    private Map<LocalDate, List<MileageDto>> groupMileageByDateAndCompleteTimelineIfNeeded(
+    private Map<LocalDate, List<LoadDto>> groupMileageByDateAndCompleteTimelineIfNeeded(
         LocalDate start,
         LocalDate end,
-        List<DriverMileageDto> driverMileageDtos
+        List<DriverLoadsDto> driverLoadsDtos
     ) {
-        var mileageGroupedByDate = driverMileageDtos.stream()
-            .map(DriverMileageDto::mileage)
+        var mileageGroupedByDate = driverLoadsDtos.stream()
+            .map(DriverLoadsDto::loads)
             .flatMap(Collection::stream)
             .collect(Collectors.toMap(
-                MileageDto::date,
+                LoadDto::date,
                 mileage -> {
-                    List<MileageDto> list = new ArrayList<>();
+                    List<LoadDto> list = new ArrayList<>();
                     list.add(mileage);
                     return list;
                 },
@@ -106,7 +106,7 @@ public class FinancialService {
 
         LocalDate temp = start;
         while (!temp.isAfter(end)) {
-            mileageGroupedByDate.putIfAbsent(temp, List.of(MileageDto.createEmptyMileageDto(temp)));
+            mileageGroupedByDate.putIfAbsent(temp, List.of(LoadDto.creteEmptyLoad(temp)));
             temp = temp.plusDays(1);
         }
 

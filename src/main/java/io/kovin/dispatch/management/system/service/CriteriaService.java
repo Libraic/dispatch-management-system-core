@@ -13,7 +13,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
-import io.kovin.dispatch.management.system.model.entity.DriverMileageEntity;
+import io.kovin.dispatch.management.system.model.entity.LoadEntity;
 import io.kovin.dispatch.management.system.model.entity.Kpiable;
 import io.kovin.dispatch.management.system.model.request.enums.PageableEntity;
 import io.kovin.dispatch.management.system.model.response.PaginationDetails;
@@ -71,36 +71,23 @@ public class CriteriaService {
     }
 
     /**
-     * Retrieves all {@link DriverMileageEntity} records that are associated with the given target entity
-     * and fall within the specified mileageDate range.
-     * <p>
-     * The method dynamically filters mileage entries based on:
-     * <ul>
-     *     <li>the target entity type (e.g., Driver, User), obtained from the {@link Kpiable} argument</li>
-     *     <li>the target entity driverMileageUuid</li>
-     *     <li>a mileage start mileageDate greater than or equal to {@code startDate}</li>
-     *     <li>a mileage end mileageDate less than or equal to {@code endDate}</li>
-     *     <li>any additional predicates derived from {@code getCommonPredicates(root)}</li>
-     * </ul>
-     * Results are ordered in descending order based on the default sorting field.
+     * Retrieves a list of load entities associated with the specified target entity within the given date range.
      *
-     * @param targetEntity the KPI target entity whose mileage entries should be fetched;
-     *                     must provide an entity type and driverMileageUuid
-     * @param startDate    the lower bound (inclusive) of the mileage start mileageDate filter
-     * @param endDate      the upper bound (inclusive) of the mileage end mileageDate filter
-     * @return a list of {@link DriverMileageEntity} matching the provided filters;
-     *         returns an empty list if no records match.
-     *
-     * @throws IllegalArgumentException if {@code targetEntity} is null,
-     *                                  or if it does not expose a valid entity type or driverMileageUuid.
+     * @param targetEntity the target entity for which to fetch load entities, implementing the {@link Kpiable} interface.
+     *                     The entity must provide its unique identifier and entity type.
+     * @param startDate    the start of the date range; only load entities with a start date greater than or equal
+     *                     to this value will be included.
+     * @param endDate      the end of the date range; only load entities with an end date less than or equal
+     *                     to this value will be included.
+     * @return a list of {@code LoadEntity} objects that match the criteria based on the target entity and the specified date range.
      */
-    public List<DriverMileageEntity> getMileageForTargetEntity(
+    public List<LoadEntity> getLoadForTargetEntity(
         Kpiable targetEntity,
         LocalDate startDate,
         LocalDate endDate
     ) {
-        CriteriaQuery<DriverMileageEntity> query = criteriaBuilder.createQuery(DriverMileageEntity.class);
-        Root<DriverMileageEntity> root = query.from(DriverMileageEntity.class);
+        CriteriaQuery<LoadEntity> query = criteriaBuilder.createQuery(LoadEntity.class);
+        Root<LoadEntity> root = query.from(LoadEntity.class);
         List<Predicate> predicates = new ArrayList<>();
         predicates.add(criteriaBuilder.equal(root.get(targetEntity.getEntityType()).get(ID), targetEntity.getId()));
         predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(START_DATE), startDate));
@@ -109,7 +96,7 @@ public class CriteriaService {
         query.select(root)
             .where(criteriaBuilder.and(predicates.toArray(new Predicate[0])))
             .orderBy(criteriaBuilder.desc(root.get(DEFAULT_SORTING_FIELD)));
-        TypedQuery<DriverMileageEntity> typedQuery = entityManager.createQuery(query);
+        TypedQuery<LoadEntity> typedQuery = entityManager.createQuery(query);
         return typedQuery.getResultList();
     }
 
@@ -179,7 +166,7 @@ public class CriteriaService {
      * compute page count, offsets, and other pagination metadata.
      *
      * @param pageableEntity    the name of the entity to paginate; must correspond to a valid entity type
-     * @param joinableEntityId  the driverMileageUuid of a related entity to filter by; may be {@code null} if no filtering is required
+     * @param joinableEntityId  the loadUuid of a related entity to filter by; may be {@code null} if no filtering is required
      * @param joinableEntityName the name of the relationship field to join on when filtering; must be provided if {@code joinableEntityId} is non-null
      * @param pageSize          the number of items per page; may be {@code null} to use a default page size
      * @return a {@link PaginationDetails} object containing total records, page count, and related pagination metadata
@@ -209,7 +196,7 @@ public class CriteriaService {
      * is restricted to entities that are associated with the specified related entity through a join.
      *
      * @param clazz              the entity class to count; defines the type of entities
-     * @param joinableEntityId   the driverMileageUuid of the related entity to filter by; if null, no join filter is applied
+     * @param joinableEntityId   the loadUuid of the related entity to filter by; if null, no join filter is applied
      * @param joinableEntityName the name of the relationship field to join on; required if {@code joinableEntityId} is provided
      * @param <T>                the type of entity to count
      * @return the total number of entities of type {@code T} that match the optional join filter

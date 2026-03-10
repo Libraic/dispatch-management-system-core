@@ -4,20 +4,20 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-public record UpsertDriverMileageRequest(
-    String driverMileageUuid,
+public record UpsertLoadRequest(
+    String loadUuid,
     String companyUuid,
     String dispatcherUuid,
     String driverUuid,
     LocalDate startDate,
     LocalDate endDate,
-    LocalDate mileageDate,
+    LocalDate loadDate,
     BigDecimal revenue,
     BigDecimal miles,
     String broker,
     String representative,
     String representativeContactNumber,
-    List<CreateMileageLocationRequest> locations
+    List<CreateLoadLocationRequest> locations
 ) {
 
 }

@@ -7,7 +7,7 @@ import lombok.Builder;
 
 @Builder
 public record GetDriverLoadsResponse(
-    String loadUuid,
+    String relationUuid,
     GetDriverResponse driver,
     List<GetLoadResponse> loads
 ) {

@@ -130,49 +130,6 @@ COMMENT ON COLUMN t_drivers.company_id                IS 'The foreign key that s
 COMMENT ON COLUMN t_drivers.dispatcher_id             IS 'The ID of the Dispatcher the Driver was assigned to.';
 
 -- changeset libra:005
--- comment: Create the t_loads table and its related dependencies
-CREATE SEQUENCE t_loads_sequence
-    INCREMENT BY 1
-    START WITH 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-CREATE TABLE t_loads (
-    id              BIGINT PRIMARY KEY DEFAULT nextval('t_loads_sequence'),
-    uuid            uuid      NOT NULL UNIQUE,
-    start_date      DATE      NOT NULL,
-    end_date        DATE      NOT NULL,
-    created_at      TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    last_updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    deleted_at      TIMESTAMP WITH TIME ZONE DEFAULT NULL,
-    company_id      BIGINT,
-    dispatcher_id   BIGINT,
-    driver_id       BIGINT,
-    load_data    JSONB,
-
-    CONSTRAINT fk_load_company      FOREIGN KEY (company_id)    REFERENCES t_companies(id),
-    CONSTRAINT fk_load_dispatcher   FOREIGN KEY (dispatcher_id) REFERENCES t_dispatchers(id),
-    CONSTRAINT fk_load_driver       FOREIGN KEY (driver_id)     REFERENCES t_drivers(id)
-);
-
-ALTER SEQUENCE t_loads_sequence OWNED BY t_loads.id;
-
-COMMENT ON TABLE t_loads IS 'The table used to store the loads data of Drivers from a certain Company.';
-
-COMMENT ON COLUMN t_loads.id              IS 'The primary key of the t_loads table.';
-COMMENT ON COLUMN t_loads.uuid            IS 'The UUID of the Load.';
-COMMENT ON COLUMN t_loads.start_date      IS 'The start date of a particular loads.';
-COMMENT ON COLUMN t_loads.end_date        IS 'The end date of a particular loads.';
-COMMENT ON COLUMN t_loads.created_at      IS 'The date the Load was created.';
-COMMENT ON COLUMN t_loads.last_updated_at IS 'The date the Load was last updated.';
-COMMENT ON COLUMN t_loads.deleted_at      IS 'The date the Load was deleted.';
-COMMENT ON COLUMN t_loads.company_id      IS 'The ID of the Company the Driver works for.';
-COMMENT ON COLUMN t_loads.driver_id       IS 'The ID of the Driver.';
-COMMENT ON COLUMN t_drivers.dispatcher_id           IS 'The ID of the Dispatcher.';
-COMMENT ON COLUMN t_loads.load_data    IS 'The data that describes the Load.';
-
--- changeset libra:006
 -- comment: Create the t_trailers table and its related dependencies
 CREATE SEQUENCE t_trailers_sequence
     INCREMENT BY 1
@@ -221,7 +178,7 @@ COMMENT ON COLUMN t_trailers.max_weight      IS 'The max weight the Trailer is a
 COMMENT ON COLUMN t_trailers.tire_size       IS 'The tire size of the Trailer.';
 COMMENT ON COLUMN t_trailers.company_id      IS 'The ID of the Company this trailer was created for.';
 
--- changeset libra:007
+-- changeset libra:006
 -- comment: Create the t_trucks table and its related dependencies
 CREATE SEQUENCE t_trucks_sequence
     INCREMENT BY 1
@@ -268,7 +225,7 @@ COMMENT ON COLUMN t_trucks.color           IS 'The color of the Truck.';
 COMMENT ON COLUMN t_trucks.weight          IS 'The weight the Truck is allowed to carry.';
 COMMENT ON COLUMN t_trucks.company_id      IS 'The ID of the Company this truck was created for.';
 
--- changeset libra:008
+-- changeset libra:007
 -- comment: Add truck_id (t_trucks table) and trailer_id (t_trailers table) as foreign keys to the t_drivers table.
 ALTER TABLE t_drivers
     ADD COLUMN truck_id   BIGINT,
@@ -279,3 +236,114 @@ ALTER TABLE t_drivers
 
 COMMENT ON COLUMN t_drivers.truck_id   IS 'The ID of the Truck that is currently assigned to this Driver.';
 COMMENT ON COLUMN t_drivers.trailer_id IS 'The ID of the Trailer that is currently assigned to this Driver.';
+
+-- changeset libra:008
+-- comment: Create the t_driver_dispatcher_relations table and its related dependencies
+CREATE SEQUENCE t_driver_dispatcher_relations_sequence
+    INCREMENT BY 1
+    START WITH 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE t_driver_dispatcher_relations (
+    id              BIGINT PRIMARY KEY       DEFAULT nextval('t_driver_dispatcher_relations_sequence'),
+    uuid            uuid                     NOT NULL UNIQUE,
+    created_at      TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    last_updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    deleted_at      TIMESTAMP WITH TIME ZONE DEFAULT NULL,
+    company_id      BIGINT,
+    dispatcher_id   BIGINT,
+    driver_id       BIGINT,
+
+    CONSTRAINT fk_load_company      FOREIGN KEY (company_id)    REFERENCES t_companies(id),
+    CONSTRAINT fk_load_dispatcher   FOREIGN KEY (dispatcher_id) REFERENCES t_dispatchers(id),
+    CONSTRAINT fk_load_driver       FOREIGN KEY (driver_id)     REFERENCES t_drivers(id)
+);
+
+ALTER SEQUENCE t_driver_dispatcher_relations_sequence OWNED BY t_driver_dispatcher_relations.id;
+
+COMMENT ON TABLE t_driver_dispatcher_relations IS 'The table used to store the relations between Dispatchers and Drivers from a certain Company.';
+
+COMMENT ON COLUMN t_driver_dispatcher_relations.id              IS 'The primary key of the t_driver_dispatcher_relations table.';
+COMMENT ON COLUMN t_driver_dispatcher_relations.uuid            IS 'The UUID of the relation.';
+COMMENT ON COLUMN t_driver_dispatcher_relations.created_at      IS 'The date the relation was created.';
+COMMENT ON COLUMN t_driver_dispatcher_relations.last_updated_at IS 'The date the relation was last updated.';
+COMMENT ON COLUMN t_driver_dispatcher_relations.deleted_at      IS 'The date the relation was deleted.';
+COMMENT ON COLUMN t_driver_dispatcher_relations.company_id      IS 'The ID of the Company the Driver works for.';
+COMMENT ON COLUMN t_driver_dispatcher_relations.driver_id       IS 'The ID of the Driver.';
+COMMENT ON COLUMN t_drivers.dispatcher_id                       IS 'The ID of the Dispatcher.';
+
+-- changeset libra:009
+-- comment: Create the t_loads table and its related dependencies
+CREATE SEQUENCE t_loads_sequence
+    INCREMENT BY 1
+    START WITH 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE t_loads (
+    id                            BIGINT         PRIMARY KEY      DEFAULT nextval('t_loads_sequence'),
+    uuid                          uuid           NOT NULL UNIQUE,
+    start_date                    DATE           NOT NULL,
+    end_date                      DATE           NOT NULL,
+    revenue                       DECIMAL(10, 6) NOT NULL         DEFAULT 0,
+    miles                         DECIMAL(6, 2)  NOT NULL         DEFAULT 0,
+    broker                        VARCHAR(70)    NOT NULL,
+    representative                VARCHAR(70),
+    representative_contact_number VARCHAR(20),
+    load_status                   VARCHAR(20),
+    driver_dispatcher_relation_id BIGINT,
+
+    CONSTRAINT fk_load_driver_dispatcher_relation FOREIGN KEY (driver_dispatcher_relation_id) REFERENCES t_driver_dispatcher_relations(id)
+);
+
+ALTER SEQUENCE t_loads_sequence OWNED BY t_loads.id;
+
+COMMENT ON TABLE t_loads IS 'The table used to store the information about the loads.';
+
+COMMENT ON COLUMN t_loads.id                            IS 'The primary key of the t_loads table.';
+COMMENT ON COLUMN t_loads.uuid                          IS 'The UUID of the load.';
+COMMENT ON COLUMN t_loads.start_date                    IS 'The date the load was dispatched.';
+COMMENT ON COLUMN t_loads.end_date                      IS 'The date the load was delivered.';
+COMMENT ON COLUMN t_loads.revenue                       IS 'The revenue of the load.';
+COMMENT ON COLUMN t_loads.miles                         IS 'The distance the load has to travel to reach its destination.';
+COMMENT ON COLUMN t_loads.broker                        IS 'The name of the broker company.';
+COMMENT ON COLUMN t_loads.representative                IS 'The representative of the broker company.';
+COMMENT ON COLUMN t_loads.representative_contact_number IS 'The contact number of the representative of the broker company.';
+COMMENT ON COLUMN t_loads.load_status                   IS 'The current status of the load.';
+COMMENT ON COLUMN t_loads.driver_dispatcher_relation_id IS 'The ID of the Driver-Dispatcher relationship.';
+
+-- changeset libra:010
+-- comment: Create the t_load_locations table and its related dependencies
+CREATE SEQUENCE t_load_locations_sequence
+    INCREMENT BY 1
+    START WITH 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE t_load_locations(
+    id                            BIGINT         PRIMARY KEY      DEFAULT nextval('t_load_locations_sequence'),
+    uuid                          uuid           NOT NULL UNIQUE,
+    location                      VARCHAR(70)    NOT NULL,
+    date                          DATE           NOT NULL,
+    location_type                 VARCHAR(30)    NOT NULL,
+    location_order                SMALLINT       NOT NULL,
+    load_id                       BIGINT,
+
+    CONSTRAINT fk_location_load FOREIGN KEY (load_id) REFERENCES t_loads(id)
+);
+
+ALTER SEQUENCE t_load_locations_sequence OWNED BY t_load_locations.id;
+
+COMMENT ON TABLE t_load_locations IS 'The table used to store the information about the locations of a certain load.';
+
+COMMENT ON COLUMN t_load_locations.id             IS 'The primary key of the t_load_locations table.';
+COMMENT ON COLUMN t_load_locations.uuid           IS 'The UUID of the location.';
+COMMENT ON COLUMN t_load_locations.location       IS 'The name of the physical location.';
+COMMENT ON COLUMN t_load_locations.date           IS 'The date the location is reached at.';
+COMMENT ON COLUMN t_load_locations.location_type  IS 'The purpose served by a certain location.';
+COMMENT ON COLUMN t_load_locations.location_order IS 'The order of a certain location in the route.';
+COMMENT ON COLUMN t_load_locations.load_id        IS 'The ID of the Load that defines the route a certain location is part of.';

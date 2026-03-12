@@ -1,7 +1,6 @@
 package io.kovin.dispatch.management.system.service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
@@ -66,13 +65,5 @@ public class CompanyService {
             log.error(errorMessage);
             throw DispatchManagementSystemException.of(errorMessage, HttpStatus.NOT_FOUND);
         }
-    }
-
-    public List<CompanyEntity> findByUuids(List<String> uuids) {
-        if (uuids == null) {
-            return List.of();
-        }
-
-        return companyRepository.findByUuidIn(uuids);
     }
 }

@@ -6,7 +6,6 @@ import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
 import io.kovin.dispatch.management.system.model.response.CompanyData;
 import io.kovin.dispatch.management.system.utils.LocalDateUtils;
 import io.kovin.dispatch.management.system.utils.StringUtils;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -31,9 +30,5 @@ public class CompanyMapper {
             .address(companyEntity.getAddress())
             .startDate(companyEntity.getStartDate().toString())
             .build();
-    }
-
-    public Page<CompanyData> fromCompanyEntityPageToCompanyDataPage(Page<CompanyEntity> companyEntities) {
-        return companyEntities.map(this::fromCompanyEntityToCompanyData);
     }
 }

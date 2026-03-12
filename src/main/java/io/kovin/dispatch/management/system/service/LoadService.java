@@ -2,144 +2,66 @@ package io.kovin.dispatch.management.system.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.persistence.LoadEntity;
-import io.kovin.dispatch.management.system.model.persistence.jsonb.LoadData;
-import io.kovin.dispatch.management.system.model.internal.Pair;
 import io.kovin.dispatch.management.system.repository.LoadRepository;
-import io.kovin.dispatch.management.system.utils.ErrorMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class LoadService {
 
     private final LoadRepository loadRepository;
 
     /**
-     * Persists a list of LoadEntity instances to the database.
-     * Logs the number of entities being persisted if the list is not empty.
+     * Persists the given load entity into the database.
+     * Logs the UUID of the load before saving it to provide traceability.
      *
-     * @param loadEntities a list of LoadEntity objects to be persisted.
-     *                     This parameter must not be null. If the list is empty, no action is taken.
+     * @param loadEntity the load entity to be persisted. It contains details such as
+     *                   UUID, start and end dates, revenue, miles, broker information,
+     *                   load status, and associated driver-dispatcher relation.
      */
-    public void saveLoadEntities(List<LoadEntity> loadEntities) {
-        if (!loadEntities.isEmpty()) {
-            log.info("Persisting [{}] Load entities.", loadEntities.size());
-            loadRepository.saveAll(loadEntities);
-        }
+    public void persistLoad(LoadEntity loadEntity) {
+        log.info("Persisting load with UUID=[{}].", loadEntity.getUuid());
+        loadRepository.save(loadEntity);
     }
 
     /**
-     * Retrieves a {@code LoadEntity} by its unique identifier (UUID).
-     * If the entity is not found, an exception is thrown.
+     * Retrieves all load entities associated with a specific driver-dispatcher relation that
+     * overlap within the given date range.
      *
-     * @param uuid the unique identifier of the load entity to be retrieved.
-     *             This parameter must not be null or empty.
-     * @return the {@code LoadEntity} associated with the provided UUID.
-     * @throws DispatchManagementSystemException if no load entity is found for the given UUID.
+     * @param driverDispatcherRelationUuid the UUID of the driver-dispatcher relation for which overlapping loads are to be retrieved.
+     * @param startDate the start date of the timeframe to check for overlapping loads.
+     * @param endDate the end date of the timeframe to check for overlapping loads.
+     * @return a list of {@code LoadEntity} objects that overlap with the specified date range for the given driver-dispatcher relation.
      */
-    public LoadEntity getByUuid(String uuid) {
-        var loadEntityOptional = findByUuid(uuid);
-        if (loadEntityOptional.isEmpty()) {
-            String errorMessage = String.format(ErrorMessage.LOAD_NOT_FOUND_BY_UUID, uuid);
-            log.error(errorMessage);
-            throw DispatchManagementSystemException.of(errorMessage, HttpStatus.NOT_FOUND);
-        }
-
-        return loadEntityOptional.get();
-    }
-
-    /**
-     * Finds a {@code LoadEntity} by its unique identifier (UUID) if it has not been deleted.
-     * This method retrieves the load with the specified UUID from the repository where
-     * the {@code deletedAt} field is null.
-     *
-     * @param loadUuid the unique identifier of the load to be retrieved.
-     *                 This parameter must not be null or empty.
-     * @return an {@code Optional} containing the matching {@code LoadEntity} if found,
-     *         or an empty {@code Optional} if no matching entity exists.
-     */
-    public Optional<LoadEntity> findByUuid(String loadUuid) {
-        log.info("Retrieving the loads with UUID=[{}].", loadUuid);
-        return loadRepository.findByUuidAndDeletedAtIsNull(loadUuid);
-    }
-
-    /**
-     * Retrieves a load entity for a specific company, dispatcher, and driver within a given timeframe.
-     * The results are filtered based on the provided UUIDs and the date range,
-     * ensuring that only non-deleted loads are considered.
-     *
-     * @param companyUuid the UUID of the company for which the loads need to be retrieved.
-     *                    This parameter must not be null or empty.
-     * @param dispatcherUuid the UUID of the dispatcher associated with the loads.
-     *                       This parameter must not be null or empty.
-     * @param driverUuid the UUID of the driver for whom the loads are associated.
-     *                   This parameter must not be null or empty.
-     * @param startDate the start date of the timeframe for filtering loads.
-     *                  This parameter must not be null.
-     * @param endDate the end date of the timeframe for filtering loads.
-     *                This parameter must not be null.
-     * @return an {@code Optional} containing the matching {@code LoadEntity} if found,
-     *         or an empty {@code Optional} if no matching entity exists.
-     */
-    public Optional<LoadEntity> getLoadsForTimeframe(
-        String companyUuid,
-        String dispatcherUuid,
-        String driverUuid,
+    public List<LoadEntity> getOverlappingLoadsForRelation(
+        String driverDispatcherRelationUuid,
         LocalDate startDate,
         LocalDate endDate
     ) {
-        return loadRepository.findLoadsForTimeframe(
-            companyUuid,
-            dispatcherUuid,
-            driverUuid,
+        log.info(
+            "Retrieving the overlapping loads for the timeframe=[{}-{}] for Driver-Dispatcher Relation with UUID=[{}].",
             startDate,
-            endDate
+            endDate,
+            driverDispatcherRelationUuid
         );
-    }
-
-    public Pair<LocalDate, LocalDate> getStartAndLastDateOfTimeframe(String loadUuid, String idAcrossTimeframe) {
-        LoadEntity loadEntity = getByUuid(loadUuid);
-        List<LocalDate> timeframeDates = loadEntity.getLoadData()
-            .entrySet()
-            .stream()
-            .filter(x -> x.getValue().getIdAcrossTimeframe().equals(idAcrossTimeframe))
-            .map(Map.Entry::getKey)
-            .map(LocalDate::parse)
-            .sorted()
-            .toList();
-        if (timeframeDates.isEmpty()) {
-            return null;
-        }
-        return Pair.of(timeframeDates.getFirst(), timeframeDates.getLast());
+        return loadRepository.findOverlappingLoadsForRelation(driverDispatcherRelationUuid, startDate, endDate);
     }
 
     /**
-     * Deletes a load entity from the system based on its unique identifier (UUID).
-     * This method retrieves the UUID from the provided {@code LoadEntity} instance
-     * and delegates the deletion process to the {@code loadRepository}.
+     * Deletes the load entity associated with the specified UUID from the database.
+     * This method logs the UUID of the load being deleted for traceability purposes.
+     * The deletion is executed within a transactional context to ensure data consistency.
      *
-     * @param loadEntity the load entity to be deleted.
-     *                   This parameter must not be null and must contain a valid UUID.
+     * @param uuid the unique identifier of the load to be deleted. It must not be null or empty.
      */
-    public void deleteLoad(LoadEntity loadEntity) {
-        String uuid = loadEntity.getUuid();
-        log.info("Deleting the load with UUID=[{}].", uuid);
+    @Transactional
+    public void deleteLoadByUuid(String uuid) {
+        log.info("Deleting the Load with UUID=[{}].", uuid);
         loadRepository.deleteByUuid(uuid);
-    }
-
-    public String getIdAcrossTimeframe(LoadEntity loadEntity, LocalDate date) {
-        LocalDate adjacentLoadDate = date.minusDays(1);
-        return Optional.ofNullable(loadEntity.getLoadData().get(adjacentLoadDate.toString()))
-            .map(LoadData::getIdAcrossTimeframe)
-            .orElse(null);
     }
 }

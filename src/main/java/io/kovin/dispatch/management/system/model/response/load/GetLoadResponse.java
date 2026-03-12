@@ -7,14 +7,15 @@ import lombok.Builder;
 
 @Builder
 public record GetLoadResponse(
-    LocalDate date,
+    String loadUuid,
     BigDecimal revenue,
     BigDecimal miles,
     String broker,
     String representative,
     String loadStatus,
     String representativeContactNumber,
-    String idAcrossTimeframe,
+    LocalDate startDate,
+    LocalDate endDate,
     List<GetLocationResponse> locations
 ) {
 }

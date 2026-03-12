@@ -1,11 +1,10 @@
 package io.kovin.dispatch.management.system.model.persistence;
 
-import io.kovin.dispatch.management.system.model.persistence.enums.LoadStatus;
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Objects;
-import jakarta.persistence.CascadeType;
+
+import io.kovin.dispatch.management.system.model.persistence.enums.LoadStatus;
+import io.kovin.dispatch.management.system.model.persistence.enums.LocationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,7 +14,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -30,53 +28,38 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @SuperBuilder(toBuilder = true)
 @Entity
-@Table(name = "t_loads")
-public class LoadEntity {
+@Table(name = "t_load_locations")
+public class LoadLocationEntity {
 
     @Id
-    @SequenceGenerator(name = "loads_sequence_generator", sequenceName = "t_loads_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "loads_sequence_generator")
+    @SequenceGenerator(name = "load_locations_sequence_generator", sequenceName = "t_load_locations_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "load_locations_sequence_generator")
     private Long id;
 
     @Column
     private String uuid;
 
     @Column
-    private LocalDate startDate;
+    private String location;
 
     @Column
-    private LocalDate endDate;
-
-    @Column
-    private BigDecimal revenue;
-
-    @Column
-    private BigDecimal miles;
-
-    @Column
-    private String broker;
-
-    @Column
-    private String representative;
-
-    @Column
-    private String representativeContactNumber;
+    private LocalDate date;
 
     @Column
     @Enumerated(EnumType.STRING)
-    private LoadStatus loadStatus;
+    private LocationType locationType;
+
+    @Column
+    private Integer locationOrder;
 
     @ManyToOne
-    @JoinColumn(name = "driver_dispatcher_relation_id")
-    private DriverDispatcherRelationEntity driverDispatcherRelation;
-
-    @OneToMany(mappedBy = "load", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LoadLocationEntity> locations;
+    @JoinColumn(name = "load_id")
+    private LoadEntity load;
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        LoadEntity that = (LoadEntity) o;
+        LoadLocationEntity that = (LoadLocationEntity) o;
         return Objects.equals(id, that.id);
     }
 

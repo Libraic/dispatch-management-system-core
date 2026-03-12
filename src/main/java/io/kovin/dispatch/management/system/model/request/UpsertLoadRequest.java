@@ -1,7 +1,6 @@
 package io.kovin.dispatch.management.system.model.request;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 public record UpsertLoadRequest(
@@ -9,9 +8,6 @@ public record UpsertLoadRequest(
     String companyUuid,
     String dispatcherUuid,
     String driverUuid,
-    LocalDate startDate,
-    LocalDate endDate,
-    LocalDate loadDate,
     BigDecimal revenue,
     BigDecimal miles,
     String broker,

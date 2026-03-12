@@ -35,7 +35,7 @@ import org.springframework.http.HttpStatus;
 public class SearchCriteriaUtils {
 
     /**
-     * Converts the String literals, namely the left-hand operator, the operation and the right-hand operator into
+     * Converts the String literals, namely the left-hand operator, the operation, and the right-hand operator into
      * a DTO object.
      *
      * @param queryParams the map containing the String literals, where the K is the field, and V is the op:value.

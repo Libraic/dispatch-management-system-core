@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,7 +33,6 @@ public class CompanyController {
     private final CompanyService companyService;
     private final CompanyMapper companyMapper;
     private final CompanyFacade companyFacade;
-    private final PasswordEncoder passwordEncoder;
 
     @PostMapping
     public ResponseEntity<ApiResponse<CompanyData, ErrorResponse>> createCompany(@RequestBody CreateCompanyRequest createCompanyRequest) {

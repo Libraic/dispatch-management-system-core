@@ -45,9 +45,8 @@ public class ErrorMessage {
     public static final String COMPANY_IS_MANDATORY = "The company is required.";
     public static final String LOCATIONS_CHRONOLOGICAL_ORDER = "The locations must be in chronological order.";
     public static final String DISPATCHER_IS_MANDATORY = "The dispatcher is required.";
+    public static final String DRIVER_DISPATCHER_RELATION_NOT_FOUND = "The Driver-Dispatcher relation was not found.";
     public static final String DRIVER_IS_MANDATORY = "The driver is required.";
-    public static final String END_DATE_IS_MANDATORY = "The end date of the load timeframe is required.";
-    public static final String LOAD_NOT_FOUND_BY_UUID = "The Load with UUID=[%s] was not found.";
     public static final String LOCATION_MANDATORY = "The location is required.";
     public static final String LOCATION_LABEL_IS_MANDATORY = "The location label is required.";
     public static final String LOCATIONS_ARE_MANDATORY = "The locations are required.";
@@ -56,7 +55,6 @@ public class ErrorMessage {
     public static final String NEGATIVE_MILES = "The miles cannot be negative.";
     public static final String NEGATIVE_REVENUE = "The revenue cannot be negative.";
     public static final String REVENUE_IS_MANDATORY = "The revenue is required.";
-    public static final String START_DATE_IS_MANDATORY = "The start date of the load timeframe is required.";
     public static final String START_DATE_BEFORE_END_DATE = "The start date cannot be after the end date.";
 
     /**

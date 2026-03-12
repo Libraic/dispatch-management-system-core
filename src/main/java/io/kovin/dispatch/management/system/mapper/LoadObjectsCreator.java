@@ -97,6 +97,7 @@ public class LoadObjectsCreator {
         GetDriverResponse getDriverResponse = GetDriverResponse.builder()
             .fullName(driver.getFullName())
             .uuid(driver.getUuid())
+            .phoneNumber(driver.getPhoneNumber())
             .build();
 
         List<GetLoadResponse> getLoadResponse = fromLoadEntityToGetLoadResponse(loadEntity);

@@ -139,6 +139,7 @@ public class LoadFacade {
             GetDispatcherResponse getDispatcherResponse = GetDispatcherResponse.builder()
                 .uuid(dispatcherUuid)
                 .name(dispatcher.getName())
+                .phoneNumber(dispatcher.getPhoneNumber())
                 .build();
             List<GetDriverLoadsResponse> getDriverLoadResponses = new ArrayList<>();
             for (DriverEntity driver : dispatcher.getDrivers()) {

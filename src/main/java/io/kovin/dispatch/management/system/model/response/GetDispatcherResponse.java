@@ -5,6 +5,7 @@ import lombok.Builder;
 @Builder
 public record GetDispatcherResponse(
     String uuid,
-    String name
+    String name,
+    String phoneNumber
 ) {
 }

@@ -34,8 +34,4 @@ public class DispatcherService {
 
         return dispatcherEntityOptional.get();
     }
-
-    public List<DispatcherEntity> getAllDispatchersWithDriversByCompany(String companyUuid) {
-        return dispatcherRepository.getDispatchersWithDrivers(companyUuid);
-    }
 }

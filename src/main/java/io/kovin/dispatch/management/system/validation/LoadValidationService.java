@@ -34,18 +34,6 @@ public class LoadValidationService {
                 throw DispatchManagementSystemException.of(ErrorMessage.DRIVER_IS_MANDATORY, HttpStatus.BAD_REQUEST);
             }
 
-            if (request.startDate() == null) {
-                throw DispatchManagementSystemException.of(ErrorMessage.START_DATE_IS_MANDATORY, HttpStatus.BAD_REQUEST);
-            }
-
-            if (request.endDate() == null) {
-                throw DispatchManagementSystemException.of(ErrorMessage.END_DATE_IS_MANDATORY, HttpStatus.BAD_REQUEST);
-            }
-
-            if (request.loadDate() == null) {
-                throw DispatchManagementSystemException.of(ErrorMessage.LOAD_DATE_IS_MANDATORY, HttpStatus.BAD_REQUEST);
-            }
-
             if (request.miles() == null) {
                 throw DispatchManagementSystemException.of(ErrorMessage.MILES_ARE_MANDATORY, HttpStatus.BAD_REQUEST);
             }

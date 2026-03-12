@@ -2,10 +2,12 @@ package io.kovin.dispatch.management.system.facade;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import io.kovin.dispatch.management.system.mapper.DriverMapper;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
 import io.kovin.dispatch.management.system.model.persistence.DispatcherEntity;
+import io.kovin.dispatch.management.system.model.persistence.DriverDispatcherRelationEntity;
 import io.kovin.dispatch.management.system.model.persistence.DriverEntity;
 import io.kovin.dispatch.management.system.model.persistence.TrailerEntity;
 import io.kovin.dispatch.management.system.model.persistence.TruckEntity;
@@ -14,6 +16,7 @@ import io.kovin.dispatch.management.system.model.response.DriverData;
 import io.kovin.dispatch.management.system.service.CompanyService;
 import io.kovin.dispatch.management.system.service.CriteriaService;
 import io.kovin.dispatch.management.system.service.DispatcherService;
+import io.kovin.dispatch.management.system.service.DriverDispatcherRelationService;
 import io.kovin.dispatch.management.system.service.DriverService;
 import io.kovin.dispatch.management.system.service.TrailerService;
 import io.kovin.dispatch.management.system.service.TruckService;
@@ -22,6 +25,7 @@ import io.kovin.dispatch.management.system.validation.DriverValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -36,7 +40,9 @@ public class DriverFacade {
     private final TruckService truckService;
     private final TrailerService trailerService;
     private final CriteriaService criteriaService;
+    private final DriverDispatcherRelationService driverDispatcherRelationService;
 
+    @Transactional
     public DriverData createDriver(CreateDriverRequest request) {
         driverValidationService.validateDriverCreation(request);
         CompanyEntity company = companyService.getByUuid(request.companyUuid());
@@ -45,6 +51,15 @@ public class DriverFacade {
         TrailerEntity trailer = getTrailer(request.trailerUuid());
         DriverEntity driverEntity = driverMapper.fromCreateDriverRequestToDriverEntity(request, company, dispatcher, trailer, truck);
         DriverEntity savedDriverEntity = driverService.saveDriver(driverEntity);
+
+        DriverDispatcherRelationEntity driverDispatcherRelationEntity = DriverDispatcherRelationEntity.builder()
+            .uuid(UUID.randomUUID().toString())
+            .company(company)
+            .dispatcher(dispatcher)
+            .driver(savedDriverEntity)
+            .build();
+        driverDispatcherRelationService.persistRelation(driverDispatcherRelationEntity);
+
         return driverMapper.fromDriverEntityToDriverData(savedDriverEntity);
     }
 

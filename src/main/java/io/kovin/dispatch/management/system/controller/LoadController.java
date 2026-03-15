@@ -38,9 +38,9 @@ public class LoadController {
         return ResponseEntity.ok(ApiResponse.fromData(response));
     }
 
-    @GetMapping
+    @GetMapping("/companies/{companyId}")
     public ResponseEntity<ApiResponse<List<GetDriverLoadsDataResponse>, ErrorResponse>> getCompanyLoads(
-        @RequestParam(name = "companyId") String companyId,
+        @PathVariable(name = "companyId") String companyId,
         @RequestParam(name = "startDate") LocalDate startDate,
         @RequestParam(name = "endDate") LocalDate endDate
     ) {
@@ -54,28 +54,26 @@ public class LoadController {
         return ResponseEntity.ok(ApiResponse.fromData(response));
     }
 
-    @GetMapping("/{uuid}")
-    public ResponseEntity<ApiResponse<List<GetLoadResponse>, ErrorResponse>> getCompanyLoads(
-        @PathVariable(name = "uuid") String loadUuid
+    @GetMapping("/relations/{relationUuid}")
+    public ResponseEntity<ApiResponse<List<GetLoadResponse>, ErrorResponse>> getRelationLoadsForTimeframe(
+        @PathVariable(name = "relationUuid") String relationUuid,
+        @RequestParam(name = "startDate") LocalDate startDate,
+        @RequestParam(name = "endDate") LocalDate endDate
     ) {
         log.info(
-            "A request to retrieve the Load Data for the Load with the UUID=[{}], was received.",
-            loadUuid
+            "A request to retrieve the Loads for the Driver-Dispatcher Relation=[{}], between [{} - {},] was received.",
+            relationUuid,
+            startDate,
+            endDate
         );
-        List<GetLoadResponse> response = loadFacade.getLoadResponses(loadUuid);
+        List<GetLoadResponse> response = loadFacade.getLoadResponses(relationUuid, startDate, endDate);
         return ResponseEntity.ok(ApiResponse.fromData(response));
     }
 
-    @DeleteMapping
-    public ResponseEntity<ApiResponse<Void, ErrorResponse>> deleteLoads(
-        @RequestParam(name = "load") String loadUuid,
-        @RequestParam(name = "idAcrossTimeframe") String idAcrossTimeframe
-    ) {
-        log.info("A request to remove the Loads with the UUID=[{}} with idAcrossTimeframe=[{}], was received.",
-            loadUuid,
-            idAcrossTimeframe
-        );
-        loadFacade.deleteLoad(loadUuid, idAcrossTimeframe);
+    @DeleteMapping("/{loadUuid}")
+    public ResponseEntity<ApiResponse<Void, ErrorResponse>> deleteLoads(@PathVariable String loadUuid) {
+        log.info("A request to remove the Loads with the UUID=[{}} was received.", loadUuid);
+        loadFacade.deleteLoad(loadUuid);
         return ResponseEntity.noContent().build();
     }
 }

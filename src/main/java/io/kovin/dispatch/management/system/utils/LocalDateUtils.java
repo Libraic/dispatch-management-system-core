@@ -32,16 +32,4 @@ public class LocalDateUtils {
             throw DispatchManagementSystemException.of(errorMessage, HttpStatus.BAD_REQUEST);
         }
     }
-
-    public static LocalDate subtractWeek(LocalDate date) {
-        return date.minusWeeks(1);
-    }
-
-    public static LocalDate addWeek(LocalDate date) {
-        return date.plusWeeks(1);
-    }
-
-    public static LocalDate addDay(LocalDate date) {
-        return date.plusDays(1);
-    }
 }

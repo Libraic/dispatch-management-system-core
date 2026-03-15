@@ -20,6 +20,7 @@ public interface DispatcherRepository extends JpaRepository<DispatcherEntity, Lo
               SELECT dr.id
               FROM DriverEntity dr
               WHERE dr.dispatcher = d
+              ORDER BY dr.createdAt ASC
           )
         ORDER BY d.createdAt ASC
     """)

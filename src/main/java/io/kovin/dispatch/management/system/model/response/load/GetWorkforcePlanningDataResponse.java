@@ -6,9 +6,9 @@ import io.kovin.dispatch.management.system.model.response.GetDispatcherResponse;
 import lombok.Builder;
 
 @Builder
-public record GetDriverLoadsDataResponse(
+public record GetWorkforcePlanningDataResponse(
     GetDispatcherResponse dispatcher,
-    List<GetDriverLoadsResponse> driverLoads
+    List<GetDriverPlanningDataResponse> driverPlanningData
 ) {
 
 }

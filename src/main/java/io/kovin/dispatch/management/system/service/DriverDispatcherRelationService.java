@@ -1,6 +1,7 @@
 package io.kovin.dispatch.management.system.service;
 
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.DRIVER_DISPATCHER_RELATION_NOT_FOUND;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.DRIVER_DISPATCHER_RELATION_NOT_FOUND_BY_UUID;
 
 import java.util.List;
 import java.util.Map;
@@ -69,6 +70,26 @@ public class DriverDispatcherRelationService {
         if (relationOptional.isEmpty()) {
             log.error(DRIVER_DISPATCHER_RELATION_NOT_FOUND);
             throw DispatchManagementSystemException.of(DRIVER_DISPATCHER_RELATION_NOT_FOUND, HttpStatus.NOT_FOUND);
+        }
+
+        return relationOptional.get();
+    }
+
+    /**
+     * Retrieves the relationship between a Driver and a Dispatcher using the specified UUID.
+     * If the relationship is not found or has been marked as deleted, an exception is thrown.
+     *
+     * @param uuid the UUID of the Driver-Dispatcher relationship to retrieve
+     * @return the DriverDispatcherRelationEntity representing the relationship
+     * @throws DispatchManagementSystemException if the relationship is not found or has been marked as deleted
+     */
+    public DriverDispatcherRelationEntity getRelationByUuid(String uuid) {
+        log.info("Retrieving the relation between Driver and Dispatcher by UUID=[{}].", uuid);
+        var relationOptional = driverDispatcherRelationRepository.findByUuidAndDeletedAtIsNull(uuid);
+        if (relationOptional.isEmpty()) {
+            String errorMessage = String.format(DRIVER_DISPATCHER_RELATION_NOT_FOUND_BY_UUID, uuid);
+            log.error(errorMessage);
+            throw DispatchManagementSystemException.of(errorMessage, HttpStatus.NOT_FOUND);
         }
 
         return relationOptional.get();

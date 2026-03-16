@@ -352,3 +352,63 @@ COMMENT ON COLUMN t_load_locations.load_id        IS 'The ID of the Load that de
 -- comment: Create an index for driver_dispatcher_relation_id and end_date columns in the t_loads table.
 CREATE INDEX idx_load_relation_end_date
     ON t_loads(driver_dispatcher_relation_id, end_date DESC);
+
+-- changeset libra:012
+-- comment: Create the t_vehicle_maintenance_records table and its related dependencies.
+CREATE SEQUENCE t_vehicle_maintenance_records_sequence
+    INCREMENT BY 1
+    START WITH 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE t_vehicle_maintenance_records(
+    id                            BIGINT         PRIMARY KEY      DEFAULT nextval('t_vehicle_maintenance_records_sequence'),
+    uuid                          uuid           NOT NULL UNIQUE,
+    location                      VARCHAR(70)    NOT NULL,
+    start_date                    DATE           NOT NULL,
+    end_date                      DATE           NOT NULL,
+    driver_dispatcher_relation_id BIGINT,
+
+    CONSTRAINT fk_vehicle_service_driver_dispatcher_relation FOREIGN KEY (driver_dispatcher_relation_id) REFERENCES t_driver_dispatcher_relations(id)
+);
+
+ALTER SEQUENCE t_vehicle_maintenance_records_sequence OWNED BY t_vehicle_maintenance_records.id;
+
+COMMENT ON TABLE t_vehicle_maintenance_records IS 'Table that stores information about vehicle maintenance events.';
+
+COMMENT ON COLUMN t_vehicle_maintenance_records.id                            IS 'The primary key of the t_vehicle_maintenance_records table.';
+COMMENT ON COLUMN t_vehicle_maintenance_records.uuid                          IS 'The UUID of the record.';
+COMMENT ON COLUMN t_vehicle_maintenance_records.location                      IS 'The name of the location where the vehicle was serviced.';
+COMMENT ON COLUMN t_vehicle_maintenance_records.start_date                    IS 'The date the service started.';
+COMMENT ON COLUMN t_vehicle_maintenance_records.end_date                      IS 'The date the service ended.';
+COMMENT ON COLUMN t_vehicle_maintenance_records.driver_dispatcher_relation_id IS 'The ID of the Driver-Dispatcher relationship.';
+
+-- changeset libra:013
+-- comment: Create the t_days_off_periods table and its related dependencies.
+CREATE SEQUENCE t_days_off_periods_sequence
+    INCREMENT BY 1
+    START WITH 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE t_days_off_periods(
+    id                            BIGINT         PRIMARY KEY      DEFAULT nextval('t_days_off_periods_sequence'),
+    uuid                          uuid           NOT NULL UNIQUE,
+    start_date                    DATE           NOT NULL,
+    end_date                      DATE           NOT NULL,
+    driver_dispatcher_relation_id BIGINT,
+
+    CONSTRAINT fk_days_off_driver_dispatcher_relation FOREIGN KEY (driver_dispatcher_relation_id) REFERENCES t_driver_dispatcher_relations(id)
+);
+
+ALTER SEQUENCE t_days_off_periods_sequence OWNED BY t_days_off_periods.id;
+
+COMMENT ON TABLE t_days_off_periods IS 'Table that stores information about the period a workforce is off.';
+
+COMMENT ON COLUMN t_days_off_periods.id                            IS 'The primary key of the t_days_off_periods table.';
+COMMENT ON COLUMN t_days_off_periods.uuid                          IS 'The UUID of the record.';
+COMMENT ON COLUMN t_days_off_periods.start_date                    IS 'The first day off.';
+COMMENT ON COLUMN t_days_off_periods.end_date                      IS 'The last day off.';
+COMMENT ON COLUMN t_days_off_periods.driver_dispatcher_relation_id IS 'The ID of the Driver-Dispatcher relationship.';

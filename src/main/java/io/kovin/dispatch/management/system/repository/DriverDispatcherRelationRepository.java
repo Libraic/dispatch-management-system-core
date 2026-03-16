@@ -14,4 +14,6 @@ public interface DriverDispatcherRelationRepository extends JpaRepository<Driver
     );
 
     List<DriverDispatcherRelationEntity> findAllByCompanyUuidAndDeletedAtIsNull(String companyUuid);
+
+    Optional<DriverDispatcherRelationEntity> findByUuidAndDeletedAtIsNull(String uuid);
 }

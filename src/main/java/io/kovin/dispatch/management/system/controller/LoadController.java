@@ -6,7 +6,6 @@ import io.kovin.dispatch.management.system.facade.LoadFacade;
 import io.kovin.dispatch.management.system.model.request.UpsertLoadRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.GetLoadStartingPointResponse;
-import io.kovin.dispatch.management.system.model.response.load.GetDriverLoadsDataResponse;
 import io.kovin.dispatch.management.system.model.response.load.GetLoadResponse;
 import io.kovin.dispatch.management.system.model.response.load.UpsertDriverLoadsResponse;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
@@ -39,22 +38,6 @@ public class LoadController {
         return ResponseEntity.ok(ApiResponse.fromData(response));
     }
 
-    @GetMapping("/companies/{companyId}")
-    public ResponseEntity<ApiResponse<List<GetDriverLoadsDataResponse>, ErrorResponse>> getCompanyLoads(
-        @PathVariable(name = "companyId") String companyId,
-        @RequestParam(name = "startDate") LocalDate startDate,
-        @RequestParam(name = "endDate") LocalDate endDate
-    ) {
-        log.info(
-            "A request to retrieve the Loads for the Company=[{}], between [{} - {},] was received.",
-            companyId,
-            startDate,
-            endDate
-        );
-        List<GetDriverLoadsDataResponse> response = loadFacade.getDriverLoadsForTimeframe(companyId, startDate, endDate);
-        return ResponseEntity.ok(ApiResponse.fromData(response));
-    }
-
     @GetMapping("/relations/{relationUuid}")
     public ResponseEntity<ApiResponse<List<GetLoadResponse>, ErrorResponse>> getRelationLoadsForTimeframe(
         @PathVariable(name = "relationUuid") String relationUuid,
@@ -83,7 +66,7 @@ public class LoadController {
 
     @DeleteMapping("/{loadUuid}")
     public ResponseEntity<ApiResponse<Void, ErrorResponse>> deleteLoads(@PathVariable String loadUuid) {
-        log.info("A request to remove the Loads with the UUID=[{}} was received.", loadUuid);
+        log.info("A request to remove the Load with the UUID=[{}} was received.", loadUuid);
         loadFacade.deleteLoad(loadUuid);
         return ResponseEntity.noContent().build();
     }

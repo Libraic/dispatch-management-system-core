@@ -49,7 +49,7 @@ public class LoadService {
             endDate,
             driverDispatcherRelationUuid
         );
-        return loadRepository.findOverlappingLoadsForRelation(driverDispatcherRelationUuid, startDate, endDate);
+        return loadRepository.findOverlappingRecordsForRelation(driverDispatcherRelationUuid, startDate, endDate);
     }
 
     /**

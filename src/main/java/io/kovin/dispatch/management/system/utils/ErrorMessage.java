@@ -7,19 +7,22 @@ import lombok.NoArgsConstructor;
 public class ErrorMessage {
 
     /**
-     * Global error messages.
+     * Common error messages.
      */
     public static final String CITIES_LOAD_ERROR = "Failed to load cities.";
     public static final String INVALID_ZIP_CODE = "The provided zip code=[%s] is invalid.";
     public static final String EMAIL_IS_MANDATORY = "The e-mail cannot be empty.";
+    public static final String END_DATE_IS_MANDATORY = "The start date is required.";
     public static final String FIRST_NAME_IS_MANDATORY = "The first name is required.";
     public static final String INTERNAL_SERVER_ERROR = "An internal server error occurred. Please try again later.";
     public static final String INVALID_DATE_FORMAT = "The loadDate=[%s] should be passed in dd-MM-YYYY format.";
     public static final String INVALID_PAGEABLE_ENTITY = "The entity=[%s] is not valid.";
     public static final String INVALID_SEARCH_CRITERIA = "The field=[%s] has an invalid format=[%s].";
     public static final String LAST_NAME_IS_MANDATORY = "The last name is required.";
+    public static final String LOCATION_MANDATORY = "The location is required.";
     public static final String PASSWORD_INVALID_LENGTH = "The password has less than 8 characters.";
     public static final String PASSWORD_IS_MANDATORY = "The password is mandatory.";
+    public static final String START_DATE_IS_MANDATORY = "The start date is required.";
 
     /**
      * Error messages related to Company.
@@ -46,8 +49,8 @@ public class ErrorMessage {
     public static final String LOCATIONS_CHRONOLOGICAL_ORDER = "The locations must be in chronological order.";
     public static final String DISPATCHER_IS_MANDATORY = "The dispatcher is required.";
     public static final String DRIVER_DISPATCHER_RELATION_NOT_FOUND = "The Driver-Dispatcher relation was not found.";
+    public static final String DRIVER_DISPATCHER_RELATION_NOT_FOUND_BY_UUID = "The Driver-Dispatcher relation with UUID=[%s] was not found.";
     public static final String DRIVER_IS_MANDATORY = "The driver is required.";
-    public static final String LOCATION_MANDATORY = "The location is required.";
     public static final String LOCATION_LABEL_IS_MANDATORY = "The location label is required.";
     public static final String LOCATIONS_ARE_MANDATORY = "The locations are required.";
     public static final String LOAD_DATE_IS_MANDATORY = "The date of the load is required.";

@@ -2,7 +2,6 @@ package io.kovin.dispatch.management.system.model.persistence;
 
 import io.kovin.dispatch.management.system.model.persistence.enums.LoadStatus;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import jakarta.persistence.CascadeType;
@@ -13,8 +12,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -31,21 +28,12 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 @Entity
 @Table(name = "t_loads")
-public class LoadEntity {
+public class LoadEntity extends PlannableEntity {
 
     @Id
     @SequenceGenerator(name = "loads_sequence_generator", sequenceName = "t_loads_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "loads_sequence_generator")
     private Long id;
-
-    @Column
-    private String uuid;
-
-    @Column
-    private LocalDate startDate;
-
-    @Column
-    private LocalDate endDate;
 
     @Column
     private BigDecimal revenue;
@@ -65,10 +53,6 @@ public class LoadEntity {
     @Column
     @Enumerated(EnumType.STRING)
     private LoadStatus loadStatus;
-
-    @ManyToOne
-    @JoinColumn(name = "driver_dispatcher_relation_id")
-    private DriverDispatcherRelationEntity driverDispatcherRelation;
 
     @OneToMany(mappedBy = "load", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LoadLocationEntity> locations;

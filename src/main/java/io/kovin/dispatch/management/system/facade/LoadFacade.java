@@ -21,6 +21,7 @@ import io.kovin.dispatch.management.system.model.request.CreateLoadLocationReque
 import io.kovin.dispatch.management.system.model.request.UpsertLoadRequest;
 import io.kovin.dispatch.management.system.model.response.GetDispatcherResponse;
 import io.kovin.dispatch.management.system.model.response.GetDriverResponse;
+import io.kovin.dispatch.management.system.model.response.GetLoadStartingPointResponse;
 import io.kovin.dispatch.management.system.model.response.load.GetDriverLoadsResponse;
 import io.kovin.dispatch.management.system.model.response.load.GetDriverLoadsDataResponse;
 import io.kovin.dispatch.management.system.model.response.load.GetLoadResponse;
@@ -195,6 +196,19 @@ public class LoadFacade {
         }
 
         return getLoadResponses;
+    }
+
+    public GetLoadStartingPointResponse getLoadStartingPoint(String relationUuid, LocalDate date) {
+        LoadEntity load = loadService.getLoadByRelationUuidAndDateBetween(relationUuid, date);
+        if (load == null || load.getLocations().isEmpty()) {
+            return new GetLoadStartingPointResponse(null);
+        }
+
+        List<LoadLocationEntity> locations = load.getLocations()
+            .stream()
+            .sorted(Comparator.comparing(LoadLocationEntity::getLocationOrder))
+            .toList();
+        return new GetLoadStartingPointResponse(locations.getLast().getLocation());
     }
 
     /**

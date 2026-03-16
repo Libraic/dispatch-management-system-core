@@ -347,3 +347,8 @@ COMMENT ON COLUMN t_load_locations.date           IS 'The date the location is r
 COMMENT ON COLUMN t_load_locations.location_type  IS 'The purpose served by a certain location.';
 COMMENT ON COLUMN t_load_locations.location_order IS 'The order of a certain location in the route.';
 COMMENT ON COLUMN t_load_locations.load_id        IS 'The ID of the Load that defines the route a certain location is part of.';
+
+-- changeset libra:011
+-- comment: Create an index for driver_dispatcher_relation_id and end_date columns in the t_loads table.
+CREATE INDEX idx_load_relation_end_date
+    ON t_loads(driver_dispatcher_relation_id, end_date DESC);

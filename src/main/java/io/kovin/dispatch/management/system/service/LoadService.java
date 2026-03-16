@@ -64,4 +64,8 @@ public class LoadService {
         log.info("Deleting the Load with UUID=[{}].", uuid);
         loadRepository.deleteByUuid(uuid);
     }
+
+    public LoadEntity getLoadByRelationUuidAndDateBetween(String relationUuid, LocalDate date) {
+        return loadRepository.findByRelationUuidAndDateBetween(relationUuid, date).orElse(null);
+    }
 }

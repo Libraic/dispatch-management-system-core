@@ -5,6 +5,7 @@ import java.util.List;
 import io.kovin.dispatch.management.system.facade.LoadFacade;
 import io.kovin.dispatch.management.system.model.request.UpsertLoadRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
+import io.kovin.dispatch.management.system.model.response.GetLoadStartingPointResponse;
 import io.kovin.dispatch.management.system.model.response.load.GetDriverLoadsDataResponse;
 import io.kovin.dispatch.management.system.model.response.load.GetLoadResponse;
 import io.kovin.dispatch.management.system.model.response.load.UpsertDriverLoadsResponse;
@@ -67,6 +68,16 @@ public class LoadController {
             endDate
         );
         List<GetLoadResponse> response = loadFacade.getLoadResponses(relationUuid, startDate, endDate);
+        return ResponseEntity.ok(ApiResponse.fromData(response));
+    }
+
+    @GetMapping("/relations/{relationUuid}/starting-point")
+    public ResponseEntity<ApiResponse<GetLoadStartingPointResponse, ErrorResponse>> getLoadStartingPoint(
+        @PathVariable(name = "relationUuid") String relationUuid,
+        @RequestParam(name = "date") LocalDate date
+    ) {
+        log.info("A request to retrieve the starting point for date=[{}] was received.", date);
+        GetLoadStartingPointResponse response = loadFacade.getLoadStartingPoint(relationUuid, date);
         return ResponseEntity.ok(ApiResponse.fromData(response));
     }
 

@@ -1,15 +1,14 @@
 package io.kovin.dispatch.management.system.repository;
 
-import io.kovin.dispatch.management.system.model.persistence.PlannableEntity;
+import java.time.LocalDate;
+import java.util.List;
+import io.kovin.dispatch.management.system.model.persistence.SchedulableEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
 
-import java.time.LocalDate;
-import java.util.List;
-
 @NoRepositoryBean
-public interface BasePlannableRepository<T extends PlannableEntity> extends JpaRepository<T, Long> {
+public interface BaseSchedulableRepository<T extends SchedulableEntity> extends JpaRepository<T, Long> {
 
     @Query("""
         SELECT e

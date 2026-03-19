@@ -28,7 +28,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 @Entity
 @Table(name = "t_loads")
-public class LoadEntity extends PlannableEntity {
+public class LoadEntity extends SchedulableEntity {
 
     @Id
     @SequenceGenerator(name = "loads_sequence_generator", sequenceName = "t_loads_sequence", allocationSize = 1)

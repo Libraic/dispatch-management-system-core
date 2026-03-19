@@ -5,7 +5,7 @@ import java.util.List;
 import io.kovin.dispatch.management.system.facade.PlannerFacade;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
-import io.kovin.dispatch.management.system.model.response.load.GetWorkforcePlanningDataResponse;
+import io.kovin.dispatch.management.system.model.response.load.GetDispatchingDataResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class PlannerController {
     private final PlannerFacade plannerFacade;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<GetWorkforcePlanningDataResponse>, ErrorResponse>> getWorkforcePlanningData(
+    public ResponseEntity<ApiResponse<List<GetDispatchingDataResponse>, ErrorResponse>> getWorkforcePlanningData(
         @RequestParam(name = "companyId") String companyId,
         @RequestParam(name = "startDate") LocalDate startDate,
         @RequestParam(name = "endDate") LocalDate endDate
@@ -34,7 +34,7 @@ public class PlannerController {
             startDate,
             endDate
         );
-        List<GetWorkforcePlanningDataResponse> response = plannerFacade.getDriverLoadsForTimeframe(companyId, startDate, endDate);
+        List<GetDispatchingDataResponse> response = plannerFacade.getDriverLoadsForTimeframe(companyId, startDate, endDate);
         return ResponseEntity.ok(ApiResponse.fromData(response));
     }
 }

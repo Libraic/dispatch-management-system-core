@@ -17,7 +17,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @SuperBuilder(toBuilder = true)
-public abstract class PlannableEntity {
+public abstract class SchedulableEntity {
 
     @Column
     private String uuid;

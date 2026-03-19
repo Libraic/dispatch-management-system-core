@@ -8,7 +8,7 @@ import io.kovin.dispatch.management.system.model.response.GetVehicleMaintenanceR
 import lombok.Builder;
 
 @Builder
-public record GetDriverPlanningDataResponse(
+public record GetWorkforceDataResponse(
     String relationUuid,
     GetDriverResponse driver,
     List<GetLoadResponse> loads,

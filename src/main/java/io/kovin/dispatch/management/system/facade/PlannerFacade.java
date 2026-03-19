@@ -15,9 +15,9 @@ import io.kovin.dispatch.management.system.model.response.GetDayOffPeriodRespons
 import io.kovin.dispatch.management.system.model.response.GetDispatcherResponse;
 import io.kovin.dispatch.management.system.model.response.GetDriverResponse;
 import io.kovin.dispatch.management.system.model.response.GetVehicleMaintenanceResponse;
-import io.kovin.dispatch.management.system.model.response.load.GetDriverPlanningDataResponse;
+import io.kovin.dispatch.management.system.model.response.load.GetWorkforceDataResponse;
 import io.kovin.dispatch.management.system.model.response.load.GetLoadResponse;
-import io.kovin.dispatch.management.system.model.response.load.GetWorkforcePlanningDataResponse;
+import io.kovin.dispatch.management.system.model.response.load.GetDispatchingDataResponse;
 import io.kovin.dispatch.management.system.service.CompanyService;
 import io.kovin.dispatch.management.system.service.DriverDispatcherRelationService;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +51,7 @@ public class PlannerFacade {
      *         including dispatcher details and driver-specific planning data for the given timeframe
      * @throws DispatchManagementSystemException if the company with the given UUID is not registered or if {@code startDate} is after {@code endDate}
      */
-    public List<GetWorkforcePlanningDataResponse> getDriverLoadsForTimeframe(
+    public List<GetDispatchingDataResponse> getDriverLoadsForTimeframe(
         String companyUuid,
         LocalDate startDate,
         LocalDate endDate
@@ -61,14 +61,14 @@ public class PlannerFacade {
             throw DispatchManagementSystemException.of(START_DATE_BEFORE_END_DATE, HttpStatus.BAD_REQUEST);
         }
 
-        List<GetWorkforcePlanningDataResponse> responses = new ArrayList<>();
+        List<GetDispatchingDataResponse> responses = new ArrayList<>();
 
         Map<DispatcherEntity, List<DriverDispatcherRelationEntity>> relations =
             driverDispatcherRelationService.findRelationsByCompanyGroupedByDispatcher(companyUuid);
 
         for (var entry : relations.entrySet()) {
             GetDispatcherResponse getDispatcherResponse = loadObjectsCreator.createGetDispatcherResponse(entry.getKey());
-            List<GetDriverPlanningDataResponse> getDriverLoadResponses = new ArrayList<>();
+            List<GetWorkforceDataResponse> getDriverLoadResponses = new ArrayList<>();
             List<DriverDispatcherRelationEntity> sortedRelations = entry.getValue()
                 .stream()
                 .sorted(Comparator.comparing(relation -> relation.getDriver().getCreatedAt()))
@@ -86,21 +86,21 @@ public class PlannerFacade {
                     endDate
                 );
                 GetDriverResponse getDriverResponse = loadObjectsCreator.createGetDriverResponse(relation.getDriver());
-                GetDriverPlanningDataResponse getDriverPlanningDataResponses = GetDriverPlanningDataResponse.builder()
+                GetWorkforceDataResponse getWorkforceDataResponses = GetWorkforceDataResponse.builder()
                     .relationUuid(relation.getUuid())
                     .driver(getDriverResponse)
                     .loads(getLoadResponses)
                     .vehicleMaintenanceRecords(getVehicleMaintenanceResponses)
                     .daysOffPeriods(getDayOffPeriodResponses)
                     .build();
-                getDriverLoadResponses.add(getDriverPlanningDataResponses);
+                getDriverLoadResponses.add(getWorkforceDataResponses);
             }
 
-            GetWorkforcePlanningDataResponse getWorkforcePlanningDataResponse = GetWorkforcePlanningDataResponse.builder()
+            GetDispatchingDataResponse getDispatchingDataResponse = GetDispatchingDataResponse.builder()
                 .dispatcher(getDispatcherResponse)
-                .driverPlanningData(getDriverLoadResponses)
+                .workforceData(getDriverLoadResponses)
                 .build();
-            responses.add(getWorkforcePlanningDataResponse);
+            responses.add(getDispatchingDataResponse);
         }
 
         return responses;

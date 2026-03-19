@@ -21,7 +21,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 @Entity
 @Table(name = "t_vehicle_maintenance_records")
-public class VehicleMaintenanceRecordEntity extends PlannableEntity {
+public class VehicleMaintenanceRecordEntity extends SchedulableEntity {
 
     @Id
     @SequenceGenerator(name = "t_vehicle_maintenance_records_sequence_generator", sequenceName = "t_t_vehicle_maintenance_records_sequence", allocationSize = 1)

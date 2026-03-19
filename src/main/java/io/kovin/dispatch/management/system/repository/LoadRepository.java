@@ -5,7 +5,7 @@ import java.util.Optional;
 import io.kovin.dispatch.management.system.model.persistence.LoadEntity;
 import org.springframework.data.jpa.repository.Query;
 
-public interface LoadRepository extends BasePlannableRepository<LoadEntity> {
+public interface LoadRepository extends BaseSchedulableRepository<LoadEntity> {
 
     @Query("""
         SELECT l

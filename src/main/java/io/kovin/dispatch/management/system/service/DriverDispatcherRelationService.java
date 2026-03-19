@@ -3,9 +3,12 @@ package io.kovin.dispatch.management.system.service;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.DRIVER_DISPATCHER_RELATION_NOT_FOUND;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.DRIVER_DISPATCHER_RELATION_NOT_FOUND_BY_UUID;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
+
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.persistence.DispatcherEntity;
 import io.kovin.dispatch.management.system.model.persistence.DriverDispatcherRelationEntity;
@@ -42,13 +45,11 @@ public class DriverDispatcherRelationService {
      * Retrieves the relation between a driver and a dispatcher for a specific company.
      * Throws an exception if the relation is not found or has been marked as deleted.
      *
-     * @param companyUuid      the UUID of the company to which the driver and dispatcher belong
-     * @param dispatcherUuid   the UUID of the dispatcher
-     * @param driverUuid       the UUID of the driver
-     *
+     * @param companyUuid    the UUID of the company to which the driver and dispatcher belong
+     * @param dispatcherUuid the UUID of the dispatcher
+     * @param driverUuid     the UUID of the driver
      * @return the DriverDispatcherRelationEntity representing the relation between the driver and dispatcher
-     *         for the specified company
-     *
+     * for the specified company
      * @throws DispatchManagementSystemException if the relation is not found or has been marked as deleted
      */
     public DriverDispatcherRelationEntity findRelationByDriverAndDispatcher(
@@ -96,16 +97,22 @@ public class DriverDispatcherRelationService {
     }
 
     /**
-     * Retrieves all Driver-Dispatcher relationships for a specific company and groups them by dispatcher.
+     * Retrieves all active driver-dispatcher relations for a given company and groups them by dispatcher.
+     * The relations are grouped using a TreeMap, ordered by the creation time of the dispatcher entities.
      *
-     * @param companyUuid the UUID of the company whose driver-dispatcher relationships are to be retrieved
-     * @return a map where the keys are DispatcherEntity objects representing dispatchers,
-     *         and the values are lists of DriverDispatcherRelationEntity objects representing the driver-dispatcher
-     *         relationships associated with each dispatcher
+     * @param companyUuid the unique identifier of the company for which the relations will be fetched
+     * @return a map where the keys are DispatcherEntity objects and the values are lists of
+     *         DriverDispatcherRelationEntity objects associated with each dispatcher
      */
     public Map<DispatcherEntity, List<DriverDispatcherRelationEntity>> findRelationsByCompanyGroupedByDispatcher(String companyUuid) {
         log.info("Retrieving all relations for Company=[{}].", companyUuid);
         List<DriverDispatcherRelationEntity> relations = driverDispatcherRelationRepository.findAllByCompanyUuidAndDeletedAtIsNull(companyUuid);
-        return relations.stream().collect(Collectors.groupingBy(DriverDispatcherRelationEntity::getDispatcher));
+        return relations.stream().collect(
+            Collectors.groupingBy(
+                DriverDispatcherRelationEntity::getDispatcher,
+                () -> new TreeMap<>(Comparator.comparing(DispatcherEntity::getCreatedAt)),
+                Collectors.toList()
+            )
+        );
     }
 }

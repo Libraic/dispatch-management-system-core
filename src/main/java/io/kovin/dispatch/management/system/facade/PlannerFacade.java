@@ -4,6 +4,7 @@ import static io.kovin.dispatch.management.system.utils.ErrorMessage.START_DATE_
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
@@ -68,7 +69,11 @@ public class PlannerFacade {
         for (var entry : relations.entrySet()) {
             GetDispatcherResponse getDispatcherResponse = loadObjectsCreator.createGetDispatcherResponse(entry.getKey());
             List<GetDriverPlanningDataResponse> getDriverLoadResponses = new ArrayList<>();
-            for (DriverDispatcherRelationEntity relation : entry.getValue()) {
+            List<DriverDispatcherRelationEntity> sortedRelations = entry.getValue()
+                .stream()
+                .sorted(Comparator.comparing(relation -> relation.getDriver().getCreatedAt()))
+                .toList();
+            for (DriverDispatcherRelationEntity relation : sortedRelations) {
                 List<GetLoadResponse> getLoadResponses = loadFacade.getLoadResponses(relation.getUuid(), startDate, endDate);
                 List<GetVehicleMaintenanceResponse> getVehicleMaintenanceResponses = vehicleMaintenanceFacade.getVehicleMaintenanceResponseList(
                     relation.getUuid(),

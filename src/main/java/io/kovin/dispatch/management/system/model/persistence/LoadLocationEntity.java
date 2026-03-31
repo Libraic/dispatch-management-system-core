@@ -1,6 +1,7 @@
 package io.kovin.dispatch.management.system.model.persistence;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Objects;
 
 import io.kovin.dispatch.management.system.model.persistence.enums.LoadStatus;
@@ -44,6 +45,9 @@ public class LoadLocationEntity {
 
     @Column
     private LocalDate date;
+
+    @Column
+    private LocalTime time;
 
     @Column
     @Enumerated(EnumType.STRING)

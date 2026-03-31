@@ -2,6 +2,7 @@ package io.kovin.dispatch.management.system.mapper;
 
 import java.time.LocalDate;
 import java.util.List;
+
 import io.kovin.dispatch.management.system.model.persistence.LoadLocationEntity;
 import io.kovin.dispatch.management.system.model.persistence.DispatcherEntity;
 import io.kovin.dispatch.management.system.model.persistence.LoadEntity;
@@ -10,7 +11,7 @@ import io.kovin.dispatch.management.system.model.persistence.enums.LoadStatus;
 import io.kovin.dispatch.management.system.model.response.GetDispatcherResponse;
 import io.kovin.dispatch.management.system.model.response.GetDriverResponse;
 import io.kovin.dispatch.management.system.model.response.load.GetLocationResponse;
-import io.kovin.dispatch.management.system.model.response.load.GetLoadResponse;
+import io.kovin.dispatch.management.system.model.response.load.GenericLoadResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -34,8 +35,8 @@ public class LoadObjectsCreator {
             .build();
     }
 
-    public GetLoadResponse createGetLoadResponse(LoadEntity load, List<LoadLocationEntity> loadLocations) {
-        return GetLoadResponse.builder()
+    public GenericLoadResponse createGetLoadResponse(LoadEntity load, List<LoadLocationEntity> loadLocations) {
+        return GenericLoadResponse.builder()
             .loadUuid(load.getUuid())
             .miles(load.getMiles())
             .revenue(load.getRevenue())
@@ -49,6 +50,7 @@ public class LoadObjectsCreator {
                 .map(locationData -> new GetLocationResponse(
                     locationData.getLocation(),
                     locationData.getDate(),
+                    locationData.getTime(),
                     locationData.getLocationType().getType(),
                     locationData.getLocationOrder()
                 )).toList()

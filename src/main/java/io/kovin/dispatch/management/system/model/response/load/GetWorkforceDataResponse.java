@@ -11,7 +11,7 @@ import lombok.Builder;
 public record GetWorkforceDataResponse(
     String relationUuid,
     GetDriverResponse driver,
-    List<GetLoadResponse> loads,
+    List<GenericLoadResponse> loads,
     List<GetVehicleMaintenanceResponse> vehicleMaintenanceRecords,
     List<GetDayOffPeriodResponse> daysOffPeriods
 ) {

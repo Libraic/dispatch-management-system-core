@@ -1,4 +1,6 @@
 package io.kovin.dispatch.management.system.model.response;
 
-public record GetLoadStartingPointResponse(String location) {
+import java.time.LocalTime;
+
+public record GetLoadStartingPointResponse(String location, LocalTime time) {
 }

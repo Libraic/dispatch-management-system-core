@@ -1,6 +1,5 @@
 package io.kovin.dispatch.management.system.facade;
 
-import static io.kovin.dispatch.management.system.model.persistence.enums.LoadStatus.DELIVERED;
 import static io.kovin.dispatch.management.system.model.persistence.enums.LoadStatus.DISPATCHED;
 
 import java.time.LocalDate;
@@ -8,18 +7,16 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.mapper.LoadObjectsCreator;
 import io.kovin.dispatch.management.system.model.persistence.LoadLocationEntity;
 import io.kovin.dispatch.management.system.model.persistence.DriverDispatcherRelationEntity;
 import io.kovin.dispatch.management.system.model.persistence.LoadEntity;
-import io.kovin.dispatch.management.system.model.persistence.enums.LoadStatus;
 import io.kovin.dispatch.management.system.model.request.CreateLoadLocationRequest;
 import io.kovin.dispatch.management.system.model.request.UpsertLoadRequest;
 import io.kovin.dispatch.management.system.model.response.GetLoadStartingPointResponse;
-import io.kovin.dispatch.management.system.model.response.load.GetLoadResponse;
-import io.kovin.dispatch.management.system.model.response.load.GetLocationResponse;
-import io.kovin.dispatch.management.system.model.response.load.UpsertDriverLoadsResponse;
+import io.kovin.dispatch.management.system.model.response.load.GenericLoadResponse;
 import io.kovin.dispatch.management.system.service.DriverDispatcherRelationService;
 import io.kovin.dispatch.management.system.service.LoadLocationService;
 import io.kovin.dispatch.management.system.service.LoadService;
@@ -53,42 +50,20 @@ public class LoadFacade {
      *                identifiers, load details such as revenue and miles, broker and representative information,
      *                and a list of load location details.
      * @return a response containing details of the inserted or updated load, including its UUID, start and end dates,
-     *         revenue, miles, broker, representative, load status, and a list of its locations.
+     * revenue, miles, broker, representative, load status, and a list of its locations.
      * @throws DispatchManagementSystemException if any validation fails, such as missing mandatory fields or
      *                                           invalid driver-dispatcher relationships.
      */
     @Transactional
-    public UpsertDriverLoadsResponse upsertLoad(UpsertLoadRequest request) {
+    public GenericLoadResponse upsertLoad(UpsertLoadRequest request) {
         loadValidationService.validateLoadUpsertion(request);
 
-        DriverDispatcherRelationEntity relation = driverDispatcherRelationService.findRelationByDriverAndDispatcher(
-            request.companyUuid(),
-            request.dispatcherUuid(),
-            request.driverUuid()
-        );
+        DriverDispatcherRelationEntity relation = driverDispatcherRelationService.getRelationByUuid(request.relationUuid());
         LoadEntity loadEntity = createLoadEntity(request, relation);
         List<LoadLocationEntity> loadLocationEntities = loadLocationFacade.createLoadLocations(request.locations(), loadEntity);
         loadLocationEntities.sort(Comparator.comparing(LoadLocationEntity::getLocationOrder));
 
-        LoadStatus loadStatus = loadEntity.getEndDate().isBefore(LocalDate.now()) ? DELIVERED : DISPATCHED;
-
-        return UpsertDriverLoadsResponse.builder()
-            .loadUuid(loadEntity.getUuid())
-            .startDate(loadLocationEntities.getFirst().getDate())
-            .endDate(loadLocationEntities.getLast().getDate())
-            .revenue(loadEntity.getRevenue())
-            .miles(loadEntity.getMiles())
-            .broker(loadEntity.getBroker())
-            .representative(loadEntity.getRepresentative())
-            .loadStatus(loadStatus.getStatus())
-            .locations(loadLocationEntities.stream()
-                .map(loadLocationEntity -> new GetLocationResponse(
-                    loadLocationEntity.getLocation(),
-                    loadLocationEntity.getDate(),
-                    loadLocationEntity.getLocationType().getType(),
-                    loadLocationEntity.getLocationOrder()
-                )).toList()
-            ).build();
+        return loadObjectsCreator.createGetLoadResponse(loadEntity, loadLocationEntities);
     }
 
     /**
@@ -98,13 +73,13 @@ public class LoadFacade {
      * objects encapsulating load details and their respective location information.
      *
      * @param relationUuid the unique identifier of the driver-dispatcher relation. Must not be null or empty.
-     * @param startDate the start of the timeframe for retrieving load responses. Must not be null.
-     * @param endDate the end of the timeframe for retrieving load responses. Must not be null.
+     * @param startDate    the start of the timeframe for retrieving load responses. Must not be null.
+     * @param endDate      the end of the timeframe for retrieving load responses. Must not be null.
      * @return a list of GetLoadResponse objects, each containing load details and their associated filtered locations
-     *         within the provided date range.
+     * within the provided date range.
      */
-    public List<GetLoadResponse> getLoadResponses(String relationUuid, LocalDate startDate, LocalDate endDate) {
-        List<GetLoadResponse> getLoadResponses = new ArrayList<>();
+    public List<GenericLoadResponse> getLoadResponses(String relationUuid, LocalDate startDate, LocalDate endDate) {
+        List<GenericLoadResponse> genericLoadResponses = new ArrayList<>();
         List<LoadEntity> loads = loadService.getOverlappingLoadsForRelation(relationUuid, startDate, endDate);
         for (LoadEntity load : loads) {
             List<LoadLocationEntity> locations = loadLocationService.getLoadLocationsByLoadUuidAndDateBetween(
@@ -112,24 +87,25 @@ public class LoadFacade {
                 startDate,
                 endDate
             );
-            GetLoadResponse getLoadResponse = loadObjectsCreator.createGetLoadResponse(load, locations);
-            getLoadResponses.add(getLoadResponse);
+            GenericLoadResponse genericLoadResponse = loadObjectsCreator.createGetLoadResponse(load, locations);
+            genericLoadResponses.add(genericLoadResponse);
         }
 
-        return getLoadResponses;
+        return genericLoadResponses;
     }
 
     public GetLoadStartingPointResponse getLoadStartingPoint(String relationUuid, LocalDate date) {
         LoadEntity load = loadService.getLoadByRelationUuidAndDateBetween(relationUuid, date);
         if (load == null || load.getLocations().isEmpty()) {
-            return new GetLoadStartingPointResponse(null);
+            return new GetLoadStartingPointResponse(null, null);
         }
 
         List<LoadLocationEntity> locations = load.getLocations()
             .stream()
             .sorted(Comparator.comparing(LoadLocationEntity::getLocationOrder))
             .toList();
-        return new GetLoadStartingPointResponse(locations.getLast().getLocation());
+        LoadLocationEntity startingPoint = locations.getLast();
+        return new GetLoadStartingPointResponse(startingPoint.getLocation(), startingPoint.getTime());
     }
 
     /**

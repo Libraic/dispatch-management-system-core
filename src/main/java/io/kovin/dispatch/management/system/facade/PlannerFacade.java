@@ -16,7 +16,7 @@ import io.kovin.dispatch.management.system.model.response.GetDispatcherResponse;
 import io.kovin.dispatch.management.system.model.response.GetDriverResponse;
 import io.kovin.dispatch.management.system.model.response.GetVehicleMaintenanceResponse;
 import io.kovin.dispatch.management.system.model.response.load.GetWorkforceDataResponse;
-import io.kovin.dispatch.management.system.model.response.load.GetLoadResponse;
+import io.kovin.dispatch.management.system.model.response.load.GenericLoadResponse;
 import io.kovin.dispatch.management.system.model.response.load.GetDispatchingDataResponse;
 import io.kovin.dispatch.management.system.service.CompanyService;
 import io.kovin.dispatch.management.system.service.DriverDispatcherRelationService;
@@ -74,7 +74,7 @@ public class PlannerFacade {
                 .sorted(Comparator.comparing(relation -> relation.getDriver().getCreatedAt()))
                 .toList();
             for (DriverDispatcherRelationEntity relation : sortedRelations) {
-                List<GetLoadResponse> getLoadResponses = loadFacade.getLoadResponses(relation.getUuid(), startDate, endDate);
+                List<GenericLoadResponse> genericLoadResponses = loadFacade.getLoadResponses(relation.getUuid(), startDate, endDate);
                 List<GetVehicleMaintenanceResponse> getVehicleMaintenanceResponses = vehicleMaintenanceFacade.getVehicleMaintenanceResponseList(
                     relation.getUuid(),
                     startDate,
@@ -89,7 +89,7 @@ public class PlannerFacade {
                 GetWorkforceDataResponse getWorkforceDataResponses = GetWorkforceDataResponse.builder()
                     .relationUuid(relation.getUuid())
                     .driver(getDriverResponse)
-                    .loads(getLoadResponses)
+                    .loads(genericLoadResponses)
                     .vehicleMaintenanceRecords(getVehicleMaintenanceResponses)
                     .daysOffPeriods(getDayOffPeriodResponses)
                     .build();

@@ -39,6 +39,7 @@ public class LoadLocationFacade {
                 .locationType(LocationType.from(createLoadLocationRequest.label()))
                 .location(createLoadLocationRequest.location())
                 .date(createLoadLocationRequest.date())
+                .time(createLoadLocationRequest.time())
                 .load(loadEntity)
                 .locationOrder(order)
                 .build();

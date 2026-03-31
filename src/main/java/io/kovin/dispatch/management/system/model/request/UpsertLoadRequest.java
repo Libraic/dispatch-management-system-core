@@ -5,9 +5,7 @@ import java.util.List;
 
 public record UpsertLoadRequest(
     String loadUuid,
-    String companyUuid,
-    String dispatcherUuid,
-    String driverUuid,
+    String relationUuid,
     BigDecimal revenue,
     BigDecimal miles,
     String broker,

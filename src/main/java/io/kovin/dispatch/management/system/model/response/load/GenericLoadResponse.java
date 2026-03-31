@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Builder;
 
 @Builder
-public record GetLoadResponse(
+public record GenericLoadResponse(
     String loadUuid,
     BigDecimal revenue,
     BigDecimal miles,

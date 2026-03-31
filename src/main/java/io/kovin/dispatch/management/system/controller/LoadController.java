@@ -6,8 +6,7 @@ import io.kovin.dispatch.management.system.facade.LoadFacade;
 import io.kovin.dispatch.management.system.model.request.UpsertLoadRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.GetLoadStartingPointResponse;
-import io.kovin.dispatch.management.system.model.response.load.GetLoadResponse;
-import io.kovin.dispatch.management.system.model.response.load.UpsertDriverLoadsResponse;
+import io.kovin.dispatch.management.system.model.response.load.GenericLoadResponse;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,16 +29,16 @@ public class LoadController {
     private final LoadFacade loadFacade;
 
     @PutMapping
-    public ResponseEntity<ApiResponse<UpsertDriverLoadsResponse, ErrorResponse>> upsertLoad(
+    public ResponseEntity<ApiResponse<GenericLoadResponse, ErrorResponse>> upsertLoad(
         @RequestBody UpsertLoadRequest upsertLoadRequest
     ) {
         log.info("A request to upsert the load was received.");
-        UpsertDriverLoadsResponse response = loadFacade.upsertLoad(upsertLoadRequest);
+        GenericLoadResponse response = loadFacade.upsertLoad(upsertLoadRequest);
         return ResponseEntity.ok(ApiResponse.fromData(response));
     }
 
     @GetMapping("/relations/{relationUuid}")
-    public ResponseEntity<ApiResponse<List<GetLoadResponse>, ErrorResponse>> getRelationLoadsForTimeframe(
+    public ResponseEntity<ApiResponse<List<GenericLoadResponse>, ErrorResponse>> getRelationLoadsForTimeframe(
         @PathVariable(name = "relationUuid") String relationUuid,
         @RequestParam(name = "startDate") LocalDate startDate,
         @RequestParam(name = "endDate") LocalDate endDate
@@ -50,7 +49,7 @@ public class LoadController {
             startDate,
             endDate
         );
-        List<GetLoadResponse> response = loadFacade.getLoadResponses(relationUuid, startDate, endDate);
+        List<GenericLoadResponse> response = loadFacade.getLoadResponses(relationUuid, startDate, endDate);
         return ResponseEntity.ok(ApiResponse.fromData(response));
     }
 

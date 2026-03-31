@@ -412,3 +412,10 @@ COMMENT ON COLUMN t_days_off_periods.uuid                          IS 'The UUID 
 COMMENT ON COLUMN t_days_off_periods.start_date                    IS 'The first day off.';
 COMMENT ON COLUMN t_days_off_periods.end_date                      IS 'The last day off.';
 COMMENT ON COLUMN t_days_off_periods.driver_dispatcher_relation_id IS 'The ID of the Driver-Dispatcher relationship.';
+
+-- changeset libra:014
+-- comment: Create the time column in the t_load_locations table.
+ALTER TABLE t_load_locations
+    ADD COLUMN time TIME DEFAULT '12:00:00';
+
+COMMENT ON COLUMN t_load_locations.time IS 'The estimated time of arrival at the provided location.';

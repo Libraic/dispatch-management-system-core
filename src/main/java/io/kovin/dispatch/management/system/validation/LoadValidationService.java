@@ -10,7 +10,6 @@ import io.kovin.dispatch.management.system.utils.CollectionUtils;
 import io.kovin.dispatch.management.system.utils.ErrorMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,65 +19,58 @@ public class LoadValidationService {
 
     public void validateLoadUpsertion(UpsertLoadRequest request) {
         log.info("Validating the request to create the load.");
-        if (StringUtil.isNullOrEmpty(request.companyUuid())) {
-            throw DispatchManagementSystemException.of(ErrorMessage.COMPANY_IS_MANDATORY, HttpStatus.BAD_REQUEST);
-        }
 
         // These validations are only for the creation of the load.
         if (StringUtil.isNullOrEmpty(request.loadUuid())) {
-            if (StringUtil.isNullOrEmpty(request.dispatcherUuid())) {
-                throw DispatchManagementSystemException.of(ErrorMessage.DISPATCHER_IS_MANDATORY, HttpStatus.BAD_REQUEST);
-            }
-
-            if (StringUtil.isNullOrEmpty(request.driverUuid())) {
-                throw DispatchManagementSystemException.of(ErrorMessage.DRIVER_IS_MANDATORY, HttpStatus.BAD_REQUEST);
-            }
-
             if (request.miles() == null) {
-                throw DispatchManagementSystemException.of(ErrorMessage.MILES_ARE_MANDATORY, HttpStatus.BAD_REQUEST);
+                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.MILES_ARE_MANDATORY);
             }
 
             if (request.revenue() == null) {
-                throw DispatchManagementSystemException.of(ErrorMessage.REVENUE_IS_MANDATORY, HttpStatus.BAD_REQUEST);
+                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.REVENUE_IS_MANDATORY);
             }
 
             if (StringUtil.isNullOrEmpty(request.broker())) {
-                throw DispatchManagementSystemException.of(ErrorMessage.BROKER_IS_MANDATORY, HttpStatus.BAD_REQUEST);
+                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.BROKER_IS_MANDATORY);
             }
 
             validateLocations(request.locations());
         }
 
         if (BigDecimalUtils.isNegative(request.miles())) {
-            throw DispatchManagementSystemException.of(ErrorMessage.NEGATIVE_MILES, HttpStatus.BAD_REQUEST);
+            throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.NEGATIVE_MILES);
         }
 
         if (BigDecimalUtils.isNegative(request.revenue())) {
-            throw DispatchManagementSystemException.of(ErrorMessage.NEGATIVE_REVENUE, HttpStatus.BAD_REQUEST);
+            throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.NEGATIVE_REVENUE);
         }
     }
 
     private void validateLocations(List<CreateLoadLocationRequest> locations) {
         if (CollectionUtils.isEmpty(locations)) {
-            throw DispatchManagementSystemException.of(ErrorMessage.LOCATIONS_ARE_MANDATORY, HttpStatus.BAD_REQUEST);
+            throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.LOCATIONS_ARE_MANDATORY);
         }
 
         for (int i = 0; i < locations.size(); i++) {
             CreateLoadLocationRequest current = locations.get(i);
             if (current.date() == null) {
-                throw DispatchManagementSystemException.of(ErrorMessage.LOAD_DATE_IS_MANDATORY, HttpStatus.BAD_REQUEST);
+                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.LOAD_DATE_IS_MANDATORY);
             }
 
             if (i > 0 && locations.get(i - 1).date().isAfter(current.date())) {
-                throw DispatchManagementSystemException.of(ErrorMessage.LOCATIONS_CHRONOLOGICAL_ORDER, HttpStatus.BAD_REQUEST);
+                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.LOCATIONS_CHRONOLOGICAL_ORDER);
             }
 
             if (current.location() == null) {
-                throw DispatchManagementSystemException.of(ErrorMessage.LOCATION_MANDATORY, HttpStatus.BAD_REQUEST);
+                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.LOCATION_MANDATORY);
             }
 
             if (current.label() == null) {
-                throw DispatchManagementSystemException.of(ErrorMessage.LOCATION_LABEL_IS_MANDATORY, HttpStatus.BAD_REQUEST);
+                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.LOCATION_LABEL_IS_MANDATORY);
+            }
+
+            if (current.time() == null) {
+                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.TIME_IS_MANDATORY);
             }
         }
     }

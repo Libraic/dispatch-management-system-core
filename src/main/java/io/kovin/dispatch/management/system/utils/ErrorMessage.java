@@ -45,12 +45,9 @@ public class ErrorMessage {
      * Error messages related to Loads.
      */
     public static final String BROKER_IS_MANDATORY = "Broker is required.";
-    public static final String COMPANY_IS_MANDATORY = "The company is required.";
     public static final String LOCATIONS_CHRONOLOGICAL_ORDER = "The locations must be in chronological order.";
-    public static final String DISPATCHER_IS_MANDATORY = "The dispatcher is required.";
     public static final String DRIVER_DISPATCHER_RELATION_NOT_FOUND = "The Driver-Dispatcher relation was not found.";
     public static final String DRIVER_DISPATCHER_RELATION_NOT_FOUND_BY_UUID = "The Driver-Dispatcher relation with UUID=[%s] was not found.";
-    public static final String DRIVER_IS_MANDATORY = "The driver is required.";
     public static final String LOCATION_LABEL_IS_MANDATORY = "The location label is required.";
     public static final String LOCATIONS_ARE_MANDATORY = "The locations are required.";
     public static final String LOAD_DATE_IS_MANDATORY = "The date of the load is required.";
@@ -59,6 +56,7 @@ public class ErrorMessage {
     public static final String NEGATIVE_REVENUE = "The revenue cannot be negative.";
     public static final String REVENUE_IS_MANDATORY = "The revenue is required.";
     public static final String START_DATE_BEFORE_END_DATE = "The start date cannot be after the end date.";
+    public static final String TIME_IS_MANDATORY = "The time is required.";
 
     /**
      * Error messages related to Trailer.

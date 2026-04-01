@@ -1,7 +1,11 @@
 package io.kovin.dispatch.management.system.service;
 
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOAD_NOT_FOUND;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOAD_NOT_FOUND_BY_UUID;
+
 import java.time.LocalDate;
 import java.util.List;
+import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.persistence.LoadEntity;
 import io.kovin.dispatch.management.system.repository.LoadRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +28,9 @@ public class LoadService {
      *                   UUID, start and end dates, revenue, miles, broker information,
      *                   load status, and associated driver-dispatcher relation.
      */
-    public void persistLoad(LoadEntity loadEntity) {
+    public LoadEntity persistLoad(LoadEntity loadEntity) {
         log.info("Persisting load with UUID=[{}].", loadEntity.getUuid());
-        loadRepository.save(loadEntity);
+        return loadRepository.save(loadEntity);
     }
 
     /**
@@ -63,6 +67,26 @@ public class LoadService {
     public void deleteLoadByUuid(String uuid) {
         log.info("Deleting the Load with UUID=[{}].", uuid);
         loadRepository.deleteByUuid(uuid);
+    }
+
+    /**
+     * Retrieves the load entity associated with the specified UUID.
+     * If no load entity is found, an exception is thrown.
+     *
+     * @param uuid the unique identifier of the load to be retrieved. It must not be null or empty.
+     * @return the {@code LoadEntity} associated with the given UUID.
+     * @throws DispatchManagementSystemException if no load entity is found with the specified UUID.
+     */
+    public LoadEntity getLoadByUuid(String uuid) {
+        log.info("Retrieving the Load by UUID=[{}].", uuid);
+        var loadOptional = loadRepository.findByUuid(uuid);
+        if (loadOptional.isEmpty()) {
+            String errorMessage = String.format(LOAD_NOT_FOUND_BY_UUID, uuid);
+            log.error(errorMessage);
+            throw DispatchManagementSystemException.ofBadRequest(LOAD_NOT_FOUND);
+        }
+
+        return loadOptional.get();
     }
 
     public LoadEntity getLoadByRelationUuidAndDateBetween(String relationUuid, LocalDate date) {

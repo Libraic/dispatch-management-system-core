@@ -1,6 +1,8 @@
 package io.kovin.dispatch.management.system.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import io.kovin.dispatch.management.system.model.persistence.LoadLocationEntity;
 import io.kovin.dispatch.management.system.repository.LoadLocationRepository;
@@ -44,5 +46,11 @@ public class LoadLocationService {
         return loadLocations.stream()
             .filter(x -> !x.getDate().isBefore(startDate) && !x.getDate().isAfter(endDate))
             .toList();
+    }
+
+    public LocalDateTime getDeliveryTime(List<LoadLocationEntity> loadLocations) {
+        loadLocations.sort(Comparator.comparing(LoadLocationEntity::getLocationOrder));
+        LoadLocationEntity lastLocation = loadLocations.getLast();
+        return LocalDateTime.of(lastLocation.getDate(), lastLocation.getTime());
     }
 }

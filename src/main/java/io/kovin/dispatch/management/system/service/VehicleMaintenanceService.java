@@ -1,7 +1,11 @@
 package io.kovin.dispatch.management.system.service;
 
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.VEHICLE_MAINTENANCE_RECORD_NOT_FOUND;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.VEHICLE_MAINTENANCE_RECORD_NOT_FOUND_BY_UUID;
+
 import java.time.LocalDate;
 import java.util.List;
+import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.persistence.VehicleMaintenanceRecordEntity;
 import io.kovin.dispatch.management.system.repository.VehicleMaintenanceRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +27,29 @@ public class VehicleMaintenanceService {
      * @param vehicleMaintenanceRecordEntity the entity representing the vehicle maintenance record
      *                                       that needs to be persisted in the database
      */
-    public void persistingVehicleMaintenanceRecord(VehicleMaintenanceRecordEntity vehicleMaintenanceRecordEntity) {
+    public void persistVehicleMaintenanceRecord(VehicleMaintenanceRecordEntity vehicleMaintenanceRecordEntity) {
         log.info("Persisting vehicle maintenance record with UUID=[{}].", vehicleMaintenanceRecordEntity.getUuid());
         vehicleMaintenanceRepository.save(vehicleMaintenanceRecordEntity);
+    }
+
+    /**
+     * Retrieves a vehicle maintenance record entity by its unique UUID.
+     * If the record is not found, an exception is thrown.
+     *
+     * @param uuid the unique identifier of the vehicle maintenance record to be retrieved
+     * @return the {@code VehicleMaintenanceRecordEntity} corresponding to the specified UUID
+     * @throws DispatchManagementSystemException if no vehicle maintenance record is found for the given UUID
+     */
+    public VehicleMaintenanceRecordEntity getVehicleMaintenanceRecordByUuid(String uuid) {
+        log.info("Retrieving the Vehicle Maintenance Record by UUID=[{}].", uuid);
+        var vehicleMaintenanceRecordEntityOptional = vehicleMaintenanceRepository.findByUuid(uuid);
+        if (vehicleMaintenanceRecordEntityOptional.isEmpty()) {
+            String errorMessage = String.format(VEHICLE_MAINTENANCE_RECORD_NOT_FOUND_BY_UUID, uuid);
+            log.error(errorMessage);
+            throw DispatchManagementSystemException.ofBadRequest(VEHICLE_MAINTENANCE_RECORD_NOT_FOUND);
+        }
+
+        return vehicleMaintenanceRecordEntityOptional.get();
     }
 
     /**

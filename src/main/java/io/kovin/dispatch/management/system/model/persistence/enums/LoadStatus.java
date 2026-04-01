@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum LoadStatus {
     DISPATCHED("Dispatched"),
-    TRANSIT("Transit"),
     DELIVERED("Delivered");
 
     private final String status;

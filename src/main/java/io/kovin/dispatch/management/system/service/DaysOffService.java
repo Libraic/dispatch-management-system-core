@@ -1,7 +1,11 @@
 package io.kovin.dispatch.management.system.service;
 
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.DAYS_OFF_PERIOD_NOT_FOUND;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.DAYS_OFF_PERIOD_NOT_FOUND_BY_UUID;
+
 import java.time.LocalDate;
 import java.util.List;
+import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.persistence.DaysOffPeriodEntity;
 import io.kovin.dispatch.management.system.repository.DaysOffRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +30,29 @@ public class DaysOffService {
      *                            and associated Driver-Dispatcher relation.
      */
     public void persistDayOffPeriod(DaysOffPeriodEntity daysOffPeriodEntity) {
-        log.info("Persisting day off with UUID=[{}].", daysOffPeriodEntity.getUuid());
+        log.debug("Persisting day off with UUID=[{}].", daysOffPeriodEntity.getUuid());
         daysOffRepository.save(daysOffPeriodEntity);
+    }
+
+    /**
+     * Retrieves a {@code DaysOffPeriodEntity} by its unique identifier (UUID).
+     * This method interacts with the repository to fetch the record associated
+     * with the provided UUID. If no record is found, an exception is thrown.
+     *
+     * @param uuid the unique identifier of the Days Off period to be retrieved.
+     * @return the {@code DaysOffPeriodEntity} associated with the given UUID.
+     * @throws DispatchManagementSystemException if no Days Off period is found for the provided UUID.
+     */
+    public DaysOffPeriodEntity getDaysOffPeriodByUuid(String uuid) {
+        log.debug("Retrieving the Days Off Period by UUID=[{}].", uuid);
+        var daysOffPeriodEntityOptional = daysOffRepository.findByUuid(uuid);
+        if (daysOffPeriodEntityOptional.isEmpty()) {
+            String errorMessage = String.format(DAYS_OFF_PERIOD_NOT_FOUND_BY_UUID, uuid);
+            log.error(errorMessage);
+            throw DispatchManagementSystemException.ofBadRequest(DAYS_OFF_PERIOD_NOT_FOUND);
+        }
+
+        return daysOffPeriodEntityOptional.get();
     }
 
     /**

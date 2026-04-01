@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface LoadRepository extends BaseSchedulableRepository<LoadEntity> {
 
+    Optional<LoadEntity> findByUuid(String uuid);
+
     @Query("""
         SELECT l
         FROM LoadEntity l

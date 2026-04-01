@@ -1,9 +1,13 @@
 package io.kovin.dispatch.management.system.facade;
 
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.VEHICLE_MAINTENANCE_RECORD_WAS_CLOSED;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
+import io.kovin.dispatch.management.system.model.persistence.DriverDispatcherRelationEntity;
 import io.kovin.dispatch.management.system.model.persistence.VehicleMaintenanceRecordEntity;
 import io.kovin.dispatch.management.system.model.request.UpsertVehicleMaintenanceRecordRequest;
 import io.kovin.dispatch.management.system.model.response.GetVehicleMaintenanceResponse;
@@ -27,14 +31,8 @@ public class VehicleMaintenanceFacade {
     ) {
         vehicleMaintenanceValidationService.validateVehicleMaintenanceUpsertion(request);
         var driverDispatcherRelationEntity = driverDispatcherRelationService.getRelationByUuid(request.relationId());
-        VehicleMaintenanceRecordEntity vehicleMaintenanceRecordEntity = VehicleMaintenanceRecordEntity.builder()
-            .uuid(UUID.randomUUID().toString())
-            .startDate(request.startDate())
-            .endDate(request.endDate())
-            .location(request.location())
-            .driverDispatcherRelation(driverDispatcherRelationEntity)
-            .build();
-        vehicleMaintenanceService.persistingVehicleMaintenanceRecord(vehicleMaintenanceRecordEntity);
+        VehicleMaintenanceRecordEntity vehicleMaintenanceRecordEntity = getVehicleMaintenanceRecordEntity(request, driverDispatcherRelationEntity);
+        vehicleMaintenanceService.persistVehicleMaintenanceRecord(vehicleMaintenanceRecordEntity);
         return UpsertVehicleMaintenanceRecordResponse.builder()
             .vehicleMaintenanceRecordUuid(vehicleMaintenanceRecordEntity.getUuid())
             .startDate(vehicleMaintenanceRecordEntity.getStartDate())
@@ -54,8 +52,8 @@ public class VehicleMaintenanceFacade {
      * @param endDate    the end date of the timeframe for which the records
      *                   should be retrieved
      * @return a list of {@code GetVehicleMaintenanceResponse} objects containing
-     *         details about the vehicle maintenance records for the specified
-     *         relation and time range
+     * details about the vehicle maintenance records for the specified
+     * relation and time range
      */
     public List<GetVehicleMaintenanceResponse> getVehicleMaintenanceResponseList(
         String relationId,
@@ -75,5 +73,33 @@ public class VehicleMaintenanceFacade {
         }
 
         return responses;
+    }
+
+    private VehicleMaintenanceRecordEntity getVehicleMaintenanceRecordEntity(
+        UpsertVehicleMaintenanceRecordRequest request,
+        DriverDispatcherRelationEntity driverDispatcherRelationEntity
+    ) {
+        VehicleMaintenanceRecordEntity initialVehicleMaintenanceRecordEntity = getInitialVehicleMaintenanceRecordEntity(request.vehicleMaintenanceRecordUuid());
+        return initialVehicleMaintenanceRecordEntity.toBuilder()
+            .startDate(request.startDate())
+            .endDate(request.endDate())
+            .location(request.location())
+            .driverDispatcherRelation(driverDispatcherRelationEntity)
+            .build();
+    }
+
+    private VehicleMaintenanceRecordEntity getInitialVehicleMaintenanceRecordEntity(String vehicleMaintenanceRecordUuid) {
+        if (vehicleMaintenanceRecordUuid != null) {
+            VehicleMaintenanceRecordEntity entity = vehicleMaintenanceService.getVehicleMaintenanceRecordByUuid(vehicleMaintenanceRecordUuid);
+            LocalDate now = LocalDate.now();
+            if (entity.getEndDate().isBefore(now)) {
+                throw DispatchManagementSystemException.ofBadRequest(VEHICLE_MAINTENANCE_RECORD_WAS_CLOSED);
+            }
+            return entity;
+        }
+
+        return VehicleMaintenanceRecordEntity.builder()
+            .uuid(UUID.randomUUID().toString())
+            .build();
     }
 }

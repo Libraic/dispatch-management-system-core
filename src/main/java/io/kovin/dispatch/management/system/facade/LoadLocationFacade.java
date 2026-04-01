@@ -48,16 +48,4 @@ public class LoadLocationFacade {
         loadLocationService.persistLoadLocations(loadLocationEntities);
         return loadLocationEntities;
     }
-
-    private LoadStatus getLoadStatusBasedOnOrder(int order, int numberOfLocations) {
-        if (order == 0) {
-            return LoadStatus.DISPATCHED;
-        }
-
-        if (order == numberOfLocations - 1) {
-            return LoadStatus.DELIVERED;
-        }
-
-        return LoadStatus.TRANSIT;
-    }
 }

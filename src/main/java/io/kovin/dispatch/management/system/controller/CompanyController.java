@@ -55,12 +55,12 @@ public class CompanyController {
     public ResponseEntity<ApiResponse<List<CompanyData>, ErrorResponse>> getCompaniesByCriteria(
         @RequestParam(name = "page", required = false) Integer page,
         @RequestParam(name = "size", required = false) Integer size,
-        @RequestParam(name = "loadUuid", required = false) String uuid,
+        @RequestParam(name = "uuid", required = false) String uuid,
         @RequestParam(name = "name", required = false) String name
     ) {
         log.info("A request to retrieve the companies by criteria was received.");
         Map<String, String> queryParams = new HashMap<>();
-        queryParams.put("loadUuid", uuid);
+        queryParams.put("uuid", uuid);
         queryParams.put("name", name);
         int finalPage = page == null ? 0 : page;
         int finalSize = size == null ? 0 : size;

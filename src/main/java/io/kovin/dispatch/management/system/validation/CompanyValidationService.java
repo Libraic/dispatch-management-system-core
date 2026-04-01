@@ -33,7 +33,7 @@ public class CompanyValidationService {
             groupsErrors.addError(COMPANY_NAME, MISSING_COMPANY_NAME);
         }
 
-        if (StringUtil.isNullOrEmpty(createCompanyRequest.startDate())) {
+        if (createCompanyRequest.startDate() == null) {
             log.error(MISSING_COMPANY_START_DATE);
             groupsErrors.addError(COMPANY_START_DATE, MISSING_COMPANY_START_DATE);
         }

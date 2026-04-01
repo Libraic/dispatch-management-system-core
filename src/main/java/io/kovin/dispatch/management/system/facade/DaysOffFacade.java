@@ -97,6 +97,7 @@ public class DaysOffFacade {
             if (now.isAfter(entity.getEndDate())) {
                 throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.DAYS_OFF_PERIOD_HAS_ENDED);
             }
+            return entity;
         }
 
         return DaysOffPeriodEntity.builder().uuid(UUID.randomUUID().toString()).build();

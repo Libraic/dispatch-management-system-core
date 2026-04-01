@@ -1,5 +1,6 @@
 package io.kovin.dispatch.management.system.model.request;
 
+import java.time.LocalDate;
 import lombok.Builder;
 
 @Builder
@@ -9,7 +10,7 @@ public record CreateCompanyRequest(
     String address,
     String email,
     String password,
-    String serviceDate,
-    String startDate
+    LocalDate serviceDate,
+    LocalDate startDate
 ) {
 }

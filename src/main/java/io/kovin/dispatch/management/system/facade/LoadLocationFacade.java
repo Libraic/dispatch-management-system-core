@@ -1,11 +1,11 @@
 package io.kovin.dispatch.management.system.facade;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import io.kovin.dispatch.management.system.model.persistence.LoadLocationEntity;
 import io.kovin.dispatch.management.system.model.persistence.LoadEntity;
-import io.kovin.dispatch.management.system.model.persistence.enums.LoadStatus;
 import io.kovin.dispatch.management.system.model.persistence.enums.LocationType;
 import io.kovin.dispatch.management.system.model.request.CreateLoadLocationRequest;
 import io.kovin.dispatch.management.system.service.LoadLocationService;
@@ -25,12 +25,15 @@ public class LoadLocationFacade {
      *
      * @param createLoadLocationRequests a list of requests containing details for creating load locations
      * @param loadEntity the LoadEntity with which the created LoadLocationEntity objects will be associated
-     * @return a list of created LoadLocationEntity objects
      */
-    public List<LoadLocationEntity> createLoadLocations(
+    public void createLoadLocations(
         List<CreateLoadLocationRequest> createLoadLocationRequests,
         LoadEntity loadEntity
     ) {
+        if (!shouldCreateLocations(loadEntity.getLocations(), createLoadLocationRequests)) {
+            return;
+        }
+
         List<LoadLocationEntity> loadLocationEntities = new ArrayList<>();
         for (CreateLoadLocationRequest createLoadLocationRequest : createLoadLocationRequests) {
             int order = createLoadLocationRequest.order();
@@ -46,6 +49,32 @@ public class LoadLocationFacade {
             loadLocationEntities.add(loadLocationEntity);
         }
         loadLocationService.persistLoadLocations(loadLocationEntities);
-        return loadLocationEntities;
+
+        loadLocationEntities.sort(Comparator.comparing(LoadLocationEntity::getLocationOrder));
+
+        loadEntity.getLocations().clear();
+        loadEntity.getLocations().addAll(loadLocationEntities);
+    }
+
+    private boolean shouldCreateLocations(List<LoadLocationEntity> previousLocations, List<CreateLoadLocationRequest> createLoadLocationRequests) {
+        int numberOfLocations = createLoadLocationRequests.size();
+        if (numberOfLocations != previousLocations.size()) {
+            return true;
+        }
+
+        previousLocations.sort(Comparator.comparing(LoadLocationEntity::getLocationOrder));
+        for (int i = 0; i < numberOfLocations; ++i) {
+            LoadLocationEntity previous = previousLocations.get(i);
+            CreateLoadLocationRequest actual = createLoadLocationRequests.get(i);
+            if (!previous.getLocation().equals(actual.location()) ||
+                !previous.getLocationType().getType().equals(actual.label()) ||
+                !previous.getDate().equals(actual.date()) ||
+                !previous.getTime().equals(actual.time())
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

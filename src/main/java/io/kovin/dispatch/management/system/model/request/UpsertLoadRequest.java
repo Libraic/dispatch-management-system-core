@@ -11,6 +11,7 @@ public record UpsertLoadRequest(
     String broker,
     String representative,
     String representativeContactNumber,
+    String loadStatus,
     List<CreateLoadLocationRequest> locations
 ) {
 

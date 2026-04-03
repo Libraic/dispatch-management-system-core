@@ -42,7 +42,7 @@ public class LoadObjectsCreator {
             .revenue(load.getRevenue())
             .broker(load.getBroker())
             .representative(load.getRepresentative())
-            .loadStatus(load.getEndDate().isBefore(LocalDate.now()) ? LoadStatus.DELIVERED.getStatus() : LoadStatus.DISPATCHED.getStatus())
+            .loadStatus(load.getLoadStatus().getStatus())
             .representativeContactNumber(load.getRepresentativeContactNumber())
             .startDate(load.getStartDate())
             .endDate(load.getEndDate())

@@ -48,9 +48,10 @@ public class ErrorMessage {
     public static final String LOCATIONS_CHRONOLOGICAL_ORDER = "The locations must be in chronological order.";
     public static final String LOAD_NOT_FOUND = "The load was not found.";
     public static final String LOAD_NOT_FOUND_BY_UUID = "The load with UUID=[%s] was not found.";
-    public static final String LOAD_WAS_ALREADY_DELIVERED = "The load was already delivered.";
     public static final String DRIVER_DISPATCHER_RELATION_NOT_FOUND = "The Driver-Dispatcher relation was not found.";
     public static final String DRIVER_DISPATCHER_RELATION_NOT_FOUND_BY_UUID = "The Driver-Dispatcher relation with UUID=[%s] was not found.";
+    public static final String INVALID_LOAD_STATUS_BE = "The load status=[%s] is invalid.";
+    public static final String INVALID_LOAD_STATUS_CLIENT = "Invalid load status.";
     public static final String LOCATION_LABEL_IS_MANDATORY = "The location label is required.";
     public static final String LOCATIONS_ARE_MANDATORY = "The locations are required.";
     public static final String LOAD_DATE_IS_MANDATORY = "The date of the load is required.";
@@ -66,14 +67,12 @@ public class ErrorMessage {
      */
     public static final String VEHICLE_MAINTENANCE_RECORD_NOT_FOUND_BY_UUID = "The Vehicle Maintenance Record with UUID=[%s] was not found.";
     public static final String VEHICLE_MAINTENANCE_RECORD_NOT_FOUND = "The Vehicle Maintenance Record was not found.";
-    public static final String VEHICLE_MAINTENANCE_RECORD_WAS_CLOSED = "The Vehicle Maintenance Record was already closed.";
 
     /**
      * Error messages related to Days Off Period.
      */
     public static final String DAYS_OFF_PERIOD_NOT_FOUND_BY_UUID = "The Days Off Period with UUID=[%s] was not found.";
     public static final String DAYS_OFF_PERIOD_NOT_FOUND = "The Days Off Period was not found.";
-    public static final String DAYS_OFF_PERIOD_HAS_ENDED = "The Days Off Period has already ended.";
 
     /**
      * Error messages related to Trailer.

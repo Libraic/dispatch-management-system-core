@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
+
 import io.kovin.dispatch.management.system.model.persistence.DaysOffPeriodEntity;
 import io.kovin.dispatch.management.system.model.persistence.DriverDispatcherRelationEntity;
 import io.kovin.dispatch.management.system.model.request.UpsertDayOffPeriodRequest;
@@ -12,7 +12,6 @@ import io.kovin.dispatch.management.system.model.response.GetDayOffPeriodRespons
 import io.kovin.dispatch.management.system.model.response.UpsertDayOffPeriodResponse;
 import io.kovin.dispatch.management.system.service.DaysOffService;
 import io.kovin.dispatch.management.system.service.DriverDispatcherRelationService;
-import io.kovin.dispatch.management.system.utils.ErrorMessage;
 import io.kovin.dispatch.management.system.validation.DaysOffValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -82,22 +81,17 @@ public class DaysOffFacade {
     }
 
     private DaysOffPeriodEntity getDaysOffPeriodEntity(UpsertDayOffPeriodRequest request, DriverDispatcherRelationEntity relation) {
-        DaysOffPeriodEntity initialDaysOffPeriod = getInitialDaysOffPeriod(request.daysOffPeriodId());
-        return initialDaysOffPeriod.toBuilder()
+        DaysOffPeriodEntity daysOffPeriod = getOrCreateDaysOffPeriod(request.daysOffPeriodId());
+        return daysOffPeriod.toBuilder()
             .startDate(request.startDate())
             .endDate(request.endDate())
             .driverDispatcherRelation(relation)
             .build();
     }
 
-    private DaysOffPeriodEntity getInitialDaysOffPeriod(String daysOffPeriodId) {
+    private DaysOffPeriodEntity getOrCreateDaysOffPeriod(String daysOffPeriodId) {
         if (daysOffPeriodId != null) {
-            DaysOffPeriodEntity entity = daysOffService.getDaysOffPeriodByUuid(daysOffPeriodId);
-            LocalDate now = LocalDate.now();
-            if (now.isAfter(entity.getEndDate())) {
-                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.DAYS_OFF_PERIOD_HAS_ENDED);
-            }
-            return entity;
+            return daysOffService.getDaysOffPeriodByUuid(daysOffPeriodId);
         }
 
         return DaysOffPeriodEntity.builder().uuid(UUID.randomUUID().toString()).build();

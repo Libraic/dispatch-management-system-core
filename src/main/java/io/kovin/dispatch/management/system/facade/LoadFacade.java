@@ -1,14 +1,11 @@
 package io.kovin.dispatch.management.system.facade;
 
-import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOAD_WAS_ALREADY_DELIVERED;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.mapper.LoadObjectsCreator;
 import io.kovin.dispatch.management.system.model.persistence.LoadLocationEntity;
@@ -62,15 +59,15 @@ public class LoadFacade {
 
         DriverDispatcherRelationEntity relation = driverDispatcherRelationService.getRelationByUuid(request.relationUuid());
 
-        LoadEntity loadEntity = createLoadEntity(request, relation);
-        List<LoadLocationEntity> loadLocationEntities = loadLocationFacade.createLoadLocations(request.locations(), loadEntity);
-        loadLocationEntities.sort(Comparator.comparing(LoadLocationEntity::getLocationOrder));
+        List<CreateLoadLocationRequest> locations = request.locations();
+        locations.sort(Comparator.comparing(CreateLoadLocationRequest::order));
 
-        loadEntity.getLocations().clear();
-        loadEntity.getLocations().addAll(loadLocationEntities);
+        LoadEntity loadEntity = createLoadEntity(request, locations, relation);
+        loadLocationFacade.createLoadLocations(locations, loadEntity);
+
         loadService.persistLoad(loadEntity);
 
-        return loadObjectsCreator.createGetLoadResponse(loadEntity, loadLocationEntities);
+        return loadObjectsCreator.createGetLoadResponse(loadEntity, loadEntity.getLocations());
     }
 
     /**
@@ -127,14 +124,17 @@ public class LoadFacade {
         loadService.deleteLoadByUuid(loadUuid);
     }
 
-    private LoadEntity createLoadEntity(UpsertLoadRequest request, DriverDispatcherRelationEntity relation) {
-        LoadEntity loadEntity = getInitialLoadEntity(request.loadUuid());
-        List<CreateLoadLocationRequest> locations = request.locations();
-        locations.sort(Comparator.comparing(CreateLoadLocationRequest::order));
+    private LoadEntity createLoadEntity(
+        UpsertLoadRequest request,
+        List<CreateLoadLocationRequest> locations,
+        DriverDispatcherRelationEntity relation
+    ) {
+        LoadEntity loadEntity = getOrCreateLoadEntity(request.loadUuid());
+
         LocalDate startDate = locations.getFirst().date();
         LocalDate endDate = locations.getLast().date();
-        LoadEntity finalLoadEntity = loadEntity.toBuilder()
-            .loadStatus(loadEntity.getLoadStatus() != null ? loadEntity.getLoadStatus() : getLoadStatus(locations.getLast()))
+        LoadEntity updatedLoadEntity = loadEntity.toBuilder()
+            .loadStatus(getLoadStatus(request.loadStatus(), loadEntity.getLoadStatus(), locations.getLast()))
             .miles(request.miles())
             .revenue(request.revenue())
             .broker(request.broker())
@@ -146,30 +146,34 @@ public class LoadFacade {
             .locations(new ArrayList<>())
             .build();
 
-        return loadService.persistLoad(finalLoadEntity);
+        return loadService.persistLoad(updatedLoadEntity);
     }
 
-    private LoadEntity getInitialLoadEntity(String loadUuid) {
+    private LoadEntity getOrCreateLoadEntity(String loadUuid) {
         if (loadUuid != null) {
-            LoadEntity existingLoadEntity = loadService.getLoadByUuid(loadUuid);
-            LocalDateTime deliveryDateTime = loadLocationService.getDeliveryTime(existingLoadEntity.getLocations());
-            LocalDateTime now = LocalDateTime.now();
-            if (now.isAfter(deliveryDateTime)) {
-                throw DispatchManagementSystemException.ofBadRequest(LOAD_WAS_ALREADY_DELIVERED);
-            }
-
-            return existingLoadEntity;
+            return loadService.getLoadByUuid(loadUuid);
         }
-
 
         return LoadEntity.builder()
             .uuid(UUID.randomUUID().toString())
             .build();
     }
 
-    private LoadStatus getLoadStatus(CreateLoadLocationRequest lastCreateLoadLocationRequest) {
+    private LoadStatus getLoadStatus(
+        String requestedLoadStatus,
+        LoadStatus actualLoadStatus,
+        CreateLoadLocationRequest lastCreateLoadLocationRequest
+    ) {
+        if (requestedLoadStatus != null) {
+            return LoadStatus.from(requestedLoadStatus);
+        }
+
+        if (actualLoadStatus != null) {
+            return actualLoadStatus;
+        }
+
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime deliveryDateTime = LocalDateTime.of(lastCreateLoadLocationRequest.date(), lastCreateLoadLocationRequest.time());
-        return now.isAfter(deliveryDateTime) ? LoadStatus.DELIVERED : LoadStatus.DISPATCHED;
+        return now.isAfter(deliveryDateTime) ? LoadStatus.DELIVERED : LoadStatus.BOOKED;
     }
 }

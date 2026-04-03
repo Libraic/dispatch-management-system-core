@@ -1,12 +1,9 @@
 package io.kovin.dispatch.management.system.facade;
 
-import static io.kovin.dispatch.management.system.utils.ErrorMessage.VEHICLE_MAINTENANCE_RECORD_WAS_CLOSED;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.persistence.DriverDispatcherRelationEntity;
 import io.kovin.dispatch.management.system.model.persistence.VehicleMaintenanceRecordEntity;
 import io.kovin.dispatch.management.system.model.request.UpsertVehicleMaintenanceRecordRequest;
@@ -79,8 +76,8 @@ public class VehicleMaintenanceFacade {
         UpsertVehicleMaintenanceRecordRequest request,
         DriverDispatcherRelationEntity driverDispatcherRelationEntity
     ) {
-        VehicleMaintenanceRecordEntity initialVehicleMaintenanceRecordEntity = getInitialVehicleMaintenanceRecordEntity(request.vehicleMaintenanceRecordUuid());
-        return initialVehicleMaintenanceRecordEntity.toBuilder()
+        VehicleMaintenanceRecordEntity vehicleMaintenanceRecordEntity = getOrCreateVehicleMaintenanceRecordEntity(request.vehicleMaintenanceRecordUuid());
+        return vehicleMaintenanceRecordEntity.toBuilder()
             .startDate(request.startDate())
             .endDate(request.endDate())
             .location(request.location())
@@ -88,14 +85,9 @@ public class VehicleMaintenanceFacade {
             .build();
     }
 
-    private VehicleMaintenanceRecordEntity getInitialVehicleMaintenanceRecordEntity(String vehicleMaintenanceRecordUuid) {
+    private VehicleMaintenanceRecordEntity getOrCreateVehicleMaintenanceRecordEntity(String vehicleMaintenanceRecordUuid) {
         if (vehicleMaintenanceRecordUuid != null) {
-            VehicleMaintenanceRecordEntity entity = vehicleMaintenanceService.getVehicleMaintenanceRecordByUuid(vehicleMaintenanceRecordUuid);
-            LocalDate now = LocalDate.now();
-            if (entity.getEndDate().isBefore(now)) {
-                throw DispatchManagementSystemException.ofBadRequest(VEHICLE_MAINTENANCE_RECORD_WAS_CLOSED);
-            }
-            return entity;
+            return vehicleMaintenanceService.getVehicleMaintenanceRecordByUuid(vehicleMaintenanceRecordUuid);
         }
 
         return VehicleMaintenanceRecordEntity.builder()

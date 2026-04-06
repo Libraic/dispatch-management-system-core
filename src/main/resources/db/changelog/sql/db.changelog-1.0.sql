@@ -416,6 +416,6 @@ COMMENT ON COLUMN t_days_off_periods.driver_dispatcher_relation_id IS 'The ID of
 -- changeset libra:014
 -- comment: Create the time column in the t_load_locations table.
 ALTER TABLE t_load_locations
-    ADD COLUMN time TIME DEFAULT '12:00:00';
+    ADD COLUMN time TIME;
 
 COMMENT ON COLUMN t_load_locations.time IS 'The estimated time of arrival at the provided location.';

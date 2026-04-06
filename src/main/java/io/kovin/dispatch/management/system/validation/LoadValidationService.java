@@ -3,6 +3,7 @@ package io.kovin.dispatch.management.system.validation;
 import ch.qos.logback.core.util.StringUtil;
 import java.util.List;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
+import io.kovin.dispatch.management.system.model.persistence.enums.LocationType;
 import io.kovin.dispatch.management.system.model.request.CreateLoadLocationRequest;
 import io.kovin.dispatch.management.system.model.request.UpsertLoadRequest;
 import io.kovin.dispatch.management.system.utils.BigDecimalUtils;
@@ -69,7 +70,8 @@ public class LoadValidationService {
                 throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.LOCATION_LABEL_IS_MANDATORY);
             }
 
-            if (current.time() == null) {
+            LocationType locationType = LocationType.from(current.label());
+            if (List.of(LocationType.DELIVERY, LocationType.PICK_UP).contains(locationType) && current.time() == null) {
                 throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.TIME_IS_MANDATORY);
             }
         }

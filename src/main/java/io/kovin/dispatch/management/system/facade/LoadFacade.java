@@ -12,6 +12,7 @@ import io.kovin.dispatch.management.system.model.persistence.LoadLocationEntity;
 import io.kovin.dispatch.management.system.model.persistence.DriverDispatcherRelationEntity;
 import io.kovin.dispatch.management.system.model.persistence.LoadEntity;
 import io.kovin.dispatch.management.system.model.persistence.enums.LoadStatus;
+import io.kovin.dispatch.management.system.model.persistence.enums.LocationType;
 import io.kovin.dispatch.management.system.model.request.CreateLoadLocationRequest;
 import io.kovin.dispatch.management.system.model.request.UpsertLoadRequest;
 import io.kovin.dispatch.management.system.model.response.GetLoadStartingPointResponse;
@@ -19,6 +20,7 @@ import io.kovin.dispatch.management.system.model.response.load.GenericLoadRespon
 import io.kovin.dispatch.management.system.service.DriverDispatcherRelationService;
 import io.kovin.dispatch.management.system.service.LoadLocationService;
 import io.kovin.dispatch.management.system.service.LoadService;
+import io.kovin.dispatch.management.system.utils.ErrorMessage;
 import io.kovin.dispatch.management.system.validation.LoadValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -101,7 +103,7 @@ public class LoadFacade {
     public GetLoadStartingPointResponse getLoadStartingPoint(String relationUuid, LocalDate date) {
         LoadEntity load = loadService.getLoadByRelationUuidAndDateBetween(relationUuid, date);
         if (load == null || load.getLocations().isEmpty()) {
-            return new GetLoadStartingPointResponse(null, null);
+            return new GetLoadStartingPointResponse(null);
         }
 
         List<LoadLocationEntity> locations = load.getLocations()
@@ -109,7 +111,7 @@ public class LoadFacade {
             .sorted(Comparator.comparing(LoadLocationEntity::getLocationOrder))
             .toList();
         LoadLocationEntity startingPoint = locations.getLast();
-        return new GetLoadStartingPointResponse(startingPoint.getLocation(), startingPoint.getTime());
+        return new GetLoadStartingPointResponse(startingPoint.getLocation());
     }
 
     /**
@@ -131,8 +133,8 @@ public class LoadFacade {
     ) {
         LoadEntity loadEntity = getOrCreateLoadEntity(request.loadUuid());
 
-        LocalDate startDate = locations.getFirst().date();
-        LocalDate endDate = locations.getLast().date();
+        LocalDate startDate = getStartDate(locations);
+        LocalDate endDate = getEndDate(locations);
         LoadEntity updatedLoadEntity = loadEntity.toBuilder()
             .loadStatus(getLoadStatus(request.loadStatus(), loadEntity.getLoadStatus(), locations.getLast()))
             .miles(request.miles())
@@ -175,5 +177,25 @@ public class LoadFacade {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime deliveryDateTime = LocalDateTime.of(lastCreateLoadLocationRequest.date(), lastCreateLoadLocationRequest.time());
         return now.isAfter(deliveryDateTime) ? LoadStatus.DELIVERED : LoadStatus.BOOKED;
+    }
+
+    private LocalDate getStartDate(List<CreateLoadLocationRequest> locations) {
+        for (CreateLoadLocationRequest location : locations) {
+            if (LocationType.from(location.label()) == LocationType.PICK_UP) {
+                return location.date();
+            }
+        }
+
+        throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.PICK_UP_LOCATION_MISSING);
+    }
+
+    private LocalDate getEndDate(List<CreateLoadLocationRequest> locations) {
+        for (int i = locations.size() - 1; i >= 0; i--) {
+            if (LocationType.from(locations.get(i).label()) == LocationType.DELIVERY) {
+                return locations.get(i).date();
+            }
+        }
+
+        throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.DELIVERY_LOCATION_MISSING);
     }
 }

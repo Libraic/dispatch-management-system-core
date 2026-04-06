@@ -48,6 +48,7 @@ public class ErrorMessage {
     public static final String LOCATIONS_CHRONOLOGICAL_ORDER = "The locations must be in chronological order.";
     public static final String LOAD_NOT_FOUND = "The load was not found.";
     public static final String LOAD_NOT_FOUND_BY_UUID = "The load with UUID=[%s] was not found.";
+    public static final String DELIVERY_LOCATION_MISSING = "The delivery location is missing.";
     public static final String DRIVER_DISPATCHER_RELATION_NOT_FOUND = "The Driver-Dispatcher relation was not found.";
     public static final String DRIVER_DISPATCHER_RELATION_NOT_FOUND_BY_UUID = "The Driver-Dispatcher relation with UUID=[%s] was not found.";
     public static final String INVALID_LOAD_STATUS_BE = "The load status=[%s] is invalid.";
@@ -58,9 +59,10 @@ public class ErrorMessage {
     public static final String MILES_ARE_MANDATORY = "Miles are required.";
     public static final String NEGATIVE_MILES = "The miles cannot be negative.";
     public static final String NEGATIVE_REVENUE = "The revenue cannot be negative.";
+    public static final String PICK_UP_LOCATION_MISSING = "The pick up location is missing.";
     public static final String REVENUE_IS_MANDATORY = "The revenue is required.";
     public static final String START_DATE_BEFORE_END_DATE = "The start date cannot be after the end date.";
-    public static final String TIME_IS_MANDATORY = "The time is required.";
+    public static final String TIME_IS_MANDATORY = "The time is required for this location type.";
 
     /**
      * Error messages related to Vehicle Maintenance Records.

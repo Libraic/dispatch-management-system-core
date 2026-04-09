@@ -1,10 +1,5 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:54322/kovin_dms
-    username: kovin
-    password: kovin
-    driver-class-name: org.postgresql.Driver
-
 logging:
   file:
     name: logs/dms-core.log
+  level:
+    io.kovin.dispatch.management.system: DEBUG

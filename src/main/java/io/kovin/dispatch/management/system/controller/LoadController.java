@@ -8,7 +8,6 @@ import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.GetLoadStartingPointResponse;
 import io.kovin.dispatch.management.system.model.response.load.GenericLoadResponse;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
-import io.kovin.dispatch.management.system.service.IngestionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class LoadController {
 
     private final LoadFacade loadFacade;
-    private final IngestionService ingestionService;
 
     @PutMapping
     public ResponseEntity<ApiResponse<GenericLoadResponse, ErrorResponse>> upsertLoad(
@@ -42,9 +40,10 @@ public class LoadController {
     }
 
     @PostMapping("/upload")
-    public void uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ApiResponse<GenericLoadResponse, ErrorResponse>> ingestDocument(@RequestParam("file") MultipartFile file) {
         log.info("Received file: [{}]", file.getOriginalFilename());
-        ingestionService.ingestDocument(file);
+        GenericLoadResponse response = loadFacade.ingestDocument(file);
+        return ResponseEntity.ok(ApiResponse.fromData(response));
     }
 
     @GetMapping("/relations/{relationUuid}")

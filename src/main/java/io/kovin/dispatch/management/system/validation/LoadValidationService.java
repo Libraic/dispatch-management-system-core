@@ -1,14 +1,27 @@
 package io.kovin.dispatch.management.system.validation;
 
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.BROKER_IS_MANDATORY;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOAD_DATE_IS_MANDATORY;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOCATIONS_ARE_MANDATORY;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOCATIONS_CHRONOLOGICAL_ORDER;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOCATION_LABEL_IS_MANDATORY;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOCATION_MANDATORY;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOCATION_TYPE_ORDER_ERROR;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.MILES_ARE_MANDATORY;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.NEGATIVE_MILES;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.NEGATIVE_REVENUE;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.REVENUE_IS_MANDATORY;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.TIME_IS_MANDATORY;
+
 import ch.qos.logback.core.util.StringUtil;
 import java.util.List;
+import java.util.Stack;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.persistence.enums.LocationType;
 import io.kovin.dispatch.management.system.model.request.CreateLoadLocationRequest;
 import io.kovin.dispatch.management.system.model.request.UpsertLoadRequest;
 import io.kovin.dispatch.management.system.utils.BigDecimalUtils;
 import io.kovin.dispatch.management.system.utils.CollectionUtils;
-import io.kovin.dispatch.management.system.utils.ErrorMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,59 +34,88 @@ public class LoadValidationService {
     public void validateLoadUpsertion(UpsertLoadRequest request) {
         log.info("Validating the request to create the load.");
 
-        // These validations are only for the creation of the load.
         if (StringUtil.isNullOrEmpty(request.loadUuid())) {
             if (request.miles() == null) {
-                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.MILES_ARE_MANDATORY);
+                throw DispatchManagementSystemException.ofBadRequest(MILES_ARE_MANDATORY);
             }
 
             if (request.revenue() == null) {
-                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.REVENUE_IS_MANDATORY);
+                throw DispatchManagementSystemException.ofBadRequest(REVENUE_IS_MANDATORY);
             }
 
             if (StringUtil.isNullOrEmpty(request.broker())) {
-                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.BROKER_IS_MANDATORY);
+                throw DispatchManagementSystemException.ofBadRequest(BROKER_IS_MANDATORY);
             }
 
             validateLocations(request.locations());
         }
 
         if (BigDecimalUtils.isNegative(request.miles())) {
-            throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.NEGATIVE_MILES);
+            throw DispatchManagementSystemException.ofBadRequest(NEGATIVE_MILES);
         }
 
         if (BigDecimalUtils.isNegative(request.revenue())) {
-            throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.NEGATIVE_REVENUE);
+            throw DispatchManagementSystemException.ofBadRequest(NEGATIVE_REVENUE);
         }
     }
 
     private void validateLocations(List<CreateLoadLocationRequest> locations) {
         if (CollectionUtils.isEmpty(locations)) {
-            throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.LOCATIONS_ARE_MANDATORY);
+            throw DispatchManagementSystemException.ofBadRequest(LOCATIONS_ARE_MANDATORY);
         }
 
         for (int i = 0; i < locations.size(); i++) {
             CreateLoadLocationRequest current = locations.get(i);
             if (current.date() == null) {
-                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.LOAD_DATE_IS_MANDATORY);
+                throw DispatchManagementSystemException.ofBadRequest(LOAD_DATE_IS_MANDATORY);
             }
 
             if (i > 0 && locations.get(i - 1).date().isAfter(current.date())) {
-                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.LOCATIONS_CHRONOLOGICAL_ORDER);
+                throw DispatchManagementSystemException.ofBadRequest(LOCATIONS_CHRONOLOGICAL_ORDER);
             }
 
             if (current.location() == null) {
-                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.LOCATION_MANDATORY);
+                throw DispatchManagementSystemException.ofBadRequest(LOCATION_MANDATORY);
             }
 
             if (current.label() == null) {
-                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.LOCATION_LABEL_IS_MANDATORY);
+                throw DispatchManagementSystemException.ofBadRequest(LOCATION_LABEL_IS_MANDATORY);
             }
 
             LocationType locationType = LocationType.from(current.label());
             if (List.of(LocationType.DELIVERY, LocationType.PICK_UP).contains(locationType) && current.time() == null) {
-                throw DispatchManagementSystemException.ofBadRequest(ErrorMessage.TIME_IS_MANDATORY);
+                throw DispatchManagementSystemException.ofBadRequest(TIME_IS_MANDATORY);
             }
+        }
+
+        validateLocationTypesOrder(locations);
+    }
+
+    private void validateLocationTypesOrder(List<CreateLoadLocationRequest> locations) {
+        Stack<LocationType> s = new Stack<>();
+        RuntimeException exception = DispatchManagementSystemException.ofBadRequest(LOCATION_TYPE_ORDER_ERROR);
+        for (CreateLoadLocationRequest location : locations) {
+            LocationType type = LocationType.from(location.label());
+            if (type == LocationType.STARTING_POINT && location.order() != 0) {
+                throw exception;
+            }
+
+            if (type == LocationType.ENDING_POINT && location.order() != locations.size() - 1) {
+                throw exception;
+            }
+
+            if (type == LocationType.PICK_UP) {
+                s.add(type);
+            } else if (type == LocationType.DELIVERY) {
+                if (s.isEmpty()) {
+                    throw exception;
+                }
+                s.pop();
+            }
+        }
+
+        if (!s.isEmpty()) {
+            throw exception;
         }
     }
 }

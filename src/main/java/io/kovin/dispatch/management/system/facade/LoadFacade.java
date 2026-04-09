@@ -18,6 +18,7 @@ import io.kovin.dispatch.management.system.model.request.UpsertLoadRequest;
 import io.kovin.dispatch.management.system.model.response.GetLoadStartingPointResponse;
 import io.kovin.dispatch.management.system.model.response.load.GenericLoadResponse;
 import io.kovin.dispatch.management.system.service.DriverDispatcherRelationService;
+import io.kovin.dispatch.management.system.service.IngestionService;
 import io.kovin.dispatch.management.system.service.LoadLocationService;
 import io.kovin.dispatch.management.system.service.LoadService;
 import io.kovin.dispatch.management.system.utils.ErrorMessage;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Component
 @RequiredArgsConstructor
@@ -37,6 +39,7 @@ public class LoadFacade {
     private final LoadService loadService;
     private final LoadLocationService loadLocationService;
     private final DriverDispatcherRelationService driverDispatcherRelationService;
+    private final IngestionService ingestionService;
 
     private final LoadLocationFacade loadLocationFacade;
 
@@ -70,6 +73,15 @@ public class LoadFacade {
         loadService.persistLoad(loadEntity);
 
         return loadObjectsCreator.createGetLoadResponse(loadEntity, loadEntity.getLocations());
+    }
+
+    public GenericLoadResponse ingestDocument(MultipartFile file) {
+        GenericLoadResponse response = ingestionService.ingestDocument(file);
+        if (response != null) {
+            return response;
+        }
+
+        return GenericLoadResponse.builder().build();
     }
 
     /**

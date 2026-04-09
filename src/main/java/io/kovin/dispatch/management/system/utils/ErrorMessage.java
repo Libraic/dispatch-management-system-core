@@ -54,6 +54,7 @@ public class ErrorMessage {
     public static final String INVALID_LOAD_STATUS_BE = "The load status=[%s] is invalid.";
     public static final String INVALID_LOAD_STATUS_CLIENT = "Invalid load status.";
     public static final String LOCATION_LABEL_IS_MANDATORY = "The location label is required.";
+    public static final String LOCATION_TYPE_ORDER_ERROR = "The order of the locations is not valid.";
     public static final String LOCATIONS_ARE_MANDATORY = "The locations are required.";
     public static final String LOAD_DATE_IS_MANDATORY = "The date of the load is required.";
     public static final String MILES_ARE_MANDATORY = "Miles are required.";

@@ -17,14 +17,14 @@ public class DispatchManagementSystemException extends RuntimeException {
     }
 
     public static DispatchManagementSystemException of(String message, HttpStatus httpStatus) {
-        throw new DispatchManagementSystemException(message, httpStatus);
+        return new DispatchManagementSystemException(message, httpStatus);
     }
 
     public static DispatchManagementSystemException ofInternal(String message) {
-        throw new DispatchManagementSystemException(message, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new DispatchManagementSystemException(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     public static DispatchManagementSystemException ofBadRequest(String message) {
-        throw new DispatchManagementSystemException(message, HttpStatus.BAD_REQUEST);
+        return new DispatchManagementSystemException(message, HttpStatus.BAD_REQUEST);
     }
 }

@@ -23,7 +23,7 @@ public class PlannerController {
     private final PlannerFacade plannerFacade;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<GetDispatchingDataResponse>, ErrorResponse>> getWorkforcePlanningData(
+    public ResponseEntity<List<GetDispatchingDataResponse>> getWorkforcePlanningData(
         @RequestParam(name = "companyId") String companyId,
         @RequestParam(name = "startDate") LocalDate startDate,
         @RequestParam(name = "endDate") LocalDate endDate
@@ -35,6 +35,6 @@ public class PlannerController {
             endDate
         );
         List<GetDispatchingDataResponse> response = plannerFacade.getDriverLoadsForTimeframe(companyId, startDate, endDate);
-        return ResponseEntity.ok(ApiResponse.fromData(response));
+        return ResponseEntity.ok(response);
     }
 }

@@ -25,6 +25,7 @@ public class IngestionService {
         log.info("Starting ingesting the document.");
         try (PDDocument document = PDDocument.load(file.getInputStream())) {
             PDFTextStripper stripper = new PDFTextStripper();
+            log.debug("Extracting text from the document: [{}].", stripper.getText(document));
             var response = openAiService.extractContractData(stripper.getText(document));
             log.debug("Extracted data from the document: [{}]", response);
             List<?> output = getOutput(response);

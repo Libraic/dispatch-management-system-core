@@ -64,7 +64,8 @@ public class OpenAiService {
               The total payment for the load (often labeled "Rate", "Total", "Carrier Pay", or "Revenue", but must be something else as well).
             
               Miles:
-              Total miles for the load, if specified.
+              Total miles for the load, if specified (it can be the "Miles" field or something similar). The miles can be in floating-point format. 
+              If that is the case, just extract the integer part (no rounding). If we have something like "12.5 miles", just extract "12".
             
               Broker:
               The company that issued the load confirmation.
@@ -129,19 +130,19 @@ public class OpenAiService {
               Return JSON in this exact format:
             
               {
-                "revenue": null,
-                "miles": null,
-                "broker": "",
-                "representative": "",
-                "representativeContactNumber": "",
-                "startDate": "",
-                "endDate": "",
+                "revenue": revenueValue or null,
+                "miles": milesValue or null,
+                "broker": brokerValue or "",
+                "representative": representativeValue or "",
+                "representativeContactNumber": representativeContactNumberValue or "",
+                "startDate": startDateValue or "",
+                "endDate": endDateValue or "",
                 "locations": [
                   {
-                    "location": "",
-                    "date": "",
-                    "time": "",
-                    "label": "",
+                    "location": locationValue or "",
+                    "date": dateValue or "",
+                    "time": timeValue or "",
+                    "label": labelValue or "",
                     "order": null
                   }
                 ]

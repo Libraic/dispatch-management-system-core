@@ -88,7 +88,7 @@ public class LoadValidationService {
             }
         }
 
-        validateLocationTypesOrder(locations);
+//        validateLocationTypesOrder(locations);
     }
 
     private void validateLocationTypesOrder(List<CreateLoadLocationRequest> locations) {

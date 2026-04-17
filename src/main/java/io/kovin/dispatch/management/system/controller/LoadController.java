@@ -4,10 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import io.kovin.dispatch.management.system.facade.LoadFacade;
 import io.kovin.dispatch.management.system.model.request.UpsertLoadRequest;
-import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.GetLoadStartingPointResponse;
 import io.kovin.dispatch.management.system.model.response.load.GenericLoadResponse;
-import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -31,23 +29,23 @@ public class LoadController {
     private final LoadFacade loadFacade;
 
     @PutMapping
-    public ResponseEntity<ApiResponse<GenericLoadResponse, ErrorResponse>> upsertLoad(
+    public ResponseEntity<GenericLoadResponse> upsertLoad(
         @RequestBody UpsertLoadRequest upsertLoadRequest
     ) {
         log.info("A request to upsert the load was received.");
         GenericLoadResponse response = loadFacade.upsertLoad(upsertLoadRequest);
-        return ResponseEntity.ok(ApiResponse.fromData(response));
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<ApiResponse<GenericLoadResponse, ErrorResponse>> ingestDocument(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<GenericLoadResponse> ingestDocument(@RequestParam("file") MultipartFile file) {
         log.info("Received file: [{}]", file.getOriginalFilename());
         GenericLoadResponse response = loadFacade.ingestDocument(file);
-        return ResponseEntity.ok(ApiResponse.fromData(response));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/relations/{relationUuid}")
-    public ResponseEntity<ApiResponse<List<GenericLoadResponse>, ErrorResponse>> getRelationLoadsForTimeframe(
+    public ResponseEntity<List<GenericLoadResponse>> getRelationLoadsForTimeframe(
         @PathVariable(name = "relationUuid") String relationUuid,
         @RequestParam(name = "startDate") LocalDate startDate,
         @RequestParam(name = "endDate") LocalDate endDate
@@ -59,21 +57,21 @@ public class LoadController {
             endDate
         );
         List<GenericLoadResponse> response = loadFacade.getLoadResponses(relationUuid, startDate, endDate);
-        return ResponseEntity.ok(ApiResponse.fromData(response));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/relations/{relationUuid}/starting-point")
-    public ResponseEntity<ApiResponse<GetLoadStartingPointResponse, ErrorResponse>> getLoadStartingPoint(
+    public ResponseEntity<GetLoadStartingPointResponse> getLoadStartingPoint(
         @PathVariable(name = "relationUuid") String relationUuid,
         @RequestParam(name = "date") LocalDate date
     ) {
         log.info("A request to retrieve the starting point for date=[{}] was received.", date);
         GetLoadStartingPointResponse response = loadFacade.getLoadStartingPoint(relationUuid, date);
-        return ResponseEntity.ok(ApiResponse.fromData(response));
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{loadUuid}")
-    public ResponseEntity<ApiResponse<Void, ErrorResponse>> deleteLoads(@PathVariable String loadUuid) {
+    public ResponseEntity<Void> deleteLoads(@PathVariable String loadUuid) {
         log.info("A request to remove the Load with the UUID=[{}} was received.", loadUuid);
         loadFacade.deleteLoad(loadUuid);
         return ResponseEntity.noContent().build();

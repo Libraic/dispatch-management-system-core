@@ -419,3 +419,10 @@ ALTER TABLE t_load_locations
     ADD COLUMN time TIME;
 
 COMMENT ON COLUMN t_load_locations.time IS 'The estimated time of arrival at the provided location.';
+
+-- changeset libra:015
+-- comment: Create the address column in the t_load_locations table.
+ALTER TABLE t_load_locations
+    ADD COLUMN address VARCHAR;
+
+COMMENT ON COLUMN t_load_locations.address IS 'The address of the provided location.';

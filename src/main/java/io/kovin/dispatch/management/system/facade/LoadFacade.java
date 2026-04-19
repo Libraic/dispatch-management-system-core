@@ -115,7 +115,7 @@ public class LoadFacade {
     public GetLoadStartingPointResponse getLoadStartingPoint(String relationUuid, LocalDate date) {
         LoadEntity load = loadService.getLoadByRelationUuidAndDateBetween(relationUuid, date);
         if (load == null || load.getLocations().isEmpty()) {
-            return new GetLoadStartingPointResponse(null);
+            return new GetLoadStartingPointResponse(null, null);
         }
 
         List<LoadLocationEntity> locations = load.getLocations()
@@ -123,7 +123,7 @@ public class LoadFacade {
             .sorted(Comparator.comparing(LoadLocationEntity::getLocationOrder))
             .toList();
         LoadLocationEntity startingPoint = locations.getLast();
-        return new GetLoadStartingPointResponse(startingPoint.getLocation());
+        return new GetLoadStartingPointResponse(startingPoint.getLocation(), startingPoint.getAddress());
     }
 
     /**

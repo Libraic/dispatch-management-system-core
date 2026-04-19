@@ -45,6 +45,7 @@ public class LoadLocationFacade {
                 .time(createLoadLocationRequest.time())
                 .load(loadEntity)
                 .locationOrder(order)
+                .address(createLoadLocationRequest.address())
                 .build();
             loadLocationEntities.add(loadLocationEntity);
         }

@@ -8,7 +8,8 @@ public record CreateLoadLocationRequest(
     LocalDate date,
     LocalTime time,
     String location,
-    Integer order
+    Integer order,
+    String address
 ) {
 
 }

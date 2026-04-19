@@ -1,13 +1,10 @@
 package io.kovin.dispatch.management.system.mapper;
 
-import java.time.LocalDate;
 import java.util.List;
-
 import io.kovin.dispatch.management.system.model.persistence.LoadLocationEntity;
 import io.kovin.dispatch.management.system.model.persistence.DispatcherEntity;
 import io.kovin.dispatch.management.system.model.persistence.LoadEntity;
 import io.kovin.dispatch.management.system.model.persistence.DriverEntity;
-import io.kovin.dispatch.management.system.model.persistence.enums.LoadStatus;
 import io.kovin.dispatch.management.system.model.response.GetDispatcherResponse;
 import io.kovin.dispatch.management.system.model.response.GetDriverResponse;
 import io.kovin.dispatch.management.system.model.response.load.GetLocationResponse;
@@ -47,13 +44,15 @@ public class LoadObjectsCreator {
             .startDate(load.getStartDate())
             .endDate(load.getEndDate())
             .locations(loadLocations.stream()
-                .map(locationData -> new GetLocationResponse(
-                    locationData.getLocation(),
-                    locationData.getDate(),
-                    locationData.getTime(),
-                    locationData.getLocationType().getType(),
-                    locationData.getLocationOrder()
-                )).toList()
+                .map(locationData -> GetLocationResponse.builder()
+                    .location(locationData.getLocation())
+                    .date(locationData.getDate())
+                    .time(locationData.getTime())
+                    .label(locationData.getLocationType().getType())
+                    .order(locationData.getLocationOrder())
+                    .address(locationData.getAddress())
+                    .build()
+                ).toList()
             ).build();
     }
 }

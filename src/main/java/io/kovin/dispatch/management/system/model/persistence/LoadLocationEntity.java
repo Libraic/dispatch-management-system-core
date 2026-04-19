@@ -3,8 +3,6 @@ package io.kovin.dispatch.management.system.model.persistence;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
-
-import io.kovin.dispatch.management.system.model.persistence.enums.LoadStatus;
 import io.kovin.dispatch.management.system.model.persistence.enums.LocationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,6 +46,9 @@ public class LoadLocationEntity {
 
     @Column
     private LocalTime time;
+
+    @Column
+    private String address;
 
     @Column
     @Enumerated(EnumType.STRING)

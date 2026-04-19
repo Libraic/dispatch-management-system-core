@@ -15,7 +15,6 @@ import static io.kovin.dispatch.management.system.utils.ErrorMessage.TIME_IS_MAN
 
 import ch.qos.logback.core.util.StringUtil;
 import java.util.List;
-import java.util.Stack;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.persistence.enums.LocationType;
 import io.kovin.dispatch.management.system.model.request.CreateLoadLocationRequest;
@@ -88,34 +87,17 @@ public class LoadValidationService {
             }
         }
 
-//        validateLocationTypesOrder(locations);
+        validateLocationTypesOrder(locations);
     }
 
     private void validateLocationTypesOrder(List<CreateLoadLocationRequest> locations) {
-        Stack<LocationType> s = new Stack<>();
-        RuntimeException exception = DispatchManagementSystemException.ofBadRequest(LOCATION_TYPE_ORDER_ERROR);
+        String pickUpLabel = null;
         for (CreateLoadLocationRequest location : locations) {
-            LocationType type = LocationType.from(location.label());
-            if (type == LocationType.STARTING_POINT && location.order() != 0) {
-                throw exception;
+            if (LocationType.PICK_UP.getType().equals(location.label())) {
+                pickUpLabel = location.label();
+            } else if (LocationType.DELIVERY.getType().equals(location.label()) && pickUpLabel == null) {
+                throw DispatchManagementSystemException.ofBadRequest(LOCATION_TYPE_ORDER_ERROR);
             }
-
-            if (type == LocationType.ENDING_POINT && location.order() != locations.size() - 1) {
-                throw exception;
-            }
-
-            if (type == LocationType.PICK_UP) {
-                s.add(type);
-            } else if (type == LocationType.DELIVERY) {
-                if (s.isEmpty()) {
-                    throw exception;
-                }
-                s.pop();
-            }
-        }
-
-        if (!s.isEmpty()) {
-            throw exception;
         }
     }
 }

@@ -57,6 +57,7 @@ public class ErrorMessage {
     public static final String LOCATION_TYPE_ORDER_ERROR = "The order of the locations is not valid.";
     public static final String LOCATIONS_ARE_MANDATORY = "The locations are required.";
     public static final String LOAD_DATE_IS_MANDATORY = "The date of the load is required.";
+    public static final String LOAD_NUMBER_IS_MANDATORY = "The load number is required.";
     public static final String MILES_ARE_MANDATORY = "Miles are required.";
     public static final String NEGATIVE_LOADED_MILES = "The loaded miles cannot be negative.";
     public static final String NEGATIVE_EMPTY_MILES = "The empty miles cannot be negative.";

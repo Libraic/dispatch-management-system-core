@@ -38,6 +38,9 @@ public class LoadEntity extends SchedulableEntity {
     private Long id;
 
     @Column
+    private String loadNumber;
+
+    @Column
     private BigDecimal revenue;
 
     @Column

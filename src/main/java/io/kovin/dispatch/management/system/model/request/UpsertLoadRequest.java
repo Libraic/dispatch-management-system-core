@@ -5,6 +5,7 @@ import java.util.List;
 
 public record UpsertLoadRequest(
     String loadUuid,
+    String loadNumber,
     String relationUuid,
     BigDecimal revenue,
     BigDecimal loadedMiles,

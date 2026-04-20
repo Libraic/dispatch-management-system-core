@@ -35,6 +35,7 @@ public class LoadObjectsCreator {
     public GenericLoadResponse createGetLoadResponse(LoadEntity load, List<LoadLocationEntity> loadLocations) {
         return GenericLoadResponse.builder()
             .loadUuid(load.getUuid())
+            .loadNumber(load.getLoadNumber())
             .loadedMiles(load.getLoadedMiles())
             .emptyMiles(load.getEmptyMiles())
             .revenue(load.getRevenue())

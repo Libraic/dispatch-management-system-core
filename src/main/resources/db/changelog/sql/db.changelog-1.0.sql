@@ -436,3 +436,10 @@ ALTER TABLE t_loads
     ADD COLUMN empty_miles DECIMAL(6, 2);
 
 COMMENT ON COLUMN t_loads.empty_miles IS 'The distance a truck drives without carrying any cargo.';
+
+-- changeset libra:017
+-- comment: Add the load_number column to t_loads table.
+ALTER TABLE t_loads
+    ADD COLUMN load_number VARCHAR;
+
+COMMENT ON COLUMN t_loads.load_number IS 'The load number.';

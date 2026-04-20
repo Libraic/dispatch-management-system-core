@@ -8,6 +8,7 @@ import lombok.Builder;
 @Builder
 public record GenericLoadResponse(
     String loadUuid,
+    String loadNumber,
     BigDecimal revenue,
     BigDecimal loadedMiles,
     BigDecimal emptyMiles,

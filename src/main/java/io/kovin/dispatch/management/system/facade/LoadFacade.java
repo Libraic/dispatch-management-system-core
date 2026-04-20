@@ -148,6 +148,7 @@ public class LoadFacade {
         LocalDate startDate = getStartDate(locations);
         LocalDate endDate = getEndDate(locations);
         LoadEntity updatedLoadEntity = loadEntity.toBuilder()
+            .loadNumber(request.loadNumber())
             .loadStatus(getLoadStatus(request.loadStatus(), loadEntity.getLoadStatus(), locations.getLast()))
             .loadedMiles(request.loadedMiles())
             .emptyMiles(request.emptyMiles())

@@ -2,6 +2,7 @@ package io.kovin.dispatch.management.system.validation;
 
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.BROKER_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOAD_DATE_IS_MANDATORY;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOAD_NUMBER_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOCATIONS_ARE_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOCATIONS_CHRONOLOGICAL_ORDER;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOCATION_LABEL_IS_MANDATORY;
@@ -35,6 +36,10 @@ public class LoadValidationService {
         log.info("Validating the request to create the load.");
 
         if (StringUtil.isNullOrEmpty(request.loadUuid())) {
+            if (StringUtil.isNullOrEmpty(request.loadNumber())) {
+                throw DispatchManagementSystemException.ofBadRequest(LOAD_NUMBER_IS_MANDATORY);
+            }
+
             if (request.loadedMiles() == null) {
                 throw DispatchManagementSystemException.ofBadRequest(MILES_ARE_MANDATORY);
             }

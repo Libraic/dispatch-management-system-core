@@ -25,7 +25,7 @@ public enum ImpactedField {
     DISPATCHER("dispatcher"),
     DRIVER("driver"),
     REVENUE("revenue"),
-    MILES("miles"),
+    MILES("loadedMiles"),
 
     /**
      * Fields related to Asset (Trailer/Truck) registration.

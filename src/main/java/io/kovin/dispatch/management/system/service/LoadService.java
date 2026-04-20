@@ -25,7 +25,7 @@ public class LoadService {
      * Logs the UUID of the load before saving it to provide traceability.
      *
      * @param loadEntity the load entity to be persisted. It contains details such as
-     *                   UUID, start and end dates, revenue, miles, broker information,
+     *                   UUID, start and end dates, revenue, loadedMiles, broker information,
      *                   load status, and associated driver-dispatcher relation.
      */
     public LoadEntity persistLoad(LoadEntity loadEntity) {

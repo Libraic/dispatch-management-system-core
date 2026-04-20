@@ -58,7 +58,8 @@ public class ErrorMessage {
     public static final String LOCATIONS_ARE_MANDATORY = "The locations are required.";
     public static final String LOAD_DATE_IS_MANDATORY = "The date of the load is required.";
     public static final String MILES_ARE_MANDATORY = "Miles are required.";
-    public static final String NEGATIVE_MILES = "The miles cannot be negative.";
+    public static final String NEGATIVE_LOADED_MILES = "The loaded miles cannot be negative.";
+    public static final String NEGATIVE_EMPTY_MILES = "The empty miles cannot be negative.";
     public static final String NEGATIVE_REVENUE = "The revenue cannot be negative.";
     public static final String PICK_UP_LOCATION_MISSING = "The pick up location is missing.";
     public static final String REVENUE_IS_MANDATORY = "The revenue is required.";

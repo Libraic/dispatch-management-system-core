@@ -51,10 +51,10 @@ public class LoadFacade {
      * the response with detailed information.
      *
      * @param request the input data for inserting or updating a load, including company, dispatcher, and driver
-     *                identifiers, load details such as revenue and miles, broker and representative information,
+     *                identifiers, load details such as revenue and loadedMiles, broker and representative information,
      *                and a list of load location details.
      * @return a response containing details of the inserted or updated load, including its UUID, start and end dates,
-     * revenue, miles, broker, representative, load status, and a list of its locations.
+     * revenue, loadedMiles, broker, representative, load status, and a list of its locations.
      * @throws DispatchManagementSystemException if any validation fails, such as missing mandatory fields or
      *                                           invalid driver-dispatcher relationships.
      */
@@ -149,7 +149,8 @@ public class LoadFacade {
         LocalDate endDate = getEndDate(locations);
         LoadEntity updatedLoadEntity = loadEntity.toBuilder()
             .loadStatus(getLoadStatus(request.loadStatus(), loadEntity.getLoadStatus(), locations.getLast()))
-            .miles(request.miles())
+            .loadedMiles(request.loadedMiles())
+            .emptyMiles(request.emptyMiles())
             .revenue(request.revenue())
             .broker(request.broker())
             .representative(request.representative())

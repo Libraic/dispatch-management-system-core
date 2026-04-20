@@ -426,3 +426,13 @@ ALTER TABLE t_load_locations
     ADD COLUMN address VARCHAR;
 
 COMMENT ON COLUMN t_load_locations.address IS 'The address of the provided location.';
+
+-- changeset libra:016
+-- comment: Rename the loadedMiles column in the t_loads table to loaded_miles and add an empty_miles column.
+ALTER TABLE t_loads
+    RENAME COLUMN miles TO loaded_miles;
+
+ALTER TABLE t_loads
+    ADD COLUMN empty_miles DECIMAL(6, 2);
+
+COMMENT ON COLUMN t_loads.empty_miles IS 'The distance a truck drives without carrying any cargo.';

@@ -8,7 +8,8 @@ import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOCATION_LA
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOCATION_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOCATION_TYPE_ORDER_ERROR;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.MILES_ARE_MANDATORY;
-import static io.kovin.dispatch.management.system.utils.ErrorMessage.NEGATIVE_MILES;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.NEGATIVE_EMPTY_MILES;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.NEGATIVE_LOADED_MILES;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.NEGATIVE_REVENUE;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.REVENUE_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.TIME_IS_MANDATORY;
@@ -34,7 +35,7 @@ public class LoadValidationService {
         log.info("Validating the request to create the load.");
 
         if (StringUtil.isNullOrEmpty(request.loadUuid())) {
-            if (request.miles() == null) {
+            if (request.loadedMiles() == null) {
                 throw DispatchManagementSystemException.ofBadRequest(MILES_ARE_MANDATORY);
             }
 
@@ -49,8 +50,12 @@ public class LoadValidationService {
             validateLocations(request.locations());
         }
 
-        if (BigDecimalUtils.isNegative(request.miles())) {
-            throw DispatchManagementSystemException.ofBadRequest(NEGATIVE_MILES);
+        if (BigDecimalUtils.isNegative(request.loadedMiles())) {
+            throw DispatchManagementSystemException.ofBadRequest(NEGATIVE_LOADED_MILES);
+        }
+
+        if (request.emptyMiles() != null && BigDecimalUtils.isNegative(request.emptyMiles())) {
+            throw DispatchManagementSystemException.ofBadRequest(NEGATIVE_EMPTY_MILES);
         }
 
         if (BigDecimalUtils.isNegative(request.revenue())) {

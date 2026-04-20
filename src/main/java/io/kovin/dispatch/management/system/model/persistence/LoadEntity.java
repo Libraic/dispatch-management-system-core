@@ -1,9 +1,11 @@
 package io.kovin.dispatch.management.system.model.persistence;
 
 import io.kovin.dispatch.management.system.model.persistence.enums.LoadStatus;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,7 +41,10 @@ public class LoadEntity extends SchedulableEntity {
     private BigDecimal revenue;
 
     @Column
-    private BigDecimal miles;
+    private BigDecimal loadedMiles;
+
+    @Column
+    private BigDecimal emptyMiles;
 
     @Column
     private String broker;

@@ -63,10 +63,16 @@ public class OpenAiService {
               Revenue:
               The total payment for the load (often labeled "Rate", "Total", "Carrier Pay", or "Revenue", but must be something else as well).
             
-              Miles:
-              Total miles for the load, if specified (it can be the "Miles" field or something similar). The miles can be in floating-point format. 
+              Loaded Miles:
+              The total number of miles for the load (the miles the truck transported a cargo), if specified (it can be the "Miles" field or something similar). The miles can be in floating-point format. 
               If that is the case, just extract the integer part (no rounding). If we have something like "12.5 miles", just extract "12".
             
+              Empty Miles:
+              The miles that were not loaded. They may be missing, in which case just default to null. These miles can also be in floating-point format. 
+              
+              Load Number:
+              Basically, this is the number of the document (it may be in the header of the document, preceded/succeded by a hashtag (#) sign.
+              
               Broker:
               The company that issued the load confirmation.
             
@@ -131,7 +137,9 @@ public class OpenAiService {
             
               {
                 "revenue": revenueValue or null,
-                "miles": milesValue or null,
+                "loadedMiles": loadedMiles value or null,
+                "emptyMiles": emptyMilesValue or null,
+                "loadNumber": loadNumberValue or "",
                 "broker": brokerValue or "",
                 "representative": representativeValue or "",
                 "representativeContactNumber": representativeContactNumberValue or "",

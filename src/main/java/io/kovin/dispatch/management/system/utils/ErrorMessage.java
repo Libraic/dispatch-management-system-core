@@ -10,6 +10,7 @@ public class ErrorMessage {
      * Common error messages.
      */
     public static final String CITIES_LOAD_ERROR = "Failed to load cities.";
+    public static final String EXTERNAL_SERVICE_ERROR = "Failed to call external service.";
     public static final String INVALID_ZIP_CODE = "The provided zip code=[%s] is invalid.";
     public static final String EMAIL_IS_MANDATORY = "The e-mail cannot be empty.";
     public static final String END_DATE_IS_MANDATORY = "The start date is required.";

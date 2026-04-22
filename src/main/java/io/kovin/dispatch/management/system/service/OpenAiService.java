@@ -1,18 +1,23 @@
 package io.kovin.dispatch.management.system.service;
 
+import java.time.Duration;
 import java.util.Map;
 
+import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.EXTERNAL_SERVICE_ERROR;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class OpenAiService {
 
+    private static final int TIMEOUT_SECONDS = 60;
     private static final String OPEN_AI_API_MODEL = "gpt-5-mini";
     private static final String OPEN_AI_RESPONSES_URI = "/responses";
 
@@ -22,14 +27,19 @@ public class OpenAiService {
         log.info("Extracting contract data from the contract text.");
         String prompt = getPrompt(contractText);
         Map<String, Object> body = getBody(prompt);
-        return openAiClient
-            .post()
-            .uri(OPEN_AI_RESPONSES_URI)
-            .bodyValue(body)
-            .retrieve()
-            .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
-            })
-            .block();
+        try {
+            return openAiClient
+                .post()
+                .uri(OPEN_AI_RESPONSES_URI)
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
+                })
+                .timeout(Duration.ofSeconds(TIMEOUT_SECONDS))
+                .block();
+        } catch (Exception e) {
+            throw DispatchManagementSystemException.of(EXTERNAL_SERVICE_ERROR, HttpStatus.BAD_GATEWAY);
+        }
     }
 
     private Map<String, Object> getBody(String prompt) {
@@ -69,10 +79,10 @@ public class OpenAiService {
             
               Empty Miles:
               The miles that were not loaded. They may be missing, in which case just default to null. These miles can also be in floating-point format. 
-              
+            
               Load Number:
               Basically, this is the number of the document (it may be in the header of the document, preceded/succeded by a hashtag (#) sign.
-              
+            
               Broker:
               The company that issued the load confirmation.
             
@@ -160,14 +170,5 @@ public class OpenAiService {
             
               %s
             """.formatted(contractText);
-    }
-
-    private String getDummyData() {
-        try {
-            Thread.sleep(5000);
-            return "Dummy data";
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

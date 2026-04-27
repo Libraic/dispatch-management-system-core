@@ -1,4 +1,4 @@
-package io.kovin.dispatch.management.system.model.request;
+package io.kovin.dispatch.management.system.model.request.company.request;
 
 import java.time.LocalDate;
 import lombok.Builder;

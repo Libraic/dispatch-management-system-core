@@ -13,8 +13,8 @@ import io.kovin.dispatch.management.system.model.persistence.DriverDispatcherRel
 import io.kovin.dispatch.management.system.model.persistence.LoadEntity;
 import io.kovin.dispatch.management.system.model.persistence.enums.LoadStatus;
 import io.kovin.dispatch.management.system.model.persistence.enums.LocationType;
-import io.kovin.dispatch.management.system.model.request.CreateLoadLocationRequest;
-import io.kovin.dispatch.management.system.model.request.UpsertLoadRequest;
+import io.kovin.dispatch.management.system.model.request.load.CreateLoadLocationRequest;
+import io.kovin.dispatch.management.system.model.request.load.UpsertLoadRequest;
 import io.kovin.dispatch.management.system.model.response.GetLoadStartingPointResponse;
 import io.kovin.dispatch.management.system.model.response.load.GenericLoadResponse;
 import io.kovin.dispatch.management.system.service.DriverDispatcherRelationService;

@@ -3,7 +3,7 @@ package io.kovin.dispatch.management.system.controller;
 import java.time.LocalDate;
 import java.util.List;
 import io.kovin.dispatch.management.system.facade.LoadFacade;
-import io.kovin.dispatch.management.system.model.request.UpsertLoadRequest;
+import io.kovin.dispatch.management.system.model.request.load.UpsertLoadRequest;
 import io.kovin.dispatch.management.system.model.response.GetLoadStartingPointResponse;
 import io.kovin.dispatch.management.system.model.response.load.GenericLoadResponse;
 import lombok.RequiredArgsConstructor;

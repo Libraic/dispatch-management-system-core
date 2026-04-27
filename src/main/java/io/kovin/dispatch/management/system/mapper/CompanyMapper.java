@@ -2,7 +2,7 @@ package io.kovin.dispatch.management.system.mapper;
 
 import java.util.UUID;
 import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
-import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
+import io.kovin.dispatch.management.system.model.request.company.request.CreateCompanyRequest;
 import io.kovin.dispatch.management.system.model.response.CompanyData;
 import io.kovin.dispatch.management.system.utils.StringUtils;
 import org.springframework.stereotype.Component;

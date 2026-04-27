@@ -1,4 +1,4 @@
-package io.kovin.dispatch.management.system.model.request;
+package io.kovin.dispatch.management.system.model.request.load;
 
 import java.math.BigDecimal;
 import java.util.List;

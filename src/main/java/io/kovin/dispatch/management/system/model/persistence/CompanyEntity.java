@@ -47,6 +47,9 @@ public class CompanyEntity extends Auditable {
     @Column
     private LocalDate startDate;
 
+    @Column
+    private String timezone;
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

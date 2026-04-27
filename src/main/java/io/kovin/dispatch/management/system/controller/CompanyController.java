@@ -6,7 +6,9 @@ import java.util.Map;
 import io.kovin.dispatch.management.system.facade.CompanyFacade;
 import io.kovin.dispatch.management.system.mapper.CompanyMapper;
 import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
-import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
+import io.kovin.dispatch.management.system.model.request.company.request.CreateCompanyRequest;
+import io.kovin.dispatch.management.system.model.request.company.request.UpdateCompanySettingsRequest;
+import io.kovin.dispatch.management.system.model.request.company.response.GetCompanySettingsResponse;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.CompanyData;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,6 +45,17 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
+    @PutMapping("/{uuid}/settings")
+    public ResponseEntity<Void> updateCompanySettings(
+        @PathVariable String uuid,
+        @RequestBody UpdateCompanySettingsRequest updateCompanySettingsRequest
+    ) {
+        log.info("A request to update the settings of the company with UUID=[{}] was received.", uuid);
+        companyFacade.updateCompanySettings(uuid, updateCompanySettingsRequest);
+        return ResponseEntity.noContent().build();
+    }
+
+
     @GetMapping("/{loadUuid}")
     public ResponseEntity<ApiResponse<CompanyData, ErrorResponse>> getByUuid(@PathVariable String uuid) {
         log.info("A request to retrieve the company with UUID=[{}] was received.", uuid);
@@ -49,6 +63,13 @@ public class CompanyController {
         CompanyData companyData = companyMapper.fromCompanyEntityToCompanyData(companyEntity);
         ApiResponse<CompanyData, ErrorResponse> apiResponse = ApiResponse.fromData(companyData);
         return ResponseEntity.ok(apiResponse);
+    }
+
+    @GetMapping("/{uuid}/settings")
+    public ResponseEntity<GetCompanySettingsResponse> getSettings(@PathVariable String uuid) {
+        log.info("A request to retrieve the settings of the company with UUID=[{}] was received.", uuid);
+        GetCompanySettingsResponse response = companyFacade.getSettings(uuid);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
@@ -74,4 +95,4 @@ public class CompanyController {
         companyService.deleteCompany(uuid);
         return ResponseEntity.status(HttpStatus.NO_CONTENT.value()).build();
     }
- }
+}

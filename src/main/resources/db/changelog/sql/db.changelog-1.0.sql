@@ -443,3 +443,10 @@ ALTER TABLE t_loads
     ADD COLUMN load_number VARCHAR;
 
 COMMENT ON COLUMN t_loads.load_number IS 'The load number.';
+
+-- changeset libra:018
+-- comment: Add the timezone column to t_companies table.
+ALTER TABLE t_companies
+    ADD COLUMN timezone VARCHAR(64) NOT NULL DEFAULT 'UTC';
+
+COMMENT ON COLUMN t_companies.timezone IS 'The timezone used by the company.';

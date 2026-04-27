@@ -39,6 +39,7 @@ public class ErrorMessage {
     public static final String DRIVER_NOT_FOUND_BY_UUID = "The driver with UUID=[%s] was not found.";
     public static final String INVALID_DOCUMENT_STATUS = "The status of the documents is not valid.";
     public static final String INVALID_DRIVER_POSITION = "The position of the driver is not valid.";
+    public static final String INVALID_TIMEZONE = "The timezone is not valid.";
     public static final String PHONE_NUMBER_IS_MANDATORY = "The phone number cannot be empty.";
     public static final String STATE_IS_MANDATORY = "The state the driver is making deliveries in is mandatory.";
 

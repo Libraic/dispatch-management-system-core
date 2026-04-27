@@ -14,7 +14,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import ch.qos.logback.core.util.StringUtil;
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemGroupException;
-import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
+import io.kovin.dispatch.management.system.model.request.company.request.CreateCompanyRequest;
 import io.kovin.dispatch.management.system.model.response.error.GroupsErrors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

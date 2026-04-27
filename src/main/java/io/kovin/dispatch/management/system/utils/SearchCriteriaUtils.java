@@ -2,8 +2,8 @@ package io.kovin.dispatch.management.system.utils;
 
 import static io.kovin.dispatch.management.system.utils.constants.DispatchManagementSystemConstants.BLANK_STRING;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_SEARCH_CRITERIA;
-import static io.kovin.dispatch.management.system.utils.LocalDateUtils.ISO_8601_FORMAT_REGEX;
-import static io.kovin.dispatch.management.system.utils.LocalDateUtils.ISO_8601_LOCAL_DATE_TIME_FORMAT_REGEX;
+import static io.kovin.dispatch.management.system.utils.TimeUtils.ISO_8601_FORMAT_REGEX;
+import static io.kovin.dispatch.management.system.utils.TimeUtils.ISO_8601_LOCAL_DATE_TIME_FORMAT_REGEX;
 import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.EQUAL;
 import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.GREATER_OR_EQUAL;
 import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.JOIN;

@@ -7,7 +7,7 @@ import java.util.UUID;
 import io.kovin.dispatch.management.system.model.persistence.LoadLocationEntity;
 import io.kovin.dispatch.management.system.model.persistence.LoadEntity;
 import io.kovin.dispatch.management.system.model.persistence.enums.LocationType;
-import io.kovin.dispatch.management.system.model.request.CreateLoadLocationRequest;
+import io.kovin.dispatch.management.system.model.request.load.CreateLoadLocationRequest;
 import io.kovin.dispatch.management.system.service.LoadLocationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

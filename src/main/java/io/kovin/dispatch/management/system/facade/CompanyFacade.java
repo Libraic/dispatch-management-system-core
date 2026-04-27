@@ -2,18 +2,24 @@ package io.kovin.dispatch.management.system.facade;
 
 import java.util.List;
 import java.util.Map;
+
+import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.mapper.CompanyMapper;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
-import io.kovin.dispatch.management.system.model.request.CreateCompanyRequest;
+import io.kovin.dispatch.management.system.model.request.company.request.CreateCompanyRequest;
+import io.kovin.dispatch.management.system.model.request.company.request.UpdateCompanySettingsRequest;
+import io.kovin.dispatch.management.system.model.request.company.response.GetCompanySettingsResponse;
 import io.kovin.dispatch.management.system.model.response.CompanyData;
 import io.kovin.dispatch.management.system.service.CompanyService;
 import io.kovin.dispatch.management.system.service.CriteriaService;
 import io.kovin.dispatch.management.system.utils.SearchCriteriaUtils;
+import io.kovin.dispatch.management.system.utils.TimeUtils;
 import io.kovin.dispatch.management.system.validation.CompanyValidationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_TIMEZONE;
 
 @Component
 @AllArgsConstructor
@@ -35,6 +41,24 @@ public class CompanyFacade {
         CompanyEntity companyEntity = companyMapper.fromCreateCompanyRequestToCompanyEntity(createCompanyRequest);
         companyService.saveCompany(companyEntity);
         return companyMapper.fromCompanyEntityToCompanyData(companyEntity);
+    }
+
+    public void updateCompanySettings(String companyUuid, UpdateCompanySettingsRequest updateCompanySettingsRequest) {
+        CompanyEntity company = companyService.getByUuid(companyUuid);
+        String timezone = updateCompanySettingsRequest.timezone();
+        if (!TimeUtils.isValidTimezone(timezone)) {
+            throw DispatchManagementSystemException.ofBadRequest(INVALID_TIMEZONE);
+        }
+
+        company.setTimezone(timezone);
+        companyService.saveCompany(company);
+    }
+
+    public GetCompanySettingsResponse getSettings(String companyUuid) {
+        CompanyEntity company = companyService.getByUuid(companyUuid);
+        return GetCompanySettingsResponse.builder()
+            .timezone(company.getTimezone())
+            .build();
     }
 
     public List<CompanyData> getCompaniesByCriteria(Map<String, String> queryParams, int page, int size) {

@@ -53,6 +53,7 @@ public class LoadObjectsCreator {
                     .label(locationData.getLocationType().getType())
                     .order(locationData.getLocationOrder())
                     .address(locationData.getAddress())
+                    .timezone(locationData.getTimezone())
                     .build()
                 ).toList()
             ).build();

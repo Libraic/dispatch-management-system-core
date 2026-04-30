@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +41,7 @@ public class CityService {
      * The process involves:
      * 1. Skipping the header row of the file.
      * 2. Reading and splitting each line into components.
-     * 3. Filtering out lines that do not have exactly three components.
+     * 3. Filtering out lines that do not have exactly three parts.
      * 4. Creating {@code CityData} objects from the parsed components.
      * In case of an error during file reading or processing, an unchecked
      * {@code DispatchManagementSystemException} is thrown with an appropriate error message.
@@ -53,12 +54,13 @@ public class CityService {
     public void loadData() {
         log.info("Loading the cities data into the system.");
         try (InputStream is = getClass().getResourceAsStream(USA_CITIES_FILEPATH);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+             BufferedReader reader = new BufferedReader(new InputStreamReader(is))
+        ) {
             cities = reader.lines()
                 .skip(1)
                 .map(line -> line.split(COMMA))
-                .filter(parts -> parts.length == 3)
-                .map(parts -> new CityData(parts[0].trim(), parts[1].trim(), parts[2].trim()))
+                .filter(parts -> parts.length == 4)
+                .map(parts -> new CityData(parts[0].trim(), parts[1].trim(), parts[2].trim(), parts[3].trim()))
                 .collect(Collectors.toList());
         } catch (IOException e) {
             throw DispatchManagementSystemException.ofInternal(CITIES_LOAD_ERROR);
@@ -75,8 +77,8 @@ public class CityService {
      *               the beginning of a zip code, city name, or state name. If the
      *               prefix cannot be sanitized properly, an exception is thrown.
      * @return a list of {@code GetCityAndStateResponse} objects containing
-     *         the zip code, city name, and state name of the matching cities.
-     *         Returns an empty list if no matches are found.
+     * the zip code, city name, and state name of the matching cities.
+     * Returns an empty list if no matches are found.
      */
     public List<GetCityAndStateResponse> searchByPrefix(String prefix) {
         String sanitizedPrefix = sanitizePrefix(prefix);
@@ -85,8 +87,12 @@ public class CityService {
             .limit(10)
             .collect(Collectors.toSet())
             .stream()
-            .map(cityData -> new GetCityAndStateResponse(cityData.zipCode(), cityData.city(), cityData.state()))
-            .toList();
+            .map(cityData -> new GetCityAndStateResponse(
+                cityData.zipCode(),
+                cityData.city(),
+                cityData.state(),
+                cityData.timezone())
+            ).toList();
     }
 
     private String sanitizePrefix(String prefix) {

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.mapper.LoadObjectsCreator;
 import io.kovin.dispatch.management.system.model.persistence.LoadLocationEntity;
@@ -115,7 +116,7 @@ public class LoadFacade {
     public GetLoadStartingPointResponse getLoadStartingPoint(String relationUuid, LocalDate date) {
         LoadEntity load = loadService.getLoadByRelationUuidAndDateBetween(relationUuid, date);
         if (load == null || load.getLocations().isEmpty()) {
-            return new GetLoadStartingPointResponse(null, null);
+            return new GetLoadStartingPointResponse(null, null, null);
         }
 
         List<LoadLocationEntity> locations = load.getLocations()
@@ -123,7 +124,7 @@ public class LoadFacade {
             .sorted(Comparator.comparing(LoadLocationEntity::getLocationOrder))
             .toList();
         LoadLocationEntity startingPoint = locations.getLast();
-        return new GetLoadStartingPointResponse(startingPoint.getLocation(), startingPoint.getAddress());
+        return new GetLoadStartingPointResponse(startingPoint.getLocation(), startingPoint.getAddress(), startingPoint.getTimezone());
     }
 
     /**

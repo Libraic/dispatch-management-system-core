@@ -9,7 +9,8 @@ public record CreateLoadLocationRequest(
     LocalTime time,
     String location,
     Integer order,
-    String address
+    String address,
+    String timezone
 ) {
 
 }

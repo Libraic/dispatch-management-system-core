@@ -12,6 +12,7 @@ public record GetLocationResponse(
     LocalTime time,
     String label,
     String address,
-    Integer order
+    Integer order,
+    String timezone
 ) {
 }

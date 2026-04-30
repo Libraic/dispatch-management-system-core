@@ -1,6 +1,7 @@
 package io.kovin.dispatch.management.system.validation;
 
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.BROKER_IS_MANDATORY;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_TIMEZONE;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOAD_DATE_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOAD_NUMBER_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOCATIONS_ARE_MANDATORY;
@@ -23,8 +24,10 @@ import io.kovin.dispatch.management.system.model.request.load.CreateLoadLocation
 import io.kovin.dispatch.management.system.model.request.load.UpsertLoadRequest;
 import io.kovin.dispatch.management.system.utils.BigDecimalUtils;
 import io.kovin.dispatch.management.system.utils.CollectionUtils;
+import io.kovin.dispatch.management.system.utils.TimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -94,6 +97,10 @@ public class LoadValidationService {
             LocationType locationType = LocationType.from(current.label());
             if (List.of(LocationType.DELIVERY, LocationType.PICK_UP).contains(locationType) && current.time() == null) {
                 throw DispatchManagementSystemException.ofBadRequest(TIME_IS_MANDATORY);
+            }
+
+            if (!TimeUtils.isValidTimezone(current.timezone())) {
+                throw DispatchManagementSystemException.ofBadRequest(INVALID_TIMEZONE);
             }
         }
 

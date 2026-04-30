@@ -57,6 +57,9 @@ public class LoadLocationEntity {
     @Column
     private Integer locationOrder;
 
+    @Column
+    private String timezone;
+
     @ManyToOne
     @JoinColumn(name = "load_id")
     private LoadEntity load;

@@ -1,10 +1,11 @@
 package io.kovin.dispatch.management.system.model.request;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public record UpsertDayOffPeriodRequest(
-    String daysOffPeriodId,
-    String relationId,
+    UUID daysOffPeriodId,
+    UUID relationId,
     LocalDate startDate,
     LocalDate endDate
 ) {

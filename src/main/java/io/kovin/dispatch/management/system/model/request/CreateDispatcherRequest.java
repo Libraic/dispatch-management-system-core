@@ -1,4 +1,6 @@
 package io.kovin.dispatch.management.system.model.request;
 
-public record CreateDispatcherRequest(String name, String phoneNumber, String companyUuid) {
+import java.util.UUID;
+
+public record CreateDispatcherRequest(String name, String phoneNumber, UUID companyUuid) {
 }

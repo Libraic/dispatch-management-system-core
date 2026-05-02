@@ -3,6 +3,7 @@ package io.kovin.dispatch.management.system.model.persistence;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
+import java.util.UUID;
 import io.kovin.dispatch.management.system.model.persistence.enums.LocationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,7 +37,7 @@ public class LoadLocationEntity {
     private Long id;
 
     @Column
-    private String uuid;
+    private UUID uuid;
 
     @Column
     private String location;
@@ -55,7 +56,7 @@ public class LoadLocationEntity {
     private LocationType locationType;
 
     @Column
-    private Integer locationOrder;
+    private Short locationOrder;
 
     @Column
     private String timezone;

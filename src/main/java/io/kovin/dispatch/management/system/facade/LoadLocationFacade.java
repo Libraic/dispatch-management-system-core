@@ -36,9 +36,9 @@ public class LoadLocationFacade {
 
         List<LoadLocationEntity> loadLocationEntities = new ArrayList<>();
         for (CreateLoadLocationRequest createLoadLocationRequest : createLoadLocationRequests) {
-            int order = createLoadLocationRequest.order();
+            short order = createLoadLocationRequest.order();
             LoadLocationEntity loadLocationEntity = LoadLocationEntity.builder()
-                .uuid(UUID.randomUUID().toString())
+                .uuid(UUID.randomUUID())
                 .locationType(LocationType.from(createLoadLocationRequest.label()))
                 .location(createLoadLocationRequest.location())
                 .date(createLoadLocationRequest.date())

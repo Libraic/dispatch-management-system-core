@@ -2,6 +2,8 @@ package io.kovin.dispatch.management.system.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
+
 import io.kovin.dispatch.management.system.facade.LoadFacade;
 import io.kovin.dispatch.management.system.model.request.load.UpsertLoadRequest;
 import io.kovin.dispatch.management.system.model.response.GetLoadStartingPointResponse;
@@ -46,7 +48,7 @@ public class LoadController {
 
     @GetMapping("/relations/{relationUuid}")
     public ResponseEntity<List<GenericLoadResponse>> getRelationLoadsForTimeframe(
-        @PathVariable(name = "relationUuid") String relationUuid,
+        @PathVariable(name = "relationUuid") UUID relationUuid,
         @RequestParam(name = "startDate") LocalDate startDate,
         @RequestParam(name = "endDate") LocalDate endDate
     ) {
@@ -62,7 +64,7 @@ public class LoadController {
 
     @GetMapping("/relations/{relationUuid}/starting-point")
     public ResponseEntity<GetLoadStartingPointResponse> getLoadStartingPoint(
-        @PathVariable(name = "relationUuid") String relationUuid,
+        @PathVariable(name = "relationUuid") UUID relationUuid,
         @RequestParam(name = "date") LocalDate date
     ) {
         log.info("A request to retrieve the starting point for date=[{}] was received.", date);
@@ -71,7 +73,7 @@ public class LoadController {
     }
 
     @DeleteMapping("/{loadUuid}")
-    public ResponseEntity<Void> deleteLoads(@PathVariable String loadUuid) {
+    public ResponseEntity<Void> deleteLoads(@PathVariable UUID loadUuid) {
         log.info("A request to remove the Load with the UUID=[{}} was received.", loadUuid);
         loadFacade.deleteLoad(loadUuid);
         return ResponseEntity.noContent().build();

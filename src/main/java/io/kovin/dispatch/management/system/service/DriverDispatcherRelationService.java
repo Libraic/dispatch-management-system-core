@@ -1,14 +1,13 @@
 package io.kovin.dispatch.management.system.service;
 
-import static io.kovin.dispatch.management.system.utils.ErrorMessage.DRIVER_DISPATCHER_RELATION_NOT_FOUND;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.DRIVER_DISPATCHER_RELATION_NOT_FOUND_BY_UUID;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.stream.Collectors;
-
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.persistence.DispatcherEntity;
 import io.kovin.dispatch.management.system.model.persistence.DriverDispatcherRelationEntity;
@@ -42,41 +41,6 @@ public class DriverDispatcherRelationService {
     }
 
     /**
-     * Retrieves the relation between a driver and a dispatcher for a specific company.
-     * Throws an exception if the relation is not found or has been marked as deleted.
-     *
-     * @param companyUuid    the UUID of the company to which the driver and dispatcher belong
-     * @param dispatcherUuid the UUID of the dispatcher
-     * @param driverUuid     the UUID of the driver
-     * @return the DriverDispatcherRelationEntity representing the relation between the driver and dispatcher
-     * for the specified company
-     * @throws DispatchManagementSystemException if the relation is not found or has been marked as deleted
-     */
-    public DriverDispatcherRelationEntity findRelationByDriverAndDispatcher(
-        String companyUuid,
-        String dispatcherUuid,
-        String driverUuid
-    ) {
-        log.info(
-            "Retrieving the relation between Driver=[{}] and Dispatcher=[{}] for Company=[{}].",
-            driverUuid,
-            dispatcherUuid,
-            companyUuid
-        );
-        var relationOptional = driverDispatcherRelationRepository.findByCompanyUuidAndDriverUuidAndDispatcherUuidAndDeletedAtIsNull(
-            companyUuid,
-            driverUuid,
-            dispatcherUuid
-        );
-        if (relationOptional.isEmpty()) {
-            log.error(DRIVER_DISPATCHER_RELATION_NOT_FOUND);
-            throw DispatchManagementSystemException.of(DRIVER_DISPATCHER_RELATION_NOT_FOUND, HttpStatus.NOT_FOUND);
-        }
-
-        return relationOptional.get();
-    }
-
-    /**
      * Retrieves the relationship between a Driver and a Dispatcher using the specified UUID.
      * If the relationship is not found or has been marked as deleted, an exception is thrown.
      *
@@ -84,7 +48,7 @@ public class DriverDispatcherRelationService {
      * @return the DriverDispatcherRelationEntity representing the relationship
      * @throws DispatchManagementSystemException if the relationship is not found or has been marked as deleted
      */
-    public DriverDispatcherRelationEntity getRelationByUuid(String uuid) {
+    public DriverDispatcherRelationEntity getRelationByUuid(UUID uuid) {
         log.info("Retrieving the relation between Driver and Dispatcher by UUID=[{}].", uuid);
         var relationOptional = driverDispatcherRelationRepository.findByUuidAndDeletedAtIsNull(uuid);
         if (relationOptional.isEmpty()) {
@@ -104,7 +68,7 @@ public class DriverDispatcherRelationService {
      * @return a map where the keys are DispatcherEntity objects and the values are lists of
      *         DriverDispatcherRelationEntity objects associated with each dispatcher
      */
-    public Map<DispatcherEntity, List<DriverDispatcherRelationEntity>> findRelationsByCompanyGroupedByDispatcher(String companyUuid) {
+    public Map<DispatcherEntity, List<DriverDispatcherRelationEntity>> findRelationsByCompanyGroupedByDispatcher(UUID companyUuid) {
         log.info("Retrieving all relations for Company=[{}].", companyUuid);
         List<DriverDispatcherRelationEntity> relations = driverDispatcherRelationRepository.findAllByCompanyUuidAndDeletedAtIsNull(companyUuid);
         return relations.stream().collect(

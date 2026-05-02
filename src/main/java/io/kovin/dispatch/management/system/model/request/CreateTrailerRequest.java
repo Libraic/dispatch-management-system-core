@@ -1,10 +1,12 @@
 package io.kovin.dispatch.management.system.model.request;
 
+import java.util.UUID;
+
 public record CreateTrailerRequest(
-    String companyUuid,
+    UUID companyUuid,
     String trailerNumber,
     String vinNumber,
-    int trailerYear,
+    short trailerYear,
     String trailerMake,
     String equipmentType,
     int equipmentSize,

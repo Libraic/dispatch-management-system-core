@@ -31,7 +31,7 @@ public class VehicleMaintenanceFacade {
         VehicleMaintenanceRecordEntity vehicleMaintenanceRecordEntity = getVehicleMaintenanceRecordEntity(request, driverDispatcherRelationEntity);
         vehicleMaintenanceService.persistVehicleMaintenanceRecord(vehicleMaintenanceRecordEntity);
         return UpsertVehicleMaintenanceRecordResponse.builder()
-            .vehicleMaintenanceRecordUuid(vehicleMaintenanceRecordEntity.getUuid())
+            .vehicleMaintenanceRecordUuid(vehicleMaintenanceRecordEntity.getUuid().toString())
             .startDate(vehicleMaintenanceRecordEntity.getStartDate())
             .endDate(vehicleMaintenanceRecordEntity.getEndDate())
             .location(vehicleMaintenanceRecordEntity.getLocation())
@@ -53,7 +53,7 @@ public class VehicleMaintenanceFacade {
      * relation and time range
      */
     public List<GetVehicleMaintenanceResponse> getVehicleMaintenanceResponseList(
-        String relationId,
+        UUID relationId,
         LocalDate startDate,
         LocalDate endDate
     ) {
@@ -61,7 +61,7 @@ public class VehicleMaintenanceFacade {
         List<GetVehicleMaintenanceResponse> responses = new ArrayList<>();
         for (var record : records) {
             GetVehicleMaintenanceResponse response = GetVehicleMaintenanceResponse.builder()
-                .vehicleMaintenanceRecordUuid(record.getUuid())
+                .vehicleMaintenanceRecordUuid(record.getUuid().toString())
                 .startDate(record.getStartDate())
                 .endDate(record.getEndDate())
                 .location(record.getLocation())
@@ -85,13 +85,13 @@ public class VehicleMaintenanceFacade {
             .build();
     }
 
-    private VehicleMaintenanceRecordEntity getOrCreateVehicleMaintenanceRecordEntity(String vehicleMaintenanceRecordUuid) {
+    private VehicleMaintenanceRecordEntity getOrCreateVehicleMaintenanceRecordEntity(UUID vehicleMaintenanceRecordUuid) {
         if (vehicleMaintenanceRecordUuid != null) {
             return vehicleMaintenanceService.getVehicleMaintenanceRecordByUuid(vehicleMaintenanceRecordUuid);
         }
 
         return VehicleMaintenanceRecordEntity.builder()
-            .uuid(UUID.randomUUID().toString())
+            .uuid(UUID.randomUUID())
             .build();
     }
 }

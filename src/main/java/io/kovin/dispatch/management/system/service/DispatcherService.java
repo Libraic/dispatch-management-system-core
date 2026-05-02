@@ -4,6 +4,8 @@ import static io.kovin.dispatch.management.system.utils.ErrorMessage.DISPATCHER_
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.persistence.DispatcherEntity;
 import io.kovin.dispatch.management.system.repository.DispatcherRepository;
@@ -24,7 +26,7 @@ public class DispatcherService {
         dispatcherRepository.save(dispatcherEntity);
     }
 
-    public DispatcherEntity getByUuid(String uuid) {
+    public DispatcherEntity getByUuid(UUID uuid) {
         Optional<DispatcherEntity> dispatcherEntityOptional = dispatcherRepository.findByUuidAndDeletedAtIsNull(uuid);
         if (dispatcherEntityOptional.isEmpty()) {
             String message = String.format(DISPATCHER_NOT_FOUND, uuid);

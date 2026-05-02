@@ -53,7 +53,7 @@ public class DriverFacade {
         DriverEntity savedDriverEntity = driverService.saveDriver(driverEntity);
 
         DriverDispatcherRelationEntity driverDispatcherRelationEntity = DriverDispatcherRelationEntity.builder()
-            .uuid(UUID.randomUUID().toString())
+            .uuid(UUID.randomUUID())
             .company(company)
             .dispatcher(dispatcher)
             .driver(savedDriverEntity)
@@ -70,7 +70,7 @@ public class DriverFacade {
         return drivers.stream().map(driverMapper::fromDriverEntityToDriverData).toList();
     }
 
-    private TruckEntity getTruck(String truckUuid) {
+    private TruckEntity getTruck(UUID truckUuid) {
         if (truckUuid == null) {
             return null;
         }
@@ -78,7 +78,7 @@ public class DriverFacade {
         return truckService.findTruckByUuid(truckUuid).orElse(null);
     }
 
-    private TrailerEntity getTrailer(String trailerUuid) {
+    private TrailerEntity getTrailer(UUID trailerUuid) {
         if (trailerUuid == null) {
             return null;
         }
@@ -86,7 +86,7 @@ public class DriverFacade {
         return trailerService.findTrailerByUuid(trailerUuid).orElse(null);
     }
 
-    private DispatcherEntity getDispatcher(String dispatcherUuid) {
+    private DispatcherEntity getDispatcher(UUID dispatcherUuid) {
         if (dispatcherUuid == null) {
             return null;
         }

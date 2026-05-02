@@ -37,7 +37,7 @@ public class DispatcherFacade {
         CompanyEntity company = companyService.getByUuid(request.companyUuid());
 
         DispatcherEntity dispatcherEntity = DispatcherEntity.builder()
-            .uuid(UUID.randomUUID().toString())
+            .uuid(UUID.randomUUID())
             .name(request.name())
             .phoneNumber(request.phoneNumber())
             .company(company)
@@ -55,7 +55,7 @@ public class DispatcherFacade {
 
     private GetDispatcherResponse fromDispatcherEntityToGetDispatcherResponse(DispatcherEntity dispatcher) {
         return GetDispatcherResponse.builder()
-            .uuid(dispatcher.getUuid())
+            .uuid(dispatcher.getUuid().toString())
             .name(dispatcher.getName())
             .build();
     }

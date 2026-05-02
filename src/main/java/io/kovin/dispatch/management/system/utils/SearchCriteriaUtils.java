@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.response.PaginationDetails;
@@ -88,13 +90,14 @@ public class SearchCriteriaUtils {
                     criteriaBuilder.lower(root.get(criteria.getField())),
                     WILDCARD + Optional.ofNullable(criteria.getValue()).map(String::toLowerCase).orElse(BLANK_STRING) + WILDCARD
                 );
-            case EQUAL -> criteriaBuilder.equal(
-                root.get(criteria.getField()),
-                criteria.getValue()
-            );
+            case EQUAL -> {
+                Class<?> type = root.get(criteria.getField()).getJavaType();
+                Object typedValue = convert(criteria.getValue(), type);
+                yield criteriaBuilder.equal(root.get(criteria.getField()), typedValue);
+            }
             case JOIN -> {
                 if (join != null) {
-                    yield criteriaBuilder.equal(join.get(UUID), criteria.getValue());
+                    yield criteriaBuilder.equal(join.get(UUID), java.util.UUID.fromString(criteria.getValue()));
                 }
                 yield null;
             }
@@ -127,5 +130,20 @@ public class SearchCriteriaUtils {
         }
 
         return (T) value;
+    }
+
+    private static Object convert(String value, Class<?> type) {
+        if (value == null) return null;
+
+        if (type.equals(String.class)) return value;
+        if (type.equals(UUID.class)) return java.util.UUID.fromString(value);
+        if (type.equals(Integer.class)) return Integer.valueOf(value);
+        if (type.equals(Long.class)) return Long.valueOf(value);
+        if (type.equals(Double.class)) return Double.valueOf(value);
+        if (type.equals(Boolean.class)) return Boolean.valueOf(value);
+        if (type.equals(LocalDate.class)) return LocalDate.parse(value);
+        if (type.equals(LocalDateTime.class)) return LocalDateTime.parse(value);
+
+        throw new IllegalArgumentException("Unsupported type: " + type);
     }
 }

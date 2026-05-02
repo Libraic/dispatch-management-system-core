@@ -2,6 +2,8 @@ package io.kovin.dispatch.management.system.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
+
 import io.kovin.dispatch.management.system.facade.DaysOffFacade;
 import io.kovin.dispatch.management.system.model.request.UpsertDayOffPeriodRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
@@ -41,7 +43,7 @@ public class DaysOffController {
 
     @GetMapping("/relations/{relationUuid}")
     public ResponseEntity<ApiResponse<List<GetDayOffPeriodResponse>, ErrorResponse>> getDaysOffPeriodsForTimeframe(
-        @PathVariable(name = "relationUuid") String relationUuid,
+        @PathVariable(name = "relationUuid") UUID relationUuid,
         @RequestParam(name = "startDate") LocalDate startDate,
         @RequestParam(name = "endDate") LocalDate endDate
     ) {
@@ -56,7 +58,7 @@ public class DaysOffController {
     }
 
     @DeleteMapping("/{daysOffPeriodUuid}")
-    public ResponseEntity<ApiResponse<Void, ErrorResponse>> deleteDaysOffPeriod(@PathVariable String daysOffPeriodUuid) {
+    public ResponseEntity<ApiResponse<Void, ErrorResponse>> deleteDaysOffPeriod(@PathVariable UUID daysOffPeriodUuid) {
         log.info("A request to remove the Days Off period with the UUID=[{}} was received.", daysOffPeriodUuid);
         daysOffService.deleteDaysOffPeriodByUuid(daysOffPeriodUuid);
         return ResponseEntity.noContent().build();

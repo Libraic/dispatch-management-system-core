@@ -2,6 +2,7 @@ package io.kovin.dispatch.management.system.facade;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.mapper.CompanyMapper;
@@ -43,7 +44,7 @@ public class CompanyFacade {
         return companyMapper.fromCompanyEntityToCompanyData(companyEntity);
     }
 
-    public void updateCompanySettings(String companyUuid, UpdateCompanySettingsRequest updateCompanySettingsRequest) {
+    public void updateCompanySettings(UUID companyUuid, UpdateCompanySettingsRequest updateCompanySettingsRequest) {
         CompanyEntity company = companyService.getByUuid(companyUuid);
         String timezone = updateCompanySettingsRequest.timezone();
         if (!TimeUtils.isValidTimezone(timezone)) {
@@ -54,7 +55,7 @@ public class CompanyFacade {
         companyService.saveCompany(company);
     }
 
-    public GetCompanySettingsResponse getSettings(String companyUuid) {
+    public GetCompanySettingsResponse getSettings(UUID companyUuid) {
         CompanyEntity company = companyService.getByUuid(companyUuid);
         return GetCompanySettingsResponse.builder()
             .timezone(company.getTimezone())

@@ -2,6 +2,8 @@ package io.kovin.dispatch.management.system.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
+
 import io.kovin.dispatch.management.system.facade.PlannerFacade;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
@@ -24,7 +26,7 @@ public class PlannerController {
 
     @GetMapping
     public ResponseEntity<List<GetDispatchingDataResponse>> getWorkforcePlanningData(
-        @RequestParam(name = "companyId") String companyId,
+        @RequestParam(name = "companyId") UUID companyId,
         @RequestParam(name = "startDate") LocalDate startDate,
         @RequestParam(name = "endDate") LocalDate endDate
     ) {

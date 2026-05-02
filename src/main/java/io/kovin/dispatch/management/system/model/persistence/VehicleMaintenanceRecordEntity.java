@@ -24,7 +24,7 @@ import lombok.experimental.SuperBuilder;
 public class VehicleMaintenanceRecordEntity extends SchedulableEntity {
 
     @Id
-    @SequenceGenerator(name = "t_vehicle_maintenance_records_sequence_generator", sequenceName = "t_t_vehicle_maintenance_records_sequence", allocationSize = 1)
+    @SequenceGenerator(name = "t_vehicle_maintenance_records_sequence_generator", sequenceName = "t_vehicle_maintenance_records_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "t_vehicle_maintenance_records_sequence_generator")
     private Long id;
 

@@ -11,6 +11,7 @@ public class SearchCriteria {
     String field;
     String operation;
     String value;
+    String type;
 
     public boolean isJoinOperation() {
         return operation.equals(QueryConstants.JOIN);

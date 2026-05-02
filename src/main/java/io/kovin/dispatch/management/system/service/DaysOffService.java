@@ -5,6 +5,8 @@ import static io.kovin.dispatch.management.system.utils.ErrorMessage.DAYS_OFF_PE
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
+
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.persistence.DaysOffPeriodEntity;
 import io.kovin.dispatch.management.system.repository.DaysOffRepository;
@@ -43,7 +45,7 @@ public class DaysOffService {
      * @return the {@code DaysOffPeriodEntity} associated with the given UUID.
      * @throws DispatchManagementSystemException if no Days Off period is found for the provided UUID.
      */
-    public DaysOffPeriodEntity getDaysOffPeriodByUuid(String uuid) {
+    public DaysOffPeriodEntity getDaysOffPeriodByUuid(UUID uuid) {
         log.debug("Retrieving the Days Off Period by UUID=[{}].", uuid);
         var daysOffPeriodEntityOptional = daysOffRepository.findByUuid(uuid);
         if (daysOffPeriodEntityOptional.isEmpty()) {
@@ -65,7 +67,7 @@ public class DaysOffService {
      * @return a list of {@code DaysOffPeriodEntity} objects representing the overlapping days off periods.
      */
     public List<DaysOffPeriodEntity> getOverlappingDaysOffPeriodsForRelation(
-        String driverDispatcherRelationUuid,
+        UUID driverDispatcherRelationUuid,
         LocalDate startDate,
         LocalDate endDate
     ) {
@@ -86,7 +88,7 @@ public class DaysOffService {
      * @param uuid the unique identifier of the Days Off period to be deleted.
      */
     @Transactional
-    public void deleteDaysOffPeriodByUuid(String uuid) {
+    public void deleteDaysOffPeriodByUuid(UUID uuid) {
         log.info("Deleting the Days Off period with UUID=[{}].", uuid);
         daysOffRepository.deleteByUuid(uuid);
     }

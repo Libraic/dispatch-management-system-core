@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.mapper.LoadObjectsCreator;
 import io.kovin.dispatch.management.system.model.persistence.DispatcherEntity;
@@ -52,7 +54,7 @@ public class PlannerFacade {
      * @throws DispatchManagementSystemException if the company with the given UUID is not registered or if {@code startDate} is after {@code endDate}
      */
     public List<GetDispatchingDataResponse> getDriverLoadsForTimeframe(
-        String companyUuid,
+        UUID companyUuid,
         LocalDate startDate,
         LocalDate endDate
     ) {

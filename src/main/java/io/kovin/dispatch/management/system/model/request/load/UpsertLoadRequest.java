@@ -2,11 +2,12 @@ package io.kovin.dispatch.management.system.model.request.load;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 public record UpsertLoadRequest(
-    String loadUuid,
+    UUID loadUuid,
     String loadNumber,
-    String relationUuid,
+    UUID relationUuid,
     BigDecimal revenue,
     BigDecimal loadedMiles,
     BigDecimal emptyMiles,

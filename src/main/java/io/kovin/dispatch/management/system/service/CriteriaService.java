@@ -21,6 +21,8 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -109,7 +111,7 @@ public class CriteriaService {
      */
     public PaginationDetails getPaginationDetails(
         String pageableEntity,
-        String joinableEntityId,
+        UUID joinableEntityId,
         String joinableEntityName,
         Integer pageSize
     ) {
@@ -137,7 +139,7 @@ public class CriteriaService {
      *
      * @throws IllegalArgumentException if {@code clazz} is null
      */
-    public <T> long count(Class<T> clazz, String joinableEntityId, String joinableEntityName) {
+    public <T> long count(Class<T> clazz, UUID joinableEntityId, String joinableEntityName) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
         Root<T> root = query.from(clazz);

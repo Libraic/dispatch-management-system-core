@@ -11,6 +11,7 @@ public record CreateCompanyRequest(
     String email,
     String password,
     LocalDate serviceDate,
-    LocalDate startDate
+    LocalDate startDate,
+    String timezone
 ) {
 }

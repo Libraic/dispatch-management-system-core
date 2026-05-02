@@ -12,7 +12,7 @@ public class TrailerMapper {
 
     public TrailerEntity fromCreateTrailerRequestToTrailerEntity(CreateTrailerRequest request, CompanyEntity company) {
         return TrailerEntity.builder()
-            .uuid(UUID.randomUUID().toString())
+            .uuid(UUID.randomUUID())
             .trailerNumber(request.trailerNumber())
             .vinNumber(request.vinNumber())
             .trailerYear(request.trailerYear())
@@ -28,7 +28,7 @@ public class TrailerMapper {
 
     public TrailerData fromTrailerEntityToTrailerData(TrailerEntity trailerEntity) {
         return TrailerData.builder()
-            .uuid(trailerEntity.getUuid())
+            .uuid(trailerEntity.getUuid().toString())
             .trailerNumber(trailerEntity.getTrailerNumber())
             .vinNumber(trailerEntity.getVinNumber())
             .trailerYear(trailerEntity.getTrailerYear())

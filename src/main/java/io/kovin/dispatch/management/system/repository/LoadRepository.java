@@ -2,12 +2,13 @@ package io.kovin.dispatch.management.system.repository;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 import io.kovin.dispatch.management.system.model.persistence.LoadEntity;
 import org.springframework.data.jpa.repository.Query;
 
 public interface LoadRepository extends BaseSchedulableRepository<LoadEntity> {
 
-    Optional<LoadEntity> findByUuid(String uuid);
+    Optional<LoadEntity> findByUuid(UUID uuid);
 
     @Query("""
         SELECT l
@@ -17,7 +18,7 @@ public interface LoadRepository extends BaseSchedulableRepository<LoadEntity> {
         ORDER BY l.endDate DESC
         LIMIT 1
     """)
-    Optional<LoadEntity> findByRelationUuidAndDateBetween(String relationUuid, LocalDate date);
+    Optional<LoadEntity> findByRelationUuidAndDateBetween(UUID relationUuid, LocalDate date);
 
-    void deleteByUuid(String uuid);
+    void deleteByUuid(UUID uuid);
 }

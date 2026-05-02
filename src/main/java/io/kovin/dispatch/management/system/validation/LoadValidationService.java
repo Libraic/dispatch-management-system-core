@@ -27,7 +27,6 @@ import io.kovin.dispatch.management.system.utils.CollectionUtils;
 import io.kovin.dispatch.management.system.utils.TimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,7 +37,7 @@ public class LoadValidationService {
     public void validateLoadUpsertion(UpsertLoadRequest request) {
         log.info("Validating the request to create the load.");
 
-        if (StringUtil.isNullOrEmpty(request.loadUuid())) {
+        if (request.loadUuid() == null || StringUtil.isNullOrEmpty(request.loadUuid().toString())) {
             if (StringUtil.isNullOrEmpty(request.loadNumber())) {
                 throw DispatchManagementSystemException.ofBadRequest(LOAD_NUMBER_IS_MANDATORY);
             }

@@ -3,6 +3,8 @@ package io.kovin.dispatch.management.system.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
 import io.kovin.dispatch.management.system.facade.CompanyFacade;
 import io.kovin.dispatch.management.system.mapper.CompanyMapper;
 import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
@@ -47,7 +49,7 @@ public class CompanyController {
 
     @PutMapping("/{uuid}/settings")
     public ResponseEntity<Void> updateCompanySettings(
-        @PathVariable String uuid,
+        @PathVariable UUID uuid,
         @RequestBody UpdateCompanySettingsRequest updateCompanySettingsRequest
     ) {
         log.info("A request to update the settings of the company with UUID=[{}] was received.", uuid);
@@ -57,7 +59,7 @@ public class CompanyController {
 
 
     @GetMapping("/{loadUuid}")
-    public ResponseEntity<ApiResponse<CompanyData, ErrorResponse>> getByUuid(@PathVariable String uuid) {
+    public ResponseEntity<ApiResponse<CompanyData, ErrorResponse>> getByUuid(@PathVariable UUID uuid) {
         log.info("A request to retrieve the company with UUID=[{}] was received.", uuid);
         CompanyEntity companyEntity = companyService.getByUuid(uuid);
         CompanyData companyData = companyMapper.fromCompanyEntityToCompanyData(companyEntity);
@@ -66,7 +68,7 @@ public class CompanyController {
     }
 
     @GetMapping("/{uuid}/settings")
-    public ResponseEntity<GetCompanySettingsResponse> getSettings(@PathVariable String uuid) {
+    public ResponseEntity<GetCompanySettingsResponse> getSettings(@PathVariable UUID uuid) {
         log.info("A request to retrieve the settings of the company with UUID=[{}] was received.", uuid);
         GetCompanySettingsResponse response = companyFacade.getSettings(uuid);
         return ResponseEntity.ok(response);
@@ -90,7 +92,7 @@ public class CompanyController {
     }
 
     @DeleteMapping("/{loadUuid}")
-    public ResponseEntity<ApiResponse<CompanyData, ErrorResponse>> deleteCompany(@PathVariable String uuid) {
+    public ResponseEntity<ApiResponse<CompanyData, ErrorResponse>> deleteCompany(@PathVariable UUID uuid) {
         log.info("A request to delete the company with UUID=[{}] was received.", uuid);
         companyService.deleteCompany(uuid);
         return ResponseEntity.status(HttpStatus.NO_CONTENT.value()).build();

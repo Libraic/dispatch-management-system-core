@@ -9,7 +9,7 @@ public record TrailerData(
     String uuid,
     String trailerNumber,
     String vinNumber,
-    Integer trailerYear,
+    Short trailerYear,
     String trailerMake,
     String equipmentType,
     LocalDateTime createdAt

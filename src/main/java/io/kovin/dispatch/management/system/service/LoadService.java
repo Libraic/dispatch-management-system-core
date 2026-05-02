@@ -5,6 +5,8 @@ import static io.kovin.dispatch.management.system.utils.ErrorMessage.LOAD_NOT_FO
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
+
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.persistence.LoadEntity;
 import io.kovin.dispatch.management.system.repository.LoadRepository;
@@ -43,7 +45,7 @@ public class LoadService {
      * @return a list of {@code LoadEntity} objects that overlap with the specified date range for the given driver-dispatcher relation.
      */
     public List<LoadEntity> getOverlappingLoadsForRelation(
-        String driverDispatcherRelationUuid,
+        UUID driverDispatcherRelationUuid,
         LocalDate startDate,
         LocalDate endDate
     ) {
@@ -64,7 +66,7 @@ public class LoadService {
      * @param uuid the unique identifier of the load to be deleted. It must not be null or empty.
      */
     @Transactional
-    public void deleteLoadByUuid(String uuid) {
+    public void deleteLoadByUuid(UUID uuid) {
         log.info("Deleting the Load with UUID=[{}].", uuid);
         loadRepository.deleteByUuid(uuid);
     }
@@ -77,7 +79,7 @@ public class LoadService {
      * @return the {@code LoadEntity} associated with the given UUID.
      * @throws DispatchManagementSystemException if no load entity is found with the specified UUID.
      */
-    public LoadEntity getLoadByUuid(String uuid) {
+    public LoadEntity getLoadByUuid(UUID uuid) {
         log.info("Retrieving the Load by UUID=[{}].", uuid);
         var loadOptional = loadRepository.findByUuid(uuid);
         if (loadOptional.isEmpty()) {
@@ -89,7 +91,7 @@ public class LoadService {
         return loadOptional.get();
     }
 
-    public LoadEntity getLoadByRelationUuidAndDateBetween(String relationUuid, LocalDate date) {
+    public LoadEntity getLoadByRelationUuidAndDateBetween(UUID relationUuid, LocalDate date) {
         return loadRepository.findByRelationUuidAndDateBetween(relationUuid, date).orElse(null);
     }
 }

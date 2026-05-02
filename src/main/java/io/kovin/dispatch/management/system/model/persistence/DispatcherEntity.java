@@ -14,6 +14,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,7 +36,7 @@ public class DispatcherEntity extends Auditable {
     private Long id;
 
     @Column
-    private String uuid;
+    private UUID uuid;
 
     @Column
     private String name;

@@ -97,7 +97,7 @@ public class LoadFacade {
      * @return a list of GetLoadResponse objects, each containing load details and their associated filtered locations
      * within the provided date range.
      */
-    public List<GenericLoadResponse> getLoadResponses(String relationUuid, LocalDate startDate, LocalDate endDate) {
+    public List<GenericLoadResponse> getLoadResponses(UUID relationUuid, LocalDate startDate, LocalDate endDate) {
         List<GenericLoadResponse> genericLoadResponses = new ArrayList<>();
         List<LoadEntity> loads = loadService.getOverlappingLoadsForRelation(relationUuid, startDate, endDate);
         for (LoadEntity load : loads) {
@@ -113,7 +113,7 @@ public class LoadFacade {
         return genericLoadResponses;
     }
 
-    public GetLoadStartingPointResponse getLoadStartingPoint(String relationUuid, LocalDate date) {
+    public GetLoadStartingPointResponse getLoadStartingPoint(UUID relationUuid, LocalDate date) {
         LoadEntity load = loadService.getLoadByRelationUuidAndDateBetween(relationUuid, date);
         if (load == null || load.getLocations().isEmpty()) {
             return new GetLoadStartingPointResponse(null, null, null);
@@ -135,7 +135,7 @@ public class LoadFacade {
      * @param loadUuid the unique identifier of the load to be deleted. Must not be null or empty.
      */
     @Transactional
-    public void deleteLoad(String loadUuid) {
+    public void deleteLoad(UUID loadUuid) {
         loadService.deleteLoadByUuid(loadUuid);
     }
 
@@ -166,13 +166,13 @@ public class LoadFacade {
         return loadService.persistLoad(updatedLoadEntity);
     }
 
-    private LoadEntity getOrCreateLoadEntity(String loadUuid) {
+    private LoadEntity getOrCreateLoadEntity(UUID loadUuid) {
         if (loadUuid != null) {
             return loadService.getLoadByUuid(loadUuid);
         }
 
         return LoadEntity.builder()
-            .uuid(UUID.randomUUID().toString())
+            .uuid(UUID.randomUUID())
             .build();
     }
 

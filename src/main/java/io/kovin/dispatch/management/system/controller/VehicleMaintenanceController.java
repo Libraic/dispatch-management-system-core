@@ -2,6 +2,7 @@ package io.kovin.dispatch.management.system.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import io.kovin.dispatch.management.system.facade.VehicleMaintenanceFacade;
 import io.kovin.dispatch.management.system.model.request.UpsertVehicleMaintenanceRecordRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
@@ -41,7 +42,7 @@ public class VehicleMaintenanceController {
 
     @GetMapping("/relations/{relationUuid}")
     public ResponseEntity<ApiResponse<List<GetVehicleMaintenanceResponse>, ErrorResponse>> getRelationLoadsForTimeframe(
-        @PathVariable(name = "relationUuid") String relationUuid,
+        @PathVariable(name = "relationUuid") UUID relationUuid,
         @RequestParam(name = "startDate") LocalDate startDate,
         @RequestParam(name = "endDate") LocalDate endDate
     ) {
@@ -56,7 +57,7 @@ public class VehicleMaintenanceController {
     }
 
     @DeleteMapping("/{vehicleMaintenanceRecordUuid}")
-    public ResponseEntity<ApiResponse<Void, ErrorResponse>> deleteLoads(@PathVariable String vehicleMaintenanceRecordUuid) {
+    public ResponseEntity<ApiResponse<Void, ErrorResponse>> deleteLoads(@PathVariable UUID vehicleMaintenanceRecordUuid) {
         log.info("A request to remove the Vehicle Maintenance record with the UUID=[{}} was received.", vehicleMaintenanceRecordUuid);
         vehicleMaintenanceService.deleteVehicleMaintenanceRecordByUuid(vehicleMaintenanceRecordUuid);
         return ResponseEntity.noContent().build();

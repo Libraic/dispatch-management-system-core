@@ -52,21 +52,6 @@ public class QueryConstants {
     public static final String ID = "id";
 
     /**
-     * The Start Date field.
-     */
-    public static final String START_DATE = "startDate";
-
-    /**
-     * The End Date field.
-     */
-    public static final String END_DATE = "endDate";
-
-    /**
-     * The company field, which acts a join entity.
-     */
-    public static final String COMPANY = "company";
-
-    /**
      * The deletedAt field.
      */
     public static final String DELETED_AT = "deletedAt";

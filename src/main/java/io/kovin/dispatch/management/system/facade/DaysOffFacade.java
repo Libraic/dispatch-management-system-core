@@ -41,7 +41,7 @@ public class DaysOffFacade {
         daysOffService.persistDayOffPeriod(daysOffPeriodEntity);
 
         return UpsertDayOffPeriodResponse.builder()
-            .daysOffPeriodId(daysOffPeriodEntity.getUuid())
+            .daysOffPeriodId(daysOffPeriodEntity.getUuid().toString())
             .startDate(daysOffPeriodEntity.getStartDate())
             .endDate(daysOffPeriodEntity.getEndDate())
             .build();
@@ -62,7 +62,7 @@ public class DaysOffFacade {
      *         within the specified date range for the given relation ID.
      */
     public List<GetDayOffPeriodResponse> getDaysOffPeriodsResponseList(
-        String relationId,
+        UUID relationId,
         LocalDate startDate,
         LocalDate endDate
     ) {
@@ -70,7 +70,7 @@ public class DaysOffFacade {
         List<GetDayOffPeriodResponse> responses = new ArrayList<>();
         for (var dayOff : daysOff) {
             GetDayOffPeriodResponse response = GetDayOffPeriodResponse.builder()
-                .daysOffPeriodId(dayOff.getUuid())
+                .daysOffPeriodId(dayOff.getUuid().toString())
                 .startDate(dayOff.getStartDate())
                 .endDate(dayOff.getEndDate())
                 .build();
@@ -89,11 +89,11 @@ public class DaysOffFacade {
             .build();
     }
 
-    private DaysOffPeriodEntity getOrCreateDaysOffPeriod(String daysOffPeriodId) {
+    private DaysOffPeriodEntity getOrCreateDaysOffPeriod(UUID daysOffPeriodId) {
         if (daysOffPeriodId != null) {
             return daysOffService.getDaysOffPeriodByUuid(daysOffPeriodId);
         }
 
-        return DaysOffPeriodEntity.builder().uuid(UUID.randomUUID().toString()).build();
+        return DaysOffPeriodEntity.builder().uuid(UUID.randomUUID()).build();
     }
 }

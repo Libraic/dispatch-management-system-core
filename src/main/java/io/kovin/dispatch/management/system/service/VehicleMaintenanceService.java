@@ -5,6 +5,8 @@ import static io.kovin.dispatch.management.system.utils.ErrorMessage.VEHICLE_MAI
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
+
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.persistence.VehicleMaintenanceRecordEntity;
 import io.kovin.dispatch.management.system.repository.VehicleMaintenanceRepository;
@@ -40,7 +42,7 @@ public class VehicleMaintenanceService {
      * @return the {@code VehicleMaintenanceRecordEntity} corresponding to the specified UUID
      * @throws DispatchManagementSystemException if no vehicle maintenance record is found for the given UUID
      */
-    public VehicleMaintenanceRecordEntity getVehicleMaintenanceRecordByUuid(String uuid) {
+    public VehicleMaintenanceRecordEntity getVehicleMaintenanceRecordByUuid(UUID uuid) {
         log.info("Retrieving the Vehicle Maintenance Record by UUID=[{}].", uuid);
         var vehicleMaintenanceRecordEntityOptional = vehicleMaintenanceRepository.findByUuid(uuid);
         if (vehicleMaintenanceRecordEntityOptional.isEmpty()) {
@@ -64,7 +66,7 @@ public class VehicleMaintenanceService {
      *         vehicle maintenance records for the specified relation and timeframe
      */
     public List<VehicleMaintenanceRecordEntity> getOverlappingRecordsForRelation(
-        String driverDispatcherRelationUuid,
+        UUID driverDispatcherRelationUuid,
         LocalDate startDate,
         LocalDate endDate
     ) {
@@ -85,7 +87,7 @@ public class VehicleMaintenanceService {
      *             from the database
      */
     @Transactional
-    public void deleteVehicleMaintenanceRecordByUuid(String uuid) {
+    public void deleteVehicleMaintenanceRecordByUuid(UUID uuid) {
         log.info("Deleting the Vehicle Maintenance record with UUID=[{}].", uuid);
         vehicleMaintenanceRepository.deleteByUuid(uuid);
     }

@@ -1,6 +1,7 @@
 package io.kovin.dispatch.management.system.model.persistence;
 
 import java.time.LocalDate;
+import java.util.UUID;
 import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -20,7 +21,7 @@ import lombok.experimental.SuperBuilder;
 public abstract class SchedulableEntity {
 
     @Column
-    private String uuid;
+    private UUID uuid;
 
     @Column
     private LocalDate startDate;

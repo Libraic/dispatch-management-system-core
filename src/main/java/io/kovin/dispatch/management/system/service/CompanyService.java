@@ -2,6 +2,8 @@ package io.kovin.dispatch.management.system.service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
+
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
 import io.kovin.dispatch.management.system.repository.CompanyRepository;
@@ -23,7 +25,7 @@ public class CompanyService {
         companyRepository.save(companyEntity);
     }
 
-    public void deleteCompany(String uuid) {
+    public void deleteCompany(UUID uuid) {
         CompanyEntity companyEntity = getByUuid(uuid);
         companyEntity.setDeletedAt(LocalDateTime.now());
         companyRepository.save(companyEntity);
@@ -37,7 +39,7 @@ public class CompanyService {
      * @return the {@link CompanyEntity} associated with the given UUID
      * @throws DispatchManagementSystemException if no company is found with the given UUID
      */
-    public CompanyEntity getByUuid(String uuid) {
+    public CompanyEntity getByUuid(UUID uuid) {
         log.info("Retrieving the company with UUID=[{}].", uuid);
         Optional<CompanyEntity> companyEntityOptional = companyRepository.findByUuidAndDeletedAtIsNull(uuid);
         if (companyEntityOptional.isEmpty()) {
@@ -57,7 +59,7 @@ public class CompanyService {
      *             (must not be null or empty)
      * @throws DispatchManagementSystemException if the company with the given UUID is not found
      */
-    public void validateTheCompanyIsRegistered(String uuid) {
+    public void validateTheCompanyIsRegistered(UUID uuid) {
         log.info("Checking if the company with UUID=[{}] exists.", uuid);
         boolean isCompanyRegistered = companyRepository.existsByUuid(uuid);
         if (!isCompanyRegistered) {

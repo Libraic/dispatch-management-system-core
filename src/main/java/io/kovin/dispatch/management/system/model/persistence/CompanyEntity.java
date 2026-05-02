@@ -9,6 +9,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,7 +31,7 @@ public class CompanyEntity extends Auditable {
     private Long id;
 
     @Column
-    private String uuid;
+    private UUID uuid;
 
     @Column
     private String name;

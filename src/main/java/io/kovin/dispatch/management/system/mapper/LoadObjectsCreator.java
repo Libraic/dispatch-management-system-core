@@ -18,7 +18,7 @@ public class LoadObjectsCreator {
 
     public GetDispatcherResponse createGetDispatcherResponse(DispatcherEntity dispatcher) {
         return GetDispatcherResponse.builder()
-            .uuid(dispatcher.getUuid())
+            .uuid(dispatcher.getUuid().toString())
             .name(dispatcher.getName())
             .phoneNumber(dispatcher.getPhoneNumber())
             .build();
@@ -27,14 +27,14 @@ public class LoadObjectsCreator {
     public GetDriverResponse createGetDriverResponse(DriverEntity driver) {
         return GetDriverResponse.builder()
             .fullName(driver.getFullName())
-            .uuid(driver.getUuid())
+            .uuid(driver.getUuid().toString())
             .phoneNumber(driver.getPhoneNumber())
             .build();
     }
 
     public GenericLoadResponse createGetLoadResponse(LoadEntity load, List<LoadLocationEntity> loadLocations) {
         return GenericLoadResponse.builder()
-            .loadUuid(load.getUuid())
+            .loadUuid(load.getUuid().toString())
             .loadNumber(load.getLoadNumber())
             .loadedMiles(load.getLoadedMiles())
             .emptyMiles(load.getEmptyMiles())

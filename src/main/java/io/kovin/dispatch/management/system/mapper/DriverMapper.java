@@ -28,7 +28,7 @@ public class DriverMapper {
         TruckEntity truck
     ) {
         return DriverEntity.builder()
-            .uuid(UUID.randomUUID().toString())
+            .uuid(UUID.randomUUID())
             .firstName(request.firstName())
             .lastName(request.lastName())
             .fullName(request.firstName() + BLANK_SPACE + request.lastName())
@@ -47,7 +47,7 @@ public class DriverMapper {
 
     public DriverData fromDriverEntityToDriverData(DriverEntity driver) {
         return DriverData.builder()
-            .uuid(driver.getUuid())
+            .uuid(driver.getUuid().toString())
             .firstName(driver.getFirstName())
             .lastName(driver.getLastName())
             .trailerNumber(Optional.ofNullable(driver.getTrailer()).map(TrailerEntity::getTrailerNumber).orElse(null))

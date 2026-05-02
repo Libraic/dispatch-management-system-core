@@ -1,11 +1,13 @@
 package io.kovin.dispatch.management.system.model.request;
 
+import java.util.UUID;
+
 public record CreateTruckRequest(
-    String companyUuid,
+    UUID companyUuid,
     String truckNumber,
     String vinNumber,
     String model,
-    int truckYear,
+    short truckYear,
     String truckMake,
     String fuelType,
     String color,

@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.util.Objects;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,7 +32,7 @@ public class TrailerEntity extends Auditable {
     private Long id;
 
     @Column
-    private String uuid;
+    private UUID uuid;
 
     @Column
     private String trailerNumber;
@@ -40,7 +41,7 @@ public class TrailerEntity extends Auditable {
     private String vinNumber;
 
     @Column
-    private Integer trailerYear;
+    private Short trailerYear;
 
     @Column
     private String trailerMake;

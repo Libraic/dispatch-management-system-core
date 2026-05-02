@@ -17,14 +17,15 @@ public class CompanyMapper {
             .address(StringUtils.parseEmptyString(request.address()))
             .serviceDate(request.serviceDate())
             .startDate(request.startDate())
-            .uuid(UUID.randomUUID().toString())
+            .uuid(UUID.randomUUID())
+            .timezone(request.timezone())
             .build();
     }
 
     public CompanyData fromCompanyEntityToCompanyData(CompanyEntity companyEntity) {
         return CompanyData.builder()
             .name(companyEntity.getName())
-            .uuid(companyEntity.getUuid())
+            .uuid(companyEntity.getUuid().toString())
             .mcNumber(companyEntity.getMcNumber())
             .address(companyEntity.getAddress())
             .startDate(companyEntity.getStartDate().toString())

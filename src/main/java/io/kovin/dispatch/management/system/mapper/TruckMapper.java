@@ -12,7 +12,7 @@ public class TruckMapper {
 
     public TruckEntity fromCreateTruckRequestToTruckEntity(CreateTruckRequest request, CompanyEntity company) {
         return TruckEntity.builder()
-            .uuid(UUID.randomUUID().toString())
+            .uuid(UUID.randomUUID())
             .truckNumber(request.truckNumber())
             .vinNumber(request.vinNumber())
             .model(request.model())
@@ -27,7 +27,7 @@ public class TruckMapper {
 
     public TruckData fromTruckEntityToTruckData(TruckEntity truckEntity) {
         return TruckData.builder()
-            .uuid(truckEntity.getUuid())
+            .uuid(truckEntity.getUuid().toString())
             .truckNumber(truckEntity.getTruckNumber())
             .vinNumber(truckEntity.getVinNumber())
             .truckMake(truckEntity.getTruckMake())

@@ -1,6 +1,7 @@
 package io.kovin.dispatch.management.system.model.response.load;
 
 import java.util.List;
+import java.util.UUID;
 
 import io.kovin.dispatch.management.system.model.response.GetDayOffPeriodResponse;
 import io.kovin.dispatch.management.system.model.response.GetDriverResponse;
@@ -9,7 +10,7 @@ import lombok.Builder;
 
 @Builder
 public record GetWorkforceDataResponse(
-    String relationUuid,
+    UUID relationUuid,
     GetDriverResponse driver,
     List<GenericLoadResponse> loads,
     List<GetVehicleMaintenanceResponse> vehicleMaintenanceRecords,

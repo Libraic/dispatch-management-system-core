@@ -1,5 +1,6 @@
 package io.kovin.dispatch.management.system.model.response.error;
 
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +17,8 @@ public class ErrorResponse {
 
     private String message;
     private HttpStatus status;
+    private ErrorType type;
+    private Map<String, String> errors;
 
     public static ErrorResponse of(String message, HttpStatus status) {
         return ErrorResponse.builder()

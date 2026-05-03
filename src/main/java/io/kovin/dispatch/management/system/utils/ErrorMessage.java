@@ -24,6 +24,8 @@ public class ErrorMessage {
     public static final String PASSWORD_IS_MANDATORY = "The password is mandatory.";
     public static final String START_DATE_IS_MANDATORY = "The start date is required.";
 
+    public static final String INVALID_CREDENTIALS = "The provided credentials are invalid.";
+
     /**
      * Error messages related to Company.
      */
@@ -35,7 +37,6 @@ public class ErrorMessage {
      * Error messages related to Drivers.
      */
     public static final String CITY_IS_MANDATORY = "The city the driver is making deliveries in is mandatory.";
-    public static final String DRIVER_NOT_FOUND_BY_UUID = "The driver with UUID=[%s] was not found.";
     public static final String INVALID_DOCUMENT_STATUS = "The status of the documents is not valid.";
     public static final String INVALID_DRIVER_POSITION = "The position of the driver is not valid.";
     public static final String INVALID_TIMEZONE = "The timezone is not valid.";
@@ -50,7 +51,6 @@ public class ErrorMessage {
     public static final String LOAD_NOT_FOUND = "The load was not found.";
     public static final String LOAD_NOT_FOUND_BY_UUID = "The load with UUID=[%s] was not found.";
     public static final String DELIVERY_LOCATION_MISSING = "The delivery location is missing.";
-    public static final String DRIVER_DISPATCHER_RELATION_NOT_FOUND = "The Driver-Dispatcher relation was not found.";
     public static final String DRIVER_DISPATCHER_RELATION_NOT_FOUND_BY_UUID = "The Driver-Dispatcher relation with UUID=[%s] was not found.";
     public static final String INVALID_LOAD_STATUS_BE = "The load status=[%s] is invalid.";
     public static final String INVALID_LOAD_STATUS_CLIENT = "Invalid load status.";
@@ -87,7 +87,6 @@ public class ErrorMessage {
     public static final String EQUIPMENT_TYPE_IS_MANDATORY = "The equipment type cannot be empty.";
     public static final String MAX_WEIGHT_INVALID = "The max weight is not valid.";
     public static final String PALLET_CAPACITY_INVALID = "The pallet capacity is not valid.";
-    public static final String TRAILER_NOT_FOUND_BY_UUID = "The trailer with UUID=[%s] was not found.";
     public static final String TRAILER_NUMBER_IS_MANDATORY = "The trailer number cannot be empty.";
     public static final String TRAILER_YEAR_INVALID = "The trailer year is not valid.";
     public static final String VIN_NUMBER_IS_MANDATORY = "The VIN number cannot be empty.";
@@ -96,7 +95,6 @@ public class ErrorMessage {
     /**
      * Error messages related to Trucks.
      */
-    public static final String TRUCK_NOT_FOUND_BY_UUID = "The truck with UUID=[%s] was not found.";
     public static final String TRUCK_NUMBER_IS_MANDATORY = "The truck number cannot be empty.";
     public static final String TRUCK_YEAR_INVALID = "The truck year is not valid.";
     public static final String TRUCK_WEIGHT_INVALID = "The truck weight is not valid.";

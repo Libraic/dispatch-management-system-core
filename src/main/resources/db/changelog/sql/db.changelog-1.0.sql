@@ -457,3 +457,35 @@ ALTER TABLE t_load_locations
     ADD COLUMN timezone VARCHAR(64) NOT NULL DEFAULT 'America/New_York';
 
 COMMENT ON COLUMN t_load_locations.timezone IS 'The timezone the location is located in.';
+
+-- changeset libra:020
+-- comment: Create the t_users table and its related dependencies
+CREATE SEQUENCE t_users_sequence
+    INCREMENT BY 1
+    START WITH 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+CREATE TABLE t_users (
+    id              BIGINT                      PRIMARY KEY DEFAULT nextval('t_users_sequence'),
+    username        VARCHAR(50)                 NOT NULL UNIQUE,
+    password        VARCHAR                     NOT NULL,
+    role            VARCHAR(50)                 NOT NULL,
+    created_at      TIMESTAMP WITH TIME ZONE    DEFAULT CURRENT_TIMESTAMP,
+    last_updated_at TIMESTAMP WITH TIME ZONE    DEFAULT CURRENT_TIMESTAMP,
+    deleted_at      TIMESTAMP WITH TIME ZONE    DEFAULT NULL
+);
+
+-- Ensure the sequence is always in sync
+ALTER SEQUENCE t_users_sequence OWNED BY t_users.id;
+
+COMMENT ON TABLE t_users IS 'The table used to store the authentication information of a User.';
+
+COMMENT ON COLUMN t_users.id               IS 'The primary key of the t_users table.';
+COMMENT ON COLUMN t_users.username         IS 'The username of the User.';
+COMMENT ON COLUMN t_users.password         IS 'The password of the User.';
+COMMENT ON COLUMN t_users.role             IS 'The role of the User.';
+COMMENT ON COLUMN t_users.created_at       IS 'The date the User was created.';
+COMMENT ON COLUMN t_users.last_updated_at  IS 'The date the User was last updated.';
+COMMENT ON COLUMN t_users.deleted_at       IS 'The date the User was deleted.';

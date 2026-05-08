@@ -1,19 +1,19 @@
 package io.kovin.dispatch.management.system.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import io.kovin.dispatch.management.system.facade.DriverFacade;
 import io.kovin.dispatch.management.system.model.request.CreateDriverRequest;
-import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.DriverData;
-import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
-import io.kovin.dispatch.management.system.model.response.error.GroupsErrors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,17 +30,23 @@ public class DriverController {
     private final DriverFacade driverFacade;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<DriverData, List<GroupsErrors>>> createDriver(
+    public ResponseEntity<DriverData> createDriver(
         @RequestBody CreateDriverRequest createDriverRequest
     ) {
         log.info("A request to create a driver was received.");
         DriverData driverData = driverFacade.createDriver(createDriverRequest);
-        ApiResponse<DriverData, List<GroupsErrors>> apiResponse = ApiResponse.fromData(driverData);
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(driverData);
+    }
+
+    @DeleteMapping("/{driverId}")
+    public ResponseEntity<Void> deleteDriver(@PathVariable UUID driverId) {
+        log.info("A request to delete the driver was received.");
+        driverFacade.deleteDriver(driverId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<DriverData>, ErrorResponse>> getDriversByCriteria(
+    public ResponseEntity<Page<DriverData>> getDriversByCriteria(
         @RequestParam(name = "page", required = false) Integer page,
         @RequestParam(name = "size", required = false) Integer size,
         @RequestParam(name = "firstName", required = false) String firstName,
@@ -58,7 +64,7 @@ public class DriverController {
 
         int finalPage = page == null ? 0 : page;
         int finalSize = size == null ? 0 : size;
-        List<DriverData> driversData = driverFacade.getDriversByCriteria(queryParams, finalPage, finalSize);
-        return ResponseEntity.ok(ApiResponse.fromData(driversData));
+        Page<DriverData> driversData = driverFacade.getDriversByCriteria(queryParams, finalPage, finalSize);
+        return ResponseEntity.ok(driversData);
     }
 }

@@ -1,16 +1,15 @@
 package io.kovin.dispatch.management.system.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import io.kovin.dispatch.management.system.facade.TrailerFacade;
 import io.kovin.dispatch.management.system.model.request.CreateTrailerRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
-import io.kovin.dispatch.management.system.model.response.TrailerData;
-import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
+import io.kovin.dispatch.management.system.model.response.GetTrailerResponse;
 import io.kovin.dispatch.management.system.model.response.error.GroupsErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,16 +28,16 @@ public class TrailerController {
     private final TrailerFacade trailerFacade;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<TrailerData, GroupsErrorResponse>> createTrailer(
+    public ResponseEntity<ApiResponse<GetTrailerResponse, GroupsErrorResponse>> createTrailer(
         @RequestBody CreateTrailerRequest createTrailerRequest
     ) {
         log.info("A request to create a Trailer was received.");
-        TrailerData trailerData = trailerFacade.createTrailer(createTrailerRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.fromData(trailerData));
+        GetTrailerResponse getTrailerResponse = trailerFacade.createTrailer(createTrailerRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.fromData(getTrailerResponse));
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<TrailerData>, ErrorResponse>> getTrailersByCriteria(
+    public ResponseEntity<Page<GetTrailerResponse>> getTrailersByCriteria(
         @RequestParam(name = "page", required = false) Integer page,
         @RequestParam(name = "size", required = false) Integer size,
         @RequestParam(name = "trailerNumber", required = false) String trailerNumber,
@@ -51,7 +50,7 @@ public class TrailerController {
         log.trace("The query parameters are the following: [{}].", queryParams);
         int finalPage = page == null ? 0 : page;
         int finalSize = size == null ? 0 : size;
-        List<TrailerData> trailersData = trailerFacade.getTrailersByCriteria(queryParams, finalPage, finalSize);
-        return ResponseEntity.ok(ApiResponse.fromData(trailersData));
+        Page<GetTrailerResponse> trailersPage = trailerFacade.getTrailersByCriteria(queryParams, finalPage, finalSize);
+        return ResponseEntity.ok(trailersPage);
     }
 }

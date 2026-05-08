@@ -16,7 +16,6 @@ public class ErrorMessage {
     public static final String END_DATE_IS_MANDATORY = "The start date is required.";
     public static final String FIRST_NAME_IS_MANDATORY = "The first name is required.";
     public static final String INTERNAL_SERVER_ERROR = "An internal server error occurred. Please try again later.";
-    public static final String INVALID_PAGEABLE_ENTITY = "The entity=[%s] is not valid.";
     public static final String INVALID_SEARCH_CRITERIA = "The field=[%s] has an invalid format=[%s].";
     public static final String LAST_NAME_IS_MANDATORY = "The last name is required.";
     public static final String LOCATION_MANDATORY = "The location is required.";

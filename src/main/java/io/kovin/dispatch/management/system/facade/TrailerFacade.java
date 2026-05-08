@@ -1,7 +1,8 @@
 package io.kovin.dispatch.management.system.facade;
 
-import jakarta.transaction.Transactional;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.DEFAULT_SORTING_FIELD;
 
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import io.kovin.dispatch.management.system.mapper.TrailerMapper;
@@ -9,14 +10,19 @@ import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
 import io.kovin.dispatch.management.system.model.persistence.TrailerEntity;
 import io.kovin.dispatch.management.system.model.request.CreateTrailerRequest;
-import io.kovin.dispatch.management.system.model.response.TrailerData;
+import io.kovin.dispatch.management.system.model.response.GetTrailerResponse;
 import io.kovin.dispatch.management.system.service.CompanyService;
 import io.kovin.dispatch.management.system.service.CriteriaService;
 import io.kovin.dispatch.management.system.service.TrailerService;
 import io.kovin.dispatch.management.system.utils.SearchCriteriaUtils;
 import io.kovin.dispatch.management.system.validation.TrailerValidationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+
 
 @Component
 @RequiredArgsConstructor
@@ -30,9 +36,9 @@ public class TrailerFacade {
     private final TrailerMapper trailerMapper;
 
     @Transactional
-    public TrailerData createTrailer(CreateTrailerRequest request) {
+    public GetTrailerResponse createTrailer(CreateTrailerRequest request) {
         if (request == null) {
-            return TrailerData.builder().build();
+            return GetTrailerResponse.builder().build();
         }
 
         CompanyEntity company = companyService.getByUuid(request.companyUuid());
@@ -42,9 +48,14 @@ public class TrailerFacade {
         return trailerMapper.fromTrailerEntityToTrailerData(trailerEntity);
     }
 
-    public List<TrailerData> getTrailersByCriteria(Map<String, String> queryParams, int page, int size) {
+    public Page<GetTrailerResponse> getTrailersByCriteria(Map<String, String> queryParams, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, DEFAULT_SORTING_FIELD));
         List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams);
-        List<TrailerEntity> trucks = criteriaService.getCollection(searchCriteria, TrailerEntity.class, page, size);
-        return trucks.stream().map(trailerMapper::fromTrailerEntityToTrailerData).toList();
+        return criteriaService.getCollection(
+            searchCriteria,
+            TrailerEntity.class,
+            pageable,
+            trailerMapper::fromTrailerEntityToTrailerData
+        );
     }
 }

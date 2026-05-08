@@ -14,8 +14,13 @@ import io.kovin.dispatch.management.system.service.DispatcherService;
 import io.kovin.dispatch.management.system.utils.SearchCriteriaUtils;
 import io.kovin.dispatch.management.system.validation.DispatcherValidationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.DEFAULT_SORTING_FIELD;
 
 @Component
 @RequiredArgsConstructor
@@ -47,10 +52,15 @@ public class DispatcherFacade {
         dispatcherService.saveDispatcher(dispatcherEntity);
     }
 
-    public List<GetDispatcherResponse> getDispatchersByCriteria(Map<String, String> queryParams, int page, int size) {
+    public Page<GetDispatcherResponse> getDispatchersByCriteria(Map<String, String> queryParams, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, DEFAULT_SORTING_FIELD));
         List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams);
-        List<DispatcherEntity> users = criteriaService.getCollection(searchCriteria, DispatcherEntity.class, page, size);
-        return users.stream().map(this::fromDispatcherEntityToGetDispatcherResponse).toList();
+        return criteriaService.getCollection(
+            searchCriteria,
+            DispatcherEntity.class,
+            pageable,
+            this::fromDispatcherEntityToGetDispatcherResponse
+        );
     }
 
     private GetDispatcherResponse fromDispatcherEntityToGetDispatcherResponse(DispatcherEntity dispatcher) {

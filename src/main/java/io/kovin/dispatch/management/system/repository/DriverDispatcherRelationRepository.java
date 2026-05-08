@@ -8,13 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DriverDispatcherRelationRepository extends JpaRepository<DriverDispatcherRelationEntity, Long> {
 
-    Optional<DriverDispatcherRelationEntity> findByCompanyUuidAndDriverUuidAndDispatcherUuidAndDeletedAtIsNull(
-        UUID companyUuid,
-        UUID driverUuid,
-        UUID dispatcherUuid
-    );
-
     List<DriverDispatcherRelationEntity> findAllByCompanyUuidAndDeletedAtIsNull(UUID companyUuid);
 
     Optional<DriverDispatcherRelationEntity> findByUuidAndDeletedAtIsNull(UUID uuid);
+
+    Optional<DriverDispatcherRelationEntity> findByDriverUuidAndDeletedAtIsNull(UUID driverUuid);
 }

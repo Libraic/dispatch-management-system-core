@@ -20,11 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
-import io.kovin.dispatch.management.system.model.response.PaginationDetails;
-import io.kovin.dispatch.management.system.utils.constants.QueryConstants;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
@@ -106,19 +103,6 @@ public class SearchCriteriaUtils {
             case LESS -> criteriaBuilder.lessThan(root.get(criteria.getField()), (T) parse(criteria.getValue()));
             default -> null;
         };
-    }
-
-    /**
-     * Return the number of pages it would take to display all the records.
-     *
-     * @param numberOfRecords the total number of records.
-     * @param pageSize        the number of records on a single page.
-     * @return                the number of pages required to contain all the records.
-     */
-    public static PaginationDetails getPaginationDetails(long numberOfRecords, Integer pageSize) {
-        int size = pageSize == null ? QueryConstants.DEFAULT_SIZE : pageSize;
-        long numberOfPages = (numberOfRecords % size != 0 ? 1 : 0) + (numberOfRecords / size);
-        return new PaginationDetails(numberOfRecords, numberOfPages);
     }
 
     @SuppressWarnings("unchecked")

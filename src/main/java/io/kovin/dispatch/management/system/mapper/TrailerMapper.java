@@ -4,7 +4,7 @@ import java.util.UUID;
 import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
 import io.kovin.dispatch.management.system.model.persistence.TrailerEntity;
 import io.kovin.dispatch.management.system.model.request.CreateTrailerRequest;
-import io.kovin.dispatch.management.system.model.response.TrailerData;
+import io.kovin.dispatch.management.system.model.response.GetTrailerResponse;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,8 +26,8 @@ public class TrailerMapper {
             .build();
     }
 
-    public TrailerData fromTrailerEntityToTrailerData(TrailerEntity trailerEntity) {
-        return TrailerData.builder()
+    public GetTrailerResponse fromTrailerEntityToTrailerData(TrailerEntity trailerEntity) {
+        return GetTrailerResponse.builder()
             .uuid(trailerEntity.getUuid().toString())
             .trailerNumber(trailerEntity.getTrailerNumber())
             .vinNumber(trailerEntity.getVinNumber())

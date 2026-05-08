@@ -1,22 +1,19 @@
 package io.kovin.dispatch.management.system.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import io.kovin.dispatch.management.system.facade.CompanyFacade;
 import io.kovin.dispatch.management.system.mapper.CompanyMapper;
 import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
 import io.kovin.dispatch.management.system.model.request.company.request.CreateCompanyRequest;
 import io.kovin.dispatch.management.system.model.request.company.request.UpdateCompanySettingsRequest;
 import io.kovin.dispatch.management.system.model.request.company.response.GetCompanySettingsResponse;
-import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.CompanyData;
-import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
 import io.kovin.dispatch.management.system.service.CompanyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,11 +37,10 @@ public class CompanyController {
     private final CompanyFacade companyFacade;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<CompanyData, ErrorResponse>> createCompany(@RequestBody CreateCompanyRequest createCompanyRequest) {
+    public ResponseEntity<CompanyData> createCompany(@RequestBody CreateCompanyRequest createCompanyRequest) {
         log.info("A request to create a company with name=[{}] was received.", createCompanyRequest.name());
         CompanyData companyData = companyFacade.saveCompany(createCompanyRequest);
-        ApiResponse<CompanyData, ErrorResponse> apiResponse = ApiResponse.fromData(companyData);
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(companyData);
     }
 
     @PutMapping("/{uuid}/settings")
@@ -58,13 +54,12 @@ public class CompanyController {
     }
 
 
-    @GetMapping("/{loadUuid}")
-    public ResponseEntity<ApiResponse<CompanyData, ErrorResponse>> getByUuid(@PathVariable UUID uuid) {
+    @GetMapping("/{uuid}")
+    public ResponseEntity<CompanyData> getByUuid(@PathVariable UUID uuid) {
         log.info("A request to retrieve the company with UUID=[{}] was received.", uuid);
         CompanyEntity companyEntity = companyService.getByUuid(uuid);
         CompanyData companyData = companyMapper.fromCompanyEntityToCompanyData(companyEntity);
-        ApiResponse<CompanyData, ErrorResponse> apiResponse = ApiResponse.fromData(companyData);
-        return ResponseEntity.ok(apiResponse);
+        return ResponseEntity.ok(companyData);
     }
 
     @GetMapping("/{uuid}/settings")
@@ -75,7 +70,7 @@ public class CompanyController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<CompanyData>, ErrorResponse>> getCompaniesByCriteria(
+    public ResponseEntity<Page<CompanyData>> getCompaniesByCriteria(
         @RequestParam(name = "page", required = false) Integer page,
         @RequestParam(name = "size", required = false) Integer size,
         @RequestParam(name = "uuid", required = false) String uuid,
@@ -87,14 +82,14 @@ public class CompanyController {
         queryParams.put("name", name);
         int finalPage = page == null ? 0 : page;
         int finalSize = size == null ? 0 : size;
-        List<CompanyData> companiesData = companyFacade.getCompaniesByCriteria(queryParams, finalPage, finalSize);
-        return ResponseEntity.ok(ApiResponse.fromData(companiesData));
+        Page<CompanyData> companiesData = companyFacade.getCompaniesByCriteria(queryParams, finalPage, finalSize);
+        return ResponseEntity.ok(companiesData);
     }
 
     @DeleteMapping("/{loadUuid}")
-    public ResponseEntity<ApiResponse<CompanyData, ErrorResponse>> deleteCompany(@PathVariable UUID uuid) {
+    public ResponseEntity<Void> deleteCompany(@PathVariable UUID uuid) {
         log.info("A request to delete the company with UUID=[{}] was received.", uuid);
         companyService.deleteCompany(uuid);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT.value()).build();
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,16 +1,15 @@
 package io.kovin.dispatch.management.system.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import io.kovin.dispatch.management.system.facade.TruckFacade;
 import io.kovin.dispatch.management.system.model.request.CreateTruckRequest;
 import io.kovin.dispatch.management.system.model.response.ApiResponse;
-import io.kovin.dispatch.management.system.model.response.TruckData;
-import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
+import io.kovin.dispatch.management.system.model.response.GetTruckResponse;
 import io.kovin.dispatch.management.system.model.response.error.GroupsErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,16 +28,16 @@ public class TruckController {
     private final TruckFacade truckFacade;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<TruckData, GroupsErrorResponse>> createTruck(
+    public ResponseEntity<ApiResponse<GetTruckResponse, GroupsErrorResponse>> createTruck(
         @RequestBody CreateTruckRequest createTruckRequest
     ) {
         log.info("A request to register a Truck was received.");
-        TruckData truckData = truckFacade.createTruck(createTruckRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.fromData(truckData));
+        GetTruckResponse getTruckResponse = truckFacade.createTruck(createTruckRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.fromData(getTruckResponse));
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<TruckData>, ErrorResponse>> getTrucksByCriteria(
+    public ResponseEntity<Page<GetTruckResponse>> getTrucksByCriteria(
         @RequestParam(name = "page", required = false) Integer page,
         @RequestParam(name = "size", required = false) Integer size,
         @RequestParam(name = "truckNumber", required = false) String truckNumber,
@@ -51,7 +50,7 @@ public class TruckController {
         log.trace("The query parameters are the following: [{}].", queryParams);
         int finalPage = page == null ? 0 : page;
         int finalSize = size == null ? 0 : size;
-        List<TruckData> trucksData = truckFacade.getTrucksByCriteria(queryParams, finalPage, finalSize);
-        return ResponseEntity.ok(ApiResponse.fromData(trucksData));
+        Page<GetTruckResponse> trucksData = truckFacade.getTrucksByCriteria(queryParams, finalPage, finalSize);
+        return ResponseEntity.ok(trucksData);
     }
 }

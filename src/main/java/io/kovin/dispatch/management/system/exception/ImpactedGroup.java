@@ -12,12 +12,7 @@ public enum ImpactedGroup {
      */
     FIRST_NAME("firstName"),
     LAST_NAME("lastName"),
-    BIRTH_DATE("birthDate"),
-    EMPLOYMENT_DATE("employmentDate"),
     EMAIL("email"),
-    PASSWORD("password"),
-    SUPERVISOR("supervisor"),
-    WORKLOADS("workloads"),
 
     /**
      * Fields related to Driver registration.
@@ -26,13 +21,7 @@ public enum ImpactedGroup {
     DOCUMENT_STATUS("documentsStatus"),
     POSITION("position"),
     STATE("state"),
-    CITY("city"),
-
-    /**
-     * Fields related to Dispatcher registration.
-     */
-    NAME("name")
-    ;
+    CITY("city");
 
     private final String groupName;
 }

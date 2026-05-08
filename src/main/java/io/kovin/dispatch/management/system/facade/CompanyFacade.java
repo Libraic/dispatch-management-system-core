@@ -18,9 +18,14 @@ import io.kovin.dispatch.management.system.utils.SearchCriteriaUtils;
 import io.kovin.dispatch.management.system.utils.TimeUtils;
 import io.kovin.dispatch.management.system.validation.CompanyValidationService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_TIMEZONE;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.DEFAULT_SORTING_FIELD;
 
 @Component
 @AllArgsConstructor
@@ -62,9 +67,14 @@ public class CompanyFacade {
             .build();
     }
 
-    public List<CompanyData> getCompaniesByCriteria(Map<String, String> queryParams, int page, int size) {
+    public Page<CompanyData> getCompaniesByCriteria(Map<String, String> queryParams, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, DEFAULT_SORTING_FIELD));
         List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams);
-        List<CompanyEntity> companies = criteriaService.getCollection(searchCriteria, CompanyEntity.class, page, size);
-        return companies.stream().map(companyMapper::fromCompanyEntityToCompanyData).toList();
+        return criteriaService.getCollection(
+            searchCriteria,
+            CompanyEntity.class,
+            pageable,
+            companyMapper::fromCompanyEntityToCompanyData
+        );
     }
 }

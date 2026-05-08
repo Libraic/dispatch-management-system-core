@@ -1,5 +1,6 @@
 package io.kovin.dispatch.management.system.facade;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -24,8 +25,13 @@ import io.kovin.dispatch.management.system.utils.SearchCriteriaUtils;
 import io.kovin.dispatch.management.system.validation.DriverValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.DEFAULT_SORTING_FIELD;
 
 @Component
 @RequiredArgsConstructor
@@ -63,11 +69,29 @@ public class DriverFacade {
         return driverMapper.fromDriverEntityToDriverData(savedDriverEntity);
     }
 
-    public List<DriverData> getDriversByCriteria(Map<String, String> queryParams, int page, int size) {
+    @Transactional
+    public void deleteDriver(UUID driverUuid) {
+        DriverEntity driver = driverService.getByUuid(driverUuid);
+        if (driver == null) {
+            return;
+        }
+
+        DriverDispatcherRelationEntity relation = driverDispatcherRelationService.getRelationByDriver(driverUuid);
+
+        LocalDateTime deletedAt = LocalDateTime.now();
+        relation.setDeletedAt(deletedAt);
+        driver.setDeletedAt(deletedAt);
+    }
+
+    public Page<DriverData> getDriversByCriteria(Map<String, String> queryParams, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, DEFAULT_SORTING_FIELD));
         List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams);
-        List<DriverEntity> drivers = criteriaService.getCollection(searchCriteria, DriverEntity.class, page, size);
-        log.info("Found [{}] drivers that match the search criteria.", drivers.size());
-        return drivers.stream().map(driverMapper::fromDriverEntityToDriverData).toList();
+        return criteriaService.getCollection(
+            searchCriteria,
+            DriverEntity.class,
+            pageable,
+            driverMapper::fromDriverEntityToDriverData
+        );
     }
 
     private TruckEntity getTruck(UUID truckUuid) {

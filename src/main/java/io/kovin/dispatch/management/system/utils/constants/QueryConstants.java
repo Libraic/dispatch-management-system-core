@@ -62,27 +62,7 @@ public class QueryConstants {
     public static final String WILDCARD = "%";
 
     /**
-     * Default size value.
-     */
-    public static final int DEFAULT_SIZE = 10;
-
-    /**
      * The CompanyEntity field name used when performing joining.
      */
     public static final String COMPANY_FIELD = "company";
-
-    /**
-     * The name of the joinable ID request param.
-     */
-    public static final String JOINABLE_FIELD_ID_REQUEST_PARAM = "joinableEntityId";
-
-    /**
-     * The name of the joinable entity request param.
-     */
-    public static final String JOINABLE_FIELD_NAME_REQUEST_PARAM = "joinableEntityName";
-
-    /**
-     * The name of the pageable entity type request param.
-     */
-    public static final String PAGEABLE_ENTITY_REQUEST_PARAM = "entity";
 }

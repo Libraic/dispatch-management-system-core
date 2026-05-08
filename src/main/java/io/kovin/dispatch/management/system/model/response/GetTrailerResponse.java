@@ -5,13 +5,13 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record TruckData(
+public record GetTrailerResponse(
     String uuid,
-    String truckNumber,
+    String trailerNumber,
     String vinNumber,
-    String model,
-    String truckMake,
-    String fuelType,
+    Short trailerYear,
+    String trailerMake,
+    String equipmentType,
     LocalDateTime createdAt
 ) {
 }

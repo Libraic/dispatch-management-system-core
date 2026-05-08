@@ -79,4 +79,17 @@ public class DriverDispatcherRelationService {
             )
         );
     }
+
+    /**
+     * Retrieves the relationship between a Driver and a Dispatcher using the provided Driver UUID.
+     * The method queries for an active relationship, where the relationship has not been marked as deleted.
+     *
+     * @param driverUuid the unique identifier of the Driver whose relationship is to be retrieved
+     * @return the DriverDispatcherRelationEntity representing the relationship between
+     *         the specified Driver and a Dispatcher, or {@code null} if no active relationship exists
+     */
+    public DriverDispatcherRelationEntity getRelationByDriver(UUID driverUuid) {
+        log.info("Retrieving the relation between Driver and Dispatcher by Driver=[{}].", driverUuid);
+        return driverDispatcherRelationRepository.findByDriverUuidAndDeletedAtIsNull(driverUuid).orElse(null);
+    }
 }

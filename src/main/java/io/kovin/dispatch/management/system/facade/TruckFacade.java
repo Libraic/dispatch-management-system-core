@@ -7,7 +7,7 @@ import io.kovin.dispatch.management.system.model.criteria.SearchCriteria;
 import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
 import io.kovin.dispatch.management.system.model.persistence.TruckEntity;
 import io.kovin.dispatch.management.system.model.request.CreateTruckRequest;
-import io.kovin.dispatch.management.system.model.response.TruckData;
+import io.kovin.dispatch.management.system.model.response.GetTruckResponse;
 import io.kovin.dispatch.management.system.service.CompanyService;
 import io.kovin.dispatch.management.system.service.CriteriaService;
 import io.kovin.dispatch.management.system.service.TruckService;
@@ -15,7 +15,12 @@ import io.kovin.dispatch.management.system.utils.SearchCriteriaUtils;
 import io.kovin.dispatch.management.system.validation.TruckValidationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.DEFAULT_SORTING_FIELD;
 
 @Component
 @RequiredArgsConstructor
@@ -29,9 +34,9 @@ public class TruckFacade {
     private final TruckMapper truckMapper;
 
     @Transactional
-    public TruckData createTruck(CreateTruckRequest request) {
+    public GetTruckResponse createTruck(CreateTruckRequest request) {
         if (request == null) {
-            return TruckData.builder().build();
+            return GetTruckResponse.builder().build();
         }
 
         CompanyEntity company = companyService.getByUuid(request.companyUuid());
@@ -41,9 +46,14 @@ public class TruckFacade {
         return truckMapper.fromTruckEntityToTruckData(truckEntity);
     }
 
-    public List<TruckData> getTrucksByCriteria(Map<String, String> queryParams, int page, int size) {
+    public Page<GetTruckResponse> getTrucksByCriteria(Map<String, String> queryParams, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, DEFAULT_SORTING_FIELD));
         List<SearchCriteria> searchCriteria = SearchCriteriaUtils.getSearchCriteriaListFromQueryParams(queryParams);
-        List<TruckEntity> trucks = criteriaService.getCollection(searchCriteria, TruckEntity.class, page, size);
-        return trucks.stream().map(truckMapper::fromTruckEntityToTruckData).toList();
+        return criteriaService.getCollection(
+            searchCriteria,
+            TruckEntity.class,
+            pageable,
+            truckMapper::fromTruckEntityToTruckData
+        );
     }
 }

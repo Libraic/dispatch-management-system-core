@@ -4,7 +4,7 @@ import java.util.UUID;
 import io.kovin.dispatch.management.system.model.persistence.CompanyEntity;
 import io.kovin.dispatch.management.system.model.persistence.TruckEntity;
 import io.kovin.dispatch.management.system.model.request.CreateTruckRequest;
-import io.kovin.dispatch.management.system.model.response.TruckData;
+import io.kovin.dispatch.management.system.model.response.GetTruckResponse;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,8 +25,8 @@ public class TruckMapper {
             .build();
     }
 
-    public TruckData fromTruckEntityToTruckData(TruckEntity truckEntity) {
-        return TruckData.builder()
+    public GetTruckResponse fromTruckEntityToTruckData(TruckEntity truckEntity) {
+        return GetTruckResponse.builder()
             .uuid(truckEntity.getUuid().toString())
             .truckNumber(truckEntity.getTruckNumber())
             .vinNumber(truckEntity.getVinNumber())

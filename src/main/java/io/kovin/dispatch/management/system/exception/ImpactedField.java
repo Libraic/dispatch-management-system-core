@@ -18,15 +18,6 @@ public enum ImpactedField {
     COMPANY_START_DATE("startDate"),
     COMPANY_NAME("name"),
 
-    COMPANY("company"),
-    COMMISSION("commission"),
-    SUPERVISOR("supervisor"),
-
-    DISPATCHER("dispatcher"),
-    DRIVER("driver"),
-    REVENUE("revenue"),
-    MILES("loadedMiles"),
-
     /**
      * Fields related to Asset (Trailer/Truck) registration.
      */
@@ -46,8 +37,7 @@ public enum ImpactedField {
      * Fields related to Dispatcher registration.
      */
     NAME("name"),
-    PHONE_NUMBER("phoneNumber"),
-    ;
+    PHONE_NUMBER("phoneNumber");
 
     private final String mappedField;
 }

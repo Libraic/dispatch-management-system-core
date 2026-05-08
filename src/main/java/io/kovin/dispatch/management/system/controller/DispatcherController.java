@@ -1,16 +1,14 @@
 package io.kovin.dispatch.management.system.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import io.kovin.dispatch.management.system.facade.DispatcherFacade;
 import io.kovin.dispatch.management.system.model.request.CreateDispatcherRequest;
-import io.kovin.dispatch.management.system.model.response.ApiResponse;
 import io.kovin.dispatch.management.system.model.response.GetDispatcherResponse;
-import io.kovin.dispatch.management.system.model.response.error.ErrorResponse;
 import io.kovin.dispatch.management.system.utils.MapUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +34,7 @@ public class DispatcherController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<GetDispatcherResponse>, ErrorResponse>> getDispatchersByCriteria(
+    public ResponseEntity<Page<GetDispatcherResponse>> getDispatchersByCriteria(
         @RequestParam(name = "page", required = false) Integer page,
         @RequestParam(name = "size", required = false) Integer size,
         @RequestParam(name = "name", required = false) String name,
@@ -50,7 +48,7 @@ public class DispatcherController {
         int finalPage = page == null ? 0 : page;
         int finalSize = size == null ? 0 : size;
 
-        List<GetDispatcherResponse> usersData = dispatcherFacade.getDispatchersByCriteria(fields, finalPage, finalSize);
-        return ResponseEntity.ok(ApiResponse.fromData(usersData));
+        Page<GetDispatcherResponse> usersData = dispatcherFacade.getDispatchersByCriteria(fields, finalPage, finalSize);
+        return ResponseEntity.ok(usersData);
     }
 }

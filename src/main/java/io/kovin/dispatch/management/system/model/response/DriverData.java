@@ -23,7 +23,6 @@ public class DriverData {
     private String email;
     private String phoneNumber;
     private String documentsStatus;
-    private String state;
-    private String city;
+    private String location;
     private LocalDateTime createdAt;
 }

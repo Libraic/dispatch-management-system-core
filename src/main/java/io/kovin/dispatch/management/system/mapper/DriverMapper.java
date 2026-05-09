@@ -36,8 +36,7 @@ public class DriverMapper {
             .email(request.email())
             .documentStatus(DocumentStatus.from(request.documentsStatus()))
             .position(DriverPosition.from(request.position()))
-            .state(request.state())
-            .city(request.city())
+            .location(request.location())
             .company(company)
             .trailer(trailer)
             .truck(truck)
@@ -55,8 +54,7 @@ public class DriverMapper {
             .email(driver.getEmail())
             .phoneNumber(driver.getPhoneNumber())
             .documentsStatus(driver.getDocumentStatus().getType())
-            .state(driver.getState())
-            .city(driver.getCity())
+            .location(driver.getLocation())
             .createdAt(driver.getCreatedAt())
             .build();
     }

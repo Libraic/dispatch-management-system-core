@@ -12,16 +12,8 @@ public enum ImpactedGroup {
      */
     FIRST_NAME("firstName"),
     LAST_NAME("lastName"),
-    EMAIL("email"),
+    EMAIL("email");
 
-    /**
-     * Fields related to Driver registration.
-     */
-    PHONE_NUMBER("phoneNumber"),
-    DOCUMENT_STATUS("documentsStatus"),
-    POSITION("position"),
-    STATE("state"),
-    CITY("city");
 
     private final String groupName;
 }

@@ -4,12 +4,16 @@ import static io.kovin.dispatch.management.system.utils.ErrorMessage.CITIES_LOAD
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_ZIP_CODE;
 import static io.kovin.dispatch.management.system.utils.constants.DispatchManagementSystemConstants.COLON;
 import static io.kovin.dispatch.management.system.utils.constants.DispatchManagementSystemConstants.COMMA;
+import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.DEFAULT_PAGE_SIZE;
 import static io.kovin.dispatch.management.system.utils.constants.QueryConstants.LIKE;
 
 import io.kovin.dispatch.management.system.exception.DispatchManagementSystemException;
 import io.kovin.dispatch.management.system.model.internal.CityData;
 import io.kovin.dispatch.management.system.model.response.GetCityAndStateResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
@@ -68,23 +72,20 @@ public class CityService {
     }
 
     /**
-     * Searches through the list of cities and returns a filtered list of city data
-     * whose zip code, city name, or state name starts with the specified prefix.
-     * The queried prefix is sanitized before performing the search, and at most
-     * 10 results are returned.
+     * Searches for cities and states whose names or zip codes match the specified prefix.
+     * The results are limited to a predefined page size.
      *
-     * @param prefix a string used to filter city data by prefix; it could match
-     *               the beginning of a zip code, city name, or state name. If the
-     *               prefix cannot be sanitized properly, an exception is thrown.
-     * @return a list of {@code GetCityAndStateResponse} objects containing
-     * the zip code, city name, and state name of the matching cities.
-     * Returns an empty list if no matches are found.
+     * @param prefix the prefix used for filtering cities and states. The prefix can be null,
+     *               in which case all cities and states are returned. If the prefix is invalid,
+     *               an exception may be thrown during its sanitization.
+     * @return a {@code Page} containing a list of {@code GetCityAndStateResponse} objects.
+     *         Each object includes the zip code, city name, state name, and timezone of a matching city.
      */
-    public List<GetCityAndStateResponse> searchByPrefix(String prefix) {
+    public Page<GetCityAndStateResponse> searchByPrefix(String prefix) {
         String sanitizedPrefix = sanitizePrefix(prefix);
-        return cities.stream()
+        List<GetCityAndStateResponse> data = cities.stream()
             .filter(cityData -> doesPrefixMatchTheCityData(cityData, sanitizedPrefix))
-            .limit(10)
+            .limit(DEFAULT_PAGE_SIZE)
             .collect(Collectors.toSet())
             .stream()
             .map(cityData -> new GetCityAndStateResponse(
@@ -93,6 +94,7 @@ public class CityService {
                 cityData.state(),
                 cityData.timezone())
             ).toList();
+        return new PageImpl<>(data, Pageable.unpaged(), DEFAULT_PAGE_SIZE);
     }
 
     private String sanitizePrefix(String prefix) {

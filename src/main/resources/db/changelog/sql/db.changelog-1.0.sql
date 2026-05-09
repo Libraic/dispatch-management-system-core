@@ -489,3 +489,14 @@ COMMENT ON COLUMN t_users.role             IS 'The role of the User.';
 COMMENT ON COLUMN t_users.created_at       IS 'The date the User was created.';
 COMMENT ON COLUMN t_users.last_updated_at  IS 'The date the User was last updated.';
 COMMENT ON COLUMN t_users.deleted_at       IS 'The date the User was deleted.';
+
+-- changeset libra:021
+-- comment: Drop the city and state columns from t_drivers table.
+ALTER TABLE t_drivers
+    DROP COLUMN city,
+    DROP COLUMN state;
+
+ALTER TABLE t_drivers
+    ADD COLUMN location VARCHAR(100);
+
+COMMENT ON COLUMN t_drivers.location IS 'The location of the Driver.';

@@ -65,4 +65,9 @@ public class QueryConstants {
      * The CompanyEntity field name used when performing joining.
      */
     public static final String COMPANY_FIELD = "company";
+
+    /**
+     * The default page size for pagination.
+     */
+    public static final int DEFAULT_PAGE_SIZE = 10;
 }

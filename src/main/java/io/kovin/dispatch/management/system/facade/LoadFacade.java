@@ -101,12 +101,7 @@ public class LoadFacade {
         List<GenericLoadResponse> genericLoadResponses = new ArrayList<>();
         List<LoadEntity> loads = loadService.getOverlappingLoadsForRelation(relationUuid, startDate, endDate);
         for (LoadEntity load : loads) {
-            List<LoadLocationEntity> locations = loadLocationService.getLoadLocationsByLoadUuidAndDateBetween(
-                load.getLocations(),
-                startDate,
-                endDate
-            );
-            GenericLoadResponse genericLoadResponse = loadObjectsCreator.createGetLoadResponse(load, locations);
+            GenericLoadResponse genericLoadResponse = loadObjectsCreator.createGetLoadResponse(load, load.getLocations());
             genericLoadResponses.add(genericLoadResponse);
         }
 

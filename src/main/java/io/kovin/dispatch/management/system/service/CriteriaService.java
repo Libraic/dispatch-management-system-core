@@ -53,16 +53,7 @@ public class CriteriaService {
         Root<T> root = query.from(clazz);
 
         // Predicates are basically WHERE clauses
-        List<Predicate> predicates = new ArrayList<>();
-
-        // Create Predicates from the Query Parameters
-        for (SearchCriteria criteria : searchCriteria) {
-            Join<?, ?> join = criteria.isJoinOperation() ? SearchCriteriaUtils.getJoin(root, criteria.getField()) : null;
-            Predicate predicate = SearchCriteriaUtils.getPredicate(criteria, criteriaBuilder, root, join);
-            if (predicate != null) {
-                predicates.add(predicate);
-            }
-        }
+        List<Predicate> predicates = convertSearchCriteriaToPredicates(root, searchCriteria);
 
         // Get common predicates that apply to all entities.
         predicates.addAll(getCommonPredicates(root));
@@ -88,18 +79,21 @@ public class CriteriaService {
 
         List<T> content = getPaginatedContent(query, pageable);
 
-        Long total = getTotalEntities(clazz);
+        Long total = getTotalEntities(clazz, searchCriteria);
 
         return new PageImpl<>(content, pageable, total);
     }
 
-    private <T> Long getTotalEntities(Class<T> clazz) {
+    private <T> Long getTotalEntities(Class<T> clazz, List<SearchCriteria> searchCriteria) {
         CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
         Root<T> countRoot = countQuery.from(clazz);
-        List<Predicate> countPredicates = getCommonPredicates(countRoot);
+
+        List<Predicate> predicates = convertSearchCriteriaToPredicates(countRoot, searchCriteria);
+
+        predicates.addAll(getCommonPredicates(countRoot));
         countQuery
             .select(criteriaBuilder.count(countRoot))
-            .where(countPredicates.toArray(new Predicate[0]));
+            .where(predicates.toArray(new Predicate[0]));
 
         return entityManager.createQuery(countQuery).getSingleResult();
     }
@@ -115,5 +109,17 @@ public class CriteriaService {
         List<Predicate> commonPredicates = new ArrayList<>();
         commonPredicates.add(criteriaBuilder.isNull(root.get(DELETED_AT)));
         return commonPredicates;
+    }
+
+    private <T> List<Predicate> convertSearchCriteriaToPredicates(Root<T> root, List<SearchCriteria> searchCriteria) {
+        List<Predicate> predicates = new ArrayList<>();
+        for (SearchCriteria criteria : searchCriteria) {
+            Join<?, ?> join = criteria.isJoinOperation() ? SearchCriteriaUtils.getJoin(root, criteria.getField()) : null;
+            Predicate predicate = SearchCriteriaUtils.getPredicate(criteria, criteriaBuilder, root, join);
+            if (predicate != null) {
+                predicates.add(predicate);
+            }
+        }
+        return predicates;
     }
 }

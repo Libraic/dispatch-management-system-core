@@ -1,6 +1,7 @@
 package io.kovin.dispatch.management.system.validation;
 
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.EMAIL_IS_MANDATORY;
+import static io.kovin.dispatch.management.system.utils.ErrorMessage.EMAIL_TAKEN;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.FIRST_NAME_IS_MANDATORY;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_DOCUMENT_STATUS;
 import static io.kovin.dispatch.management.system.utils.ErrorMessage.INVALID_DRIVER_POSITION;
@@ -14,13 +15,18 @@ import io.kovin.dispatch.management.system.exception.DispatchManagementSystemVal
 import io.kovin.dispatch.management.system.model.persistence.enums.DocumentStatus;
 import io.kovin.dispatch.management.system.model.persistence.enums.DriverPosition;
 import io.kovin.dispatch.management.system.model.request.CreateDriverRequest;
+import io.kovin.dispatch.management.system.service.DriverService;
 import io.kovin.dispatch.management.system.validation.fields.DriverField;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class DriverValidationService {
+
+    private final DriverService driverService;
 
     public void validateDriverCreation(CreateDriverRequest request) {
         log.info("Validating the request to create the driver.");
@@ -35,6 +41,10 @@ public class DriverValidationService {
 
         if (StringUtil.isNullOrEmpty(request.email())) {
             errorFields.put(DriverField.EMAIL.getFieldName(), EMAIL_IS_MANDATORY);
+        } else {
+            if (driverService.existsByEmail(request.email())) {
+                errorFields.put(DriverField.EMAIL.getFieldName(), EMAIL_TAKEN);
+            }
         }
 
         if (StringUtil.isNullOrEmpty(request.phoneNumber())) {

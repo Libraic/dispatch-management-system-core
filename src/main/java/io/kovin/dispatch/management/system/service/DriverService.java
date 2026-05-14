@@ -23,4 +23,9 @@ public class DriverService {
         log.info("Retrieving driver by UUID=[{}].", uuid);
         return driverRepository.findByUuidAndDeletedAtIsNull(uuid).orElse(null);
     }
+
+    public boolean existsByEmail(String email) {
+        log.info("Checking if a driver with the following email=[{}] was already registered.", email);
+        return driverRepository.existsByEmailAndDeletedAtIsNull(email);
+    }
 }

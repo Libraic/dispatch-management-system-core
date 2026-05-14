@@ -13,6 +13,7 @@ public class ErrorMessage {
     public static final String EXTERNAL_SERVICE_ERROR = "Failed to call external service.";
     public static final String INVALID_ZIP_CODE = "The provided zip code=[%s] is invalid.";
     public static final String EMAIL_IS_MANDATORY = "The e-mail cannot be empty.";
+    public static final String EMAIL_TAKEN = "The e-mail was taken.";
     public static final String END_DATE_IS_MANDATORY = "The start date is required.";
     public static final String FIRST_NAME_IS_MANDATORY = "The first name is required.";
     public static final String INTERNAL_SERVER_ERROR = "An internal server error occurred. Please try again later.";

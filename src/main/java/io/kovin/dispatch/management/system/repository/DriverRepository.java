@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface DriverRepository extends JpaRepository<DriverEntity, Long> {
 
     Optional<DriverEntity> findByUuidAndDeletedAtIsNull(UUID uuid);
+
+    boolean existsByEmailAndDeletedAtIsNull(String email);
 }
